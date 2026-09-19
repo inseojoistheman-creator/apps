@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>성벽</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="성벽">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0E1320">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+:root{
+  --night:#0E1320; --panel:#171D2C; --panel2:#1E2638; --line:#2A3246;
+  --text:#EDE6D6; --muted:#9AA0AE; --faint:#6B7284;
+  --stone:#B5AD9C; --torch:#F2A33A; --torch-soft:#3A2C14;
+  --kept:#6FA36B; --kept-soft:#1C2C22; --fall:#D4574A; --fall-soft:#331C1B; --sky:#7FA6D9;
+  --display:"Do Hyeon","Apple SD Gothic Neo",sans-serif;
+  --body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --serif:"Gowun Batang","AppleMyungjo",serif;
+}
+*{box-sizing:border-box;touch-action:manipulation}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--night);color:var(--text);font-family:var(--body);font-size:15px;line-height:1.6;
+  padding:env(safe-area-inset-top,0px) 16px calc(86px + env(safe-area-inset-bottom,0px));-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-user-select:none;user-select:none}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--torch);outline-offset:2px}
+.wrap{max-width:560px;margin-inline:auto;display:flex;flex-direction:column;gap:14px;padding-top:14px}
+.page{display:none;flex-direction:column;gap:14px}.page.on{display:flex}
+h1{font-family:var(--display);font-weight:400;font-size:30px;letter-spacing:.1em;margin:0;line-height:1.1}
+h2{font-family:var(--display);font-weight:400;font-size:20px;letter-spacing:.04em;margin:0 0 8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+h2 small{font-family:var(--body);font-size:12px;color:var(--muted);letter-spacing:0}
+.verse{font-family:var(--serif);font-size:14.5px;line-height:1.8;color:var(--stone)}
+.verse b{display:block;font-weight:400;font-size:12px;color:var(--faint);margin-top:2px;font-family:var(--body)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.lead{font-size:13.5px;color:var(--muted);margin:0 0 10px}
+.num{font-variant-numeric:tabular-nums}
+
+/* 머리 */
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.pills{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.pill{font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted);white-space:nowrap}
+.pill b{color:var(--torch);font-weight:600}
+
+/* 성벽 그림 */
+.scene{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0A0E18}
+.scene canvas{display:block;width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges}
+.gates{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}
+.gates button{padding:9px 4px 10px;text-align:center;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:1px;align-items:center}
+.gates button:first-child{border-left:0}
+.gates .g{font-family:var(--display);font-size:16px;letter-spacing:.04em}
+.gates .c{font-size:12px;color:var(--muted)}
+.gates .c b{color:var(--text);font-weight:600}
+.rank{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:13px;color:var(--muted)}
+.rank b{font-family:var(--display);font-weight:400;font-size:17px;color:var(--torch);letter-spacing:.04em}
+.bar{height:6px;border-radius:3px;background:var(--panel2);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--torch);border-radius:3px}
+.bar.ok i{background:var(--kept)}.bar.warn i{background:var(--torch)}.bar.over i{background:var(--fall)}
+.ally{font-size:13px;color:var(--stone);margin-top:8px;font-family:var(--serif)}
+
+/* 오늘 점검 */
+.check{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.check:first-of-type{border-top:0;padding-top:2px}
+.check .n{font-weight:600}.check .s{font-size:12.5px;color:var(--muted)}
+.two{display:flex;gap:6px}
+.chip{font-size:13.5px;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text);white-space:nowrap}
+.chip.kept.on{background:var(--kept-soft);border-color:var(--kept);color:var(--kept);font-weight:600}
+.chip.fell.on{background:var(--fall-soft);border-color:var(--fall);color:var(--fall);font-weight:600}
+.chip.sel{background:var(--torch-soft);border-color:var(--torch);color:var(--torch)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.breach{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--fall-soft);border:1px solid var(--fall);border-radius:10px;padding:10px 14px;font-size:14px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:600;font-size:15px;padding:12px 16px;border-radius:9px;border:1px solid var(--line);background:var(--panel2)}
+.btn.torch{background:var(--torch);border-color:var(--torch);color:#1A1204}
+.btn.danger{border-color:var(--fall);color:var(--fall);background:transparent}
+.btn.ghost{background:transparent}
+.btn.small{font-size:13px;padding:8px 12px;font-weight:500}
+.btn.wide{width:100%}
+.btn:disabled{opacity:.4}
+.sos{width:100%;font-family:var(--display);font-size:22px;letter-spacing:.06em;padding:18px;border-radius:12px;background:var(--torch);color:#1A1204;box-shadow:0 0 0 0 rgba(242,163,58,.5)}
+@media (prefers-reduced-motion:no-preference){.sos{animation:glow 2.4s ease-in-out infinite}@keyframes glow{50%{box-shadow:0 0 0 8px rgba(242,163,58,0)}}}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input[type=text],input[type=number],input[type=date],textarea{width:100%;font:inherit;font-size:16px;color:var(--text);background:var(--night);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+textarea{min-height:70px;resize:vertical}
+input::placeholder,textarea::placeholder{color:var(--faint)}
+.inrow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
+.mic{width:44px;height:44px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);font-size:18px;display:grid;place-items:center}
+.mic.on{background:var(--fall);border-color:var(--fall)}
+.lab{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--muted);margin:12px 0 5px}
+.hint{font-size:12.5px;color:var(--faint);min-height:18px;margin-top:4px}
+
+/* 방비 체크 */
+.guard{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start;padding:8px 0;border-top:1px solid var(--line);font-size:14px;cursor:pointer}
+.guard:first-child{border-top:0}
+.guard .bx{width:22px;height:22px;border-radius:5px;border:1.5px solid var(--faint);display:grid;place-items:center;font-size:13px;color:var(--night);margin-top:1px}
+.guard.on .bx{background:var(--kept);border-color:var(--kept)}
+.guard.on span:last-child{color:var(--muted)}
+.guard small{display:block;color:var(--faint);font-size:12.5px}
+
+/* 곳간 */
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sum div{background:var(--panel2);border-radius:8px;padding:9px 10px;font-size:12px;color:var(--muted)}
+.sum b{display:block;font-size:16px;color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
+.item{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.item:first-child{border-top:0}
+.item .m{font-size:12.5px;color:var(--muted)}
+.item .amt{font-variant-numeric:tabular-nums;font-weight:600;text-align:right}
+.item .x{color:var(--faint);font-size:12.5px;text-decoration:underline;text-align:right}
+.item .acts{grid-column:1 / -1;display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.empty{font-size:13.5px;color:var(--faint);text-align:center;padding:14px 6px}
+
+/* 기록 */
+.cal{display:grid;grid-template-columns:repeat(13,1fr);gap:3px}
+.cal i{aspect-ratio:1;border-radius:2px;background:var(--panel2);display:block}
+.cal i.k{background:var(--kept)}.cal i.f{background:var(--fall)}.cal i.t{outline:1.5px solid var(--torch);outline-offset:-1px}.cal i.star{box-shadow:inset 0 0 0 2px var(--sky)}
+.trig{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:13.5px;margin-top:8px}
+.trig .bar{grid-column:1 / -1;margin-top:0}
+
+/* 탭 */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;background:rgba(14,19,32,.96);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabs button{flex:1;padding:7px 2px;font-size:11.5px;color:var(--faint);display:flex;flex-direction:column;align-items:center;gap:1px}
+.tabs button .g{font-family:var(--display);font-size:18px;line-height:1.1}
+.tabs button.on{color:var(--torch)}
+
+/* 모달 */
+.modal{position:fixed;inset:0;z-index:20;background:var(--night);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 24px)}
+.modal-in{max-width:560px;margin-inline:auto;display:flex;flex-direction:column;gap:14px}
+.clock{font-family:var(--display);font-size:72px;line-height:1;text-align:center;font-variant-numeric:tabular-nums;color:var(--torch);margin:6px 0}
+.steps{display:flex;flex-direction:column;gap:8px;counter-reset:s}
+.steps div{display:grid;grid-template-columns:26px 1fr;gap:10px;font-size:15px}
+.steps div::before{counter-increment:s;content:counter(s);width:24px;height:24px;border-radius:50%;border:1.5px solid var(--torch);color:var(--torch);display:grid;place-items:center;font-size:13px;font-weight:600}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--night);padding:9px 16px;border-radius:999px;font-size:14px;font-weight:600;z-index:30;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>성벽</h1>
+    <div class="pills"><span class="pill">공사 <b class="num" id="pDay">1</b>/52일</span><span class="pill" id="pGoalWrap"><span id="pGoalLabel">면접</span> <b class="num" id="pGoal"></b></span></div>
+  </header>
+
+  <!-- 성벽 -->
+  <section class="page on" id="p-home">
+    <div class="verse">자기의 마음을 제어하지 아니하는 자는 성읍이 무너지고 성벽이 없는 것 같으니라<b>잠언 25:28 · 개역한글</b></div>
+    <div class="scene">
+      <canvas id="wall" width="192" height="120" aria-label="세 구간의 성벽 공사 현황"></canvas>
+      <div class="gates" id="gates"></div>
+    </div>
+    <div class="panel">
+      <div class="rank"><span>지금 나는 <b id="rankName"></b></span><span class="num" id="rankNext"></span></div>
+      <div class="bar"><i id="rankBar"></i></div>
+      <div class="ally" id="ally"></div>
+    </div>
+    <div id="breaches"></div>
+    <div class="panel">
+      <h2>오늘의 점검<small id="todayLabel"></small></h2>
+      <div id="checks"></div>
+      <div class="hint">지킨 하루 = 벽돌 한 장. 넘어진 날은 두 장이 빠지지만, 보수하면 한 장이 돌아온다. 숨기는 것보다 적는 편이 벽에 이롭다.</div>
+    </div>
+    <div class="panel">
+      <h2>느헤미야의 52일</h2>
+      <p class="lead" style="margin:0">무너진 예루살렘 성벽은 52일 만에 다시 섰다(느 6:15). 일꾼들은 한 손으로 쌓고 한 손에는 병기를 들었다. 이 앱도 같다 — 매일 한 장씩 쌓고, 충동이 오면 그 자리에서 싸운다.</p>
+    </div>
+  </section>
+
+  <!-- 손 -->
+  <section class="page" id="p-hand">
+    <div class="verse">지극히 작은 것에 충성된 자는 큰 것에도 충성되고<b>누가복음 16:10</b></div>
+    <button class="sos" data-urge="hand">손이 입으로 간다</button>
+    <div class="panel">
+      <h2>손의 문<small id="handMeta"></small></h2>
+      <p class="lead">손톱 뜯기는 의지보다 <b>알아차림</b>의 문제다. 대부분 나도 모르게 시작된다. ① 손이 가는 순간 버튼을 누르고 ② 1분 동안 주먹을 쥐어 손을 묶는다. 이 방법(습관 뒤집기 훈련)이 가장 검증된 방법이다.</p>
+      <div class="lab">면접까지 손톱 계획</div>
+      <div class="lead" id="nailPlan" style="margin:0"></div>
+    </div>
+    <div class="panel"><h2>방비<small>뜯을 거리를 없앤다</small></h2><div id="guards-hand"></div></div>
+    <div class="panel"><h2>내 작전<small>만약 ~하면, 나는 ~한다</small></h2>
+      <div class="inrow"><textarea id="plan-hand" placeholder="예: 문제 풀다 막혀서 손이 입으로 가면, 펜을 내려놓고 두 손을 허벅지 밑에 10초 깔고 앉는다."></textarea><button class="mic" data-mic="plan-hand">🎙</button></div>
+      <div class="hint" id="hint-plan-hand"></div>
+    </div>
+  </section>
+
+  <!-- 눈 -->
+  <section class="page" id="p-eye">
+    <div class="verse">청년이 무엇으로 그 행실을 깨끗케 하리이까 주의 말씀을 따라 삼갈 것이니이다<b>시편 119:9</b></div>
+    <button class="sos" data-urge="eye">지금 위험하다</button>
+    <div class="panel">
+      <h2>눈의 문<small id="eyeMeta"></small></h2>
+      <p class="lead">충동은 파도다. 올라왔다가 10~15분이면 반드시 내려간다. 이기는 법은 맞서 버티는 게 아니라 <b>그 자리를 떠나는 것</b>이다(딤후 2:22 "피하고"). 버튼을 누르면 피하는 순서를 안내한다.</p>
+    </div>
+    <div class="panel"><h2>방비<small>싸움은 낮에 미리 이긴다</small></h2><div id="guards-eye"></div></div>
+    <div class="panel"><h2>내 작전<small>만약 ~하면, 나는 ~한다</small></h2>
+      <div class="inrow"><textarea id="plan-eye" placeholder="예: 밤에 침대에서 폰을 보다 마음이 흔들리면, 바로 일어나 폰을 금욕상자에 넣고 거실에서 물을 마신다."></textarea><button class="mic" data-mic="plan-eye">🎙</button></div>
+      <div class="hint" id="hint-plan-eye"></div>
+    </div>
+  </section>
+
+  <!-- 곳간 -->
+  <section class="page" id="p-purse">
+    <div class="verse">우리가 먹을 것과 입을 것이 있은즉 족한 줄로 알 것이니라<b>디모데전서 6:8</b></div>
+    <button class="sos" data-urge="purse">사고 싶은 게 생겼다</button>
+    <div class="panel">
+      <h2>이달의 곳간<small id="monthLabel"></small></h2>
+      <div class="sum" id="sum"></div>
+      <div class="lab">의복 예산 <span id="clothesPct" style="letter-spacing:0;font-weight:400"></span></div>
+      <div class="bar" id="clothesBar"><i></i></div>
+      <div class="row" style="margin-top:8px"><input type="number" inputmode="numeric" id="budgetIn" placeholder="이달 의복 예산(원)" style="flex:1;min-width:0"><button class="btn small" id="budgetSave">정하기</button></div>
+      <div class="hint">청지기의 순서: ① 먼저 드리고(헌금) ② 먼저 모으고(저축) ③ 남은 것 안에서 쓴다. 옷을 좋아하는 건 죄가 아니다. 옷이 주인이 되는 게 문제다(마 6:21).</div>
+    </div>
+    <div class="panel">
+      <h2>72시간 대기 목록<small id="waitMeta"></small></h2>
+      <p class="lead">사고 싶은 옷은 사지 말고 여기 <b>적는다</b>. 72시간 뒤에도 생각나면 그때 다섯 가지를 묻고 결정한다. 안 사기로 한 물건 하나 = 벽돌 한 장.</p>
+      <div id="waitList"></div>
+    </div>
+    <div class="panel">
+      <h2>장부</h2>
+      <div class="chips" id="catChips"></div>
+      <div class="row" style="margin-top:8px"><input type="number" inputmode="numeric" id="amtIn" placeholder="금액(원)" style="flex:1;min-width:120px"><input type="text" id="memoIn" placeholder="메모" maxlength="40" style="flex:2;min-width:140px"></div>
+      <div class="row" style="margin-top:8px"><button class="btn small torch" id="ledgerAdd">적기</button></div>
+      <div id="ledger" style="margin-top:6px"></div>
+    </div>
+    <div class="panel"><h2>방비<small>유혹이 닿는 길을 끊는다</small></h2><div id="guards-purse"></div></div>
+  </section>
+
+  <!-- 기록 -->
+  <section class="page" id="p-rec">
+    <div class="panel"><h2>52일 공사 일지</h2><div id="cals"></div><div class="hint">초록 = 지킨 날 · 빨강 = 넘어진 날 · 주황 테두리 = 오늘 · 파란 테두리 = 목표일</div></div>
+    <div class="panel"><h2>언제 흔들리나<small>이긴 것 + 넘어진 것</small></h2><p class="lead">자주 나오는 상황이 내 약한 성문이다. 방비를 거기에 세운다.</p><div id="trigs"></div></div>
+    <div class="panel"><h2>설정</h2>
+      <div class="lab" style="margin-top:0">공사 시작일</div><input type="date" id="startIn">
+      <div class="lab">목표일 이름 · 날짜</div><div class="row"><input type="text" id="goalLabelIn" maxlength="10" style="flex:1;min-width:100px"><input type="date" id="goalDateIn" style="flex:1;min-width:150px"></div>
+      <div class="lab">백업</div><div class="row"><button class="btn small" id="bkCopy">기록 전체 복사</button><button class="btn small" id="bkPaste">붙여넣어 복원</button></div>
+      <textarea id="bkArea" hidden placeholder="백업한 글을 여기 붙여 넣고 '복원 실행'" style="margin-top:8px"></textarea>
+      <div class="row" style="margin-top:8px"><button class="btn small" id="bkRun" hidden>복원 실행</button></div>
+      <div class="hint" id="bkHint">기록은 이 기기 안에만 저장된다. 서버로 나가는 것은 없다.</div>
+    </div>
+  </section>
+</div>
+
+<nav class="tabs">
+  <button class="on" data-tab="home"><span class="g">城</span>성벽</button>
+  <button data-tab="hand"><span class="g">手</span>손</button>
+  <button data-tab="eye"><span class="g">目</span>눈</button>
+  <button data-tab="purse"><span class="g">庫</span>곳간</button>
+  <button data-tab="rec"><span class="g">記</span>기록</button>
+</nav>
+
+<div class="modal" id="modal" hidden><div class="modal-in" id="modalIn"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+"use strict";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtK=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>fmtK(new Date());
+const dayDiff=(a,b)=>Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000);
+const addDays=(k,n)=>{ const d=new Date(k+'T00:00:00'); d.setDate(d.getDate()+n); return fmtK(d); };
+const won=n=>Math.round(n).toLocaleString('ko-KR')+'원';
+const rid=()=>Math.random().toString(36).slice(2,9);
+const TOTAL=52;
+
+const SEC={
+  hand:{name:'손의 문',short:'손',what:'손톱을 뜯지 않았다',
+    trig:['공부 중','폰·영상 볼 때','긴장·불안','지루함','거스러미가 걸려서','기타'],
+    guards:[['손톱을 짧고 매끈하게 다듬었다','걸리는 데가 없으면 뜯을 거리도 없다. 주 2회.'],['손톱 줄을 필통에 넣어 뒀다','거스러미는 뜯지 말고 간다.'],['핸드크림·큐티클 오일을 책상에 뒀다','손이 갈 때 뜯는 대신 바른다.'],['공부할 때 반대 손에 쥘 것을 뒀다','지우개, 악력볼, 펜 뚜껑.'],['(선택) 쓴맛 나는 손톱 보호제를 발랐다','나도 모르게 입에 갈 때 알아차리게 해 준다.']],
+    repair:['뜯긴 부분을 손톱 줄로 매끈하게 갈았다','핸드크림을 발랐다','어떤 상황이었는지 위에 골랐다']},
+  eye:{name:'눈의 문',short:'눈',what:'눈을 지켰다',
+    trig:['밤늦게','침대에서 폰','혼자 있을 때','스트레스·피곤','쇼츠·SNS 보다가','기타'],
+    guards:[["아이폰 스크린타임에서 '성인 웹사이트 제한'을 켰다",'설정 > 스크린 타임 > 콘텐츠 및 개인정보 보호 제한'],['스크린타임 암호는 내가 모른다','부모님이나 믿는 사람이 정하게 한다.'],['밤 11시 이후 폰은 금욕상자에 들어간다','가장 약한 시간에 가장 센 방비.'],['침대에는 폰을 가져가지 않는다','알람은 다른 시계로.'],['믿는 사람 한 명에게 이 싸움을 말해 뒀다','혼자 쌓는 성벽은 없다(느 3장).']],
+    repair:['하나님께 그대로 자백했다 (요일 1:9)','어떤 상황이었는지 위에 골랐다','뚫린 곳에 방비 하나를 더 세웠다']},
+  purse:{name:'곳간의 문',short:'곳간',what:'충동구매 없이 예산 안에서 썼다',
+    trig:['쇼핑앱 구경하다','세일·쿠폰 알림','SNS에서 코디 보고','기분이 가라앉아서','친구가 산 걸 보고','기타'],
+    guards:[['쇼핑앱 알림을 전부 껐다','세일은 내 필요가 아니라 그들의 필요다.'],['장바구니를 비우고 앱에서 로그아웃했다','사려면 귀찮아야 한다.'],['저장된 카드·간편결제 정보를 지웠다',''],["사고 싶은 건 '대기 목록'에만 적는다",'72시간 뒤에만 결정.'],['용돈이 들어오면 헌금·저축부터 뗀다','남은 것이 내가 쓸 돈이다.']],
+    repair:['산 것을 장부에 정직하게 적었다','환불·반품이 가능한지 확인했다','어떤 상황이었는지 위에 골랐다']}
+};
+const KEYS=['hand','eye','purse'];
+const RANKS=[[0,'일꾼'],[10,'석공'],[25,'파수꾼'],[45,'문지기'],[70,'나팔수'],[100,'성벽 감독'],[140,'성벽 재건자']];
+const ALLIES=[[7,'나팔수가 곁에 섰다. 위급하면 나팔을 분다. (느 4:18)'],[20,'금장색 웃시엘이 옆 구간을 맡았다. (느 3:8)'],[40,'제사장 엘리아십이 일어나 양문을 세웠다. (느 3:1)'],[65,'살룸과 그 딸들이 함께 쌓기 시작했다. (느 3:12)'],[95,'드고아 사람들이 한 구간을 더 맡았다. (느 3:27)'],[130,'레위 사람들이 성벽 위에서 찬양하며 봉헌을 준비한다. (느 12:27)']];
+const CATS=['의복','식비·간식','교통','문화·취미','헌금','저축','기타','수입'];
+const ASK=['옷장에 비슷한 게 이미 있지 않나?','서른 번 넘게 입을 옷인가?','이달 의복 예산 안인가?','이걸 사느라 헌금·저축이 줄지 않나?','72시간이 지난 지금도 정말 원하나?'];
+
+// ---------- 상태 ----------
+const KEY='wall-v1';
+let S=null;
+try{ S=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+function normalize(){
+  S=S||{}; S.start=S.start||today(); S.goal=S.goal||{label:'면접',date:'2026-10-31'};
+  S.log=S.log||{}; KEYS.forEach(k=>S.log[k]=S.log[k]||{});
+  S.wins=S.wins||[]; S.falls=S.falls||[]; S.guards=S.guards||{}; KEYS.forEach(k=>S.guards[k]=S.guards[k]||[]);
+  S.plans=S.plans||{}; S.wait=S.wait||[]; S.ledger=S.ledger||[]; S.budget=S.budget||0;
+}
+normalize();
+function persist(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+function toast(m){ const t=$('toast'); t.textContent=m; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true,1800); }
+
+const winsOf=k=>S.wins.filter(w=>w.k===k);
+const fallsOf=k=>S.falls.filter(f=>f.k===k);
+function bricks(k){
+  const kept=Object.values(S.log[k]).filter(v=>v==='kept').length, f=fallsOf(k);
+  const bonus=k==='purse'?S.wait.filter(w=>w.decided==='pass').length:Math.floor(winsOf(k).length/5);
+  return Math.max(0,Math.min(TOTAL,kept+f.filter(x=>x.repaired).length+bonus-2*f.length));
+}
+const totalBricks=()=>KEYS.reduce((a,k)=>a+bricks(k),0);
+
+// ---------- 탭 ----------
+function showTab(k){ document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===k)); document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id==='p-'+k)); window.scrollTo({top:0}); }
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+
+// ---------- 성벽 그림 (픽셀) ----------
+const SHADE=['#8C8577','#B5AD9C','#79736A','#A39B8A'];
+let frame=0;
+function drawWall(){
+  const c=$('wall'), x=c.getContext('2d'), W=192, H=120, G=106; x.imageSmoothingEnabled=false;
+  ['#070A12','#0A0F1B','#0E1526','#131C31'].forEach((col,i)=>{ x.fillStyle=col; x.fillRect(0,i*27,W,27); });
+  x.fillStyle='#EDE6D6'; [[12,9],[40,20],[70,6],[101,15],[128,8],[176,24],[58,33],[22,40],[186,6]].forEach(([a,b],i)=>{ if((frame+i)%7) x.fillRect(a,b,1,1); });
+  x.fillStyle='#F3E3B0'; x.fillRect(150,10,8,8); x.fillStyle='#0A0F1B'; x.fillRect(153,9,6,6);
+  x.fillStyle='#1B2233'; x.fillRect(0,G,W,H-G); x.fillStyle='#232C41'; x.fillRect(0,G,W,1);
+  const BW=14,BH=6,COLS=4,ROWS=13, recent=addDays(today(),-2);
+  KEYS.forEach((k,si)=>{
+    const ox=8+si*62, n=bricks(k), w=COLS*BW;
+    x.strokeStyle='#232C41'; x.lineWidth=1; x.strokeRect(ox+.5,G-ROWS*BH+.5,w-1,ROWS*BH-1);
+    for(let r=0;r<ROWS;r++){ const inRow=Math.max(0,Math.min(COLS,n-r*COLS)); if(!inRow) break;
+      const y=G-(r+1)*BH, fillW=inRow*BW; x.save(); x.beginPath(); x.rect(ox,y,fillW,BH); x.clip();
+      const off=r%2?-BW/2:0;
+      for(let cI=0;cI<=COLS;cI++){ x.fillStyle=SHADE[(r*5+cI*3+si)%4]; x.fillRect(ox+off+cI*BW,y,BW-1,BH-1); }
+      x.restore(); }
+    const rows=Math.ceil(n/COLS), topY=G-rows*BH;
+    if(n>=TOTAL){ x.fillStyle='#B5AD9C'; for(let m=0;m<4;m++) x.fillRect(ox+2+m*14,topY-4,8,4); }
+    const open=fallsOf(k).filter(f=>!f.repaired).length;
+    if(open){ x.fillStyle='#D4574A'; const cx=ox+w/2; [[0,0],[1,2],[-1,4],[0,6],[2,8]].forEach(([dx,dy])=>x.fillRect(cx+dx,Math.min(G-2,topY+dy),1,2)); x.fillStyle='#79736A'; x.fillRect(ox+w-9,G-2,4,2); x.fillRect(ox+w-4,G-1,3,1); }
+    if(S.wins.some(v=>v.k===k&&v.d>=recent)){ const tx=ox+3, ty=topY-7; x.fillStyle='#5A3D22'; x.fillRect(tx,ty+3,1,4); x.fillStyle='#F2A33A'; x.fillRect(tx-1,ty+(frame%2),3,3); x.fillStyle='#FFD77A'; x.fillRect(tx,ty+1+(frame%2),1,2); }
+    if(S.log[k][today()]==='kept'){ const px=ox+w-12, py=topY-8; x.fillStyle='#EDE6D6'; x.fillRect(px+1,py,2,2); x.fillStyle='#7FA6D9'; x.fillRect(px,py+2,4,3); x.fillStyle='#3A4258'; x.fillRect(px,py+5,1,3); x.fillRect(px+3,py+5,1,3); x.fillStyle='#B5AD9C'; x.fillRect(px+5,py+2+(frame%2),3,2); }
+  });
+}
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(()=>{ frame++; if(!document.hidden&&$('p-home').classList.contains('on')) drawWall(); },450);
+
+// ---------- 홈 ----------
+function renderHome(){
+  const t=today(), dn=Math.max(1,dayDiff(S.start,t)+1);
+  $('pDay').textContent=Math.min(dn,TOTAL); $('todayLabel').textContent=t;
+  if(S.goal.date){ const n=dayDiff(t,S.goal.date); $('pGoalWrap').hidden=false; $('pGoalLabel').textContent=S.goal.label||'목표'; $('pGoal').textContent=n>0?'D-'+n:n===0?'D-DAY':'D+'+(-n); } else $('pGoalWrap').hidden=true;
+  $('gates').innerHTML=KEYS.map(k=>`<button data-go="${k}"><span class="g">${SEC[k].name}</span><span class="c num"><b>${bricks(k)}</b>/${TOTAL}장 · 횃불 ${winsOf(k).length}</span></button>`).join('');
+  const tot=totalBricks(); let ri=0; RANKS.forEach((r,i)=>{ if(tot>=r[0]) ri=i; });
+  const next=RANKS[ri+1]; $('rankName').textContent=RANKS[ri][1];
+  $('rankNext').textContent=next?`${next[1]}까지 ${next[0]-tot}장`:'완공';
+  $('rankBar').style.width=(next?Math.round((tot-RANKS[ri][0])/(next[0]-RANKS[ri][0])*100):100)+'%';
+  const got=ALLIES.filter(a=>tot>=a[0]), nx=ALLIES.find(a=>tot<a[0]);
+  $('ally').textContent=got.length?got[got.length-1][1]:'아직은 혼자 쌓는다. 벽돌 '+(nx?nx[0]:7)+'장이 되면 첫 동료가 온다.';
+  const open=S.falls.filter(f=>!f.repaired);
+  $('breaches').innerHTML=open.map(f=>`<div class="breach"><span>${SEC[f.k].name} · ${f.d.slice(5)} 무너진 곳</span><button class="btn small" data-repair="${f.id}">보수하기</button></div>`).join('');
+  const y=addDays(t,-1);
+  $('checks').innerHTML=KEYS.map(k=>{ const v=S.log[k][t], yv=S.log[k][y], showY=!yv&&y>=S.start;
+    return `<div class="check"><div><div class="n">${SEC[k].name}</div><div class="s">${SEC[k].what}</div></div><div class="two"><button class="chip kept ${v==='kept'?'on':''}" data-set="${k}|${t}|kept">지켰다</button><button class="chip fell ${v==='fell'?'on':''}" data-set="${k}|${t}|fell">넘어졌다</button></div>${showY?`<div class="s" style="grid-column:1/-1">어제 기록이 비었다 → <button class="chip" style="padding:3px 9px;font-size:12.5px" data-set="${k}|${y}|kept">지켰다</button> <button class="chip" style="padding:3px 9px;font-size:12.5px" data-set="${k}|${y}|fell">넘어졌다</button></div>`:''}</div>`; }).join('');
+  drawWall();
+}
+function setDay(k,d,v){
+  const cur=S.log[k][d];
+  if(cur===v){ delete S.log[k][d]; if(v==='fell') S.falls=S.falls.filter(f=>!(f.k===k&&f.d===d)); persist(); render(); return; }
+  if(v==='fell'){ openFall(k,d); return; }
+  S.falls=S.falls.filter(f=>!(f.k===k&&f.d===d)); S.log[k][d]='kept'; persist(); render();
+  if(d===today()) toast('벽돌 한 장 올렸다');
+}
+
+// ---------- 방비 · 작전 ----------
+function renderGuards(){
+  KEYS.forEach(k=>{ $('guards-'+k).innerHTML=SEC[k].guards.map((g,i)=>`<div class="guard ${S.guards[k].includes(i)?'on':''}" data-guard="${k}|${i}"><span class="bx">${S.guards[k].includes(i)?'✓':''}</span><span>${esc(g[0])}${g[1]?`<small>${esc(g[1])}</small>`:''}</span></div>`).join(''); });
+  ['hand','eye'].forEach(k=>{ const el=$('plan-'+k); if(document.activeElement!==el&&!(activeDict)) el.value=S.plans[k]||''; });
+  $('handMeta').textContent='이긴 충동 '+winsOf('hand').length+'번'; $('eyeMeta').textContent='이긴 충동 '+winsOf('eye').length+'번';
+  const n=S.goal.date?dayDiff(today(),S.goal.date):null;
+  $('nailPlan').innerHTML=n===null?'':n>0?`${esc(S.goal.label||'목표일')}까지 <b>${n}일</b>. 손톱은 하루 약 0.1mm, ${n}일이면 <b>${(n*0.1).toFixed(1)}mm</b> 자란다. 지금 시작하면 그날 단정한 손끝으로 앉을 수 있다. 3~4일 전에 길이를 맞춰 다듬자.`:'목표일이 지났다. 기록 탭에서 다음 목표일을 정하자.';
+}
+['hand','eye'].forEach(k=>$('plan-'+k).addEventListener('change',e=>{ S.plans[k]=e.target.value.trim(); persist(); }));
+
+// ---------- 받아쓰기 ----------
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition; let activeDict=null;
+function dictate(btn,input,hint,done){
+  if(activeDict){ activeDict.stop(); return; }
+  if(!SR){ hint.textContent='이 브라우저는 음성인식을 지원하지 않는다. 직접 적자.'; return; }
+  const me={want:true}; let prefix,last,skip;
+  const finish=()=>{ if(me.fin) return; me.fin=true; activeDict=null; btn.classList.remove('on'); btn.textContent='🎙'; done&&done(); };
+  const begin=()=>{ const sr=new SR(); me.sr=sr; sr.lang='ko-KR'; sr.continuous=true; sr.interimResults=true; prefix=input.value; last=prefix; skip=0;
+    sr.onresult=e=>{ if(input.value!==last){ prefix=input.value; skip=e.resultIndex; } let t=''; for(let i=skip;i<e.results.length;i++) t+=e.results[i][0].transcript+' '; t=t.replace(/\s+/g,' ').trim(); last=prefix+(prefix&&t&&!/\s$/.test(prefix)?' ':'')+t; input.value=last; };
+    sr.onerror=e=>{ if(['not-allowed','service-not-allowed','network','audio-capture'].includes(e.error)){ me.dead=true; hint.textContent=e.error==='network'?'인터넷이 없어 받아쓰기가 안 된다. 키보드의 마이크나 타이핑으로 적자.':'마이크·음성인식 권한이 필요하다.'; } };
+    sr.onend=()=>{ if(me.want&&!me.dead){ try{ begin(); return; }catch(err){} } finish(); };
+    sr.start(); };
+  me.stop=()=>{ me.want=false; try{ me.sr.stop(); }catch(e){} setTimeout(finish,1500); };
+  activeDict=me; btn.classList.add('on'); btn.textContent='■'; hint.textContent='듣고 있다… 끝나면 다시 누르자.';
+  try{ begin(); }catch(e){ finish(); }
+}
+
+// ---------- 모달 · 타이머 ----------
+let tick=null;
+function openModal(html){ $('modalIn').innerHTML=html; $('modal').hidden=false; $('modal').scrollTop=0; }
+function closeModal(){ clearInterval(tick); tick=null; if(activeDict) activeDict.stop(); $('modal').hidden=true; $('modalIn').innerHTML=''; render(); }
+const mmss=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+function chime(){ try{ const ac=new (window.AudioContext||window.webkitAudioContext)(); [523,659,784].forEach((f,i)=>{ const o=ac.createOscillator(), g=ac.createGain(); o.frequency.value=f; o.connect(g); g.connect(ac.destination); const t=ac.currentTime+i*.3; g.gain.setValueAtTime(.001,t); g.gain.exponentialRampToValueAtTime(.2,t+.02); g.gain.exponentialRampToValueAtTime(.001,t+1); o.start(t); o.stop(t+1.1); }); }catch(e){} }
+function runTimer(sec,minWin,onTick){ clearInterval(tick); const end=Date.now()+sec*1000, st=Date.now(); tick=setInterval(()=>{ const left=Math.max(0,Math.round((end-Date.now())/1000)); onTick(left,(Date.now()-st)/1000>=minWin); if(left<=0){ clearInterval(tick); tick=null; chime(); } },250); }
+
+let flow=null;
+const trigChips=k=>`<div class="chips" id="trigChips">${SEC[k].trig.map(t=>`<button class="chip ${flow&&flow.trig===t?'sel':''}" data-trig="${esc(t)}">${esc(t)}</button>`).join('')}</div>`;
+function openUrge(k){
+  flow={k,trig:null};
+  if(k==='purse'){ openModal(`<h2>사고 싶은 게 생겼다</h2><div class="verse">네 보물 있는 그 곳에는 네 마음도 있느니라<b>마태복음 6:21</b></div>
+    <div class="panel"><p class="lead">지금 사지 않는다. 적어 두고 72시간 뒤에 다시 본다. 정말 필요한 옷은 사흘 뒤에도 필요하다.</p>
+    <div class="lab" style="margin-top:0">무엇을</div><input type="text" id="wName" placeholder="예: 울 블렌드 코트 (네이비)" maxlength="60">
+    <div class="lab">얼마</div><input type="number" inputmode="numeric" id="wPrice" placeholder="가격(원)">
+    <div class="lab">어쩌다 보게 됐나</div>${trigChips(k)}</div>
+    <div class="row"><button class="btn torch" id="wSave" style="flex:1">대기 목록에 올린다</button><button class="btn ghost" data-close="1">닫기</button></div>
+    <button class="btn danger small" data-fallnow="purse">이미 사 버렸다</button>`); return; }
+  const hand=k==='hand', sec=hand?60:600;
+  openModal(`<h2>${hand?'손을 묶는다':'자리를 떠난다'}</h2>
+    ${hand?`<div class="panel"><div class="steps"><div>손을 입에서 떼고, <b>양손 주먹을 꽉 쥔다.</b></div><div>주먹을 허벅지 위에 올리거나 깔고 앉는다.</div><div>60초가 끝날 때까지 그대로. 숨은 천천히.</div></div></div>`
+      :`<div class="verse">사람이 감당할 시험 밖에는 너희에게 당한 것이 없나니 오직 하나님은 미쁘사 너희가 감당치 못할 시험 당함을 허락지 아니하시고 시험 당할 즈음에 또한 피할 길을 내사 너희로 능히 감당하게 하시느니라<b>고린도전서 10:13</b></div>
+      <div class="panel"><div class="steps"><div><b>지금 일어난다.</b> 있던 자리(침대·방)를 떠난다.</div><div><b>폰을 금욕상자에 넣는다.</b> 상자가 멀면 거실에 두고 온다.</div><div>10분만 다른 걸 한다 — 턱걸이·링딥스 한 세트, 찬양 한 곡 부르기, 물 한 잔, 바깥 공기.</div><div>짧게 기도한다. "주님, 피할 길을 주셨으니 그 길로 갑니다."</div></div></div>
+      <p class="lead" style="margin:0">폰을 상자에 넣기 전에 아래 타이머만 눌러 두자. 돌아와서 결과를 적으면 된다.</p>`}
+    <div class="clock num" id="clock">${mmss(sec)}</div>
+    <button class="btn wide" id="tStart">${hand?'60초 시작':'10분 시작'}</button>
+    <div class="panel"><div class="lab" style="margin-top:0">어떤 상황이었나 (알아차림 훈련)</div>${trigChips(k)}</div>
+    <div class="row"><button class="btn torch" id="uWin" style="flex:1" disabled>이겼다 · 횃불을 올린다</button><button class="btn ghost" data-close="1">닫기</button></div>
+    <button class="btn danger small" data-fallnow="${k}">${hand?'이미 뜯었다':'넘어졌다'}</button>`);
+  $('tStart').onclick=()=>{ $('tStart').disabled=true; runTimer(sec,hand?55:120,(left,ok)=>{ const c=$('clock'); if(!c) return; c.textContent=mmss(left); if(ok) $('uWin').disabled=false; if(left<=0) $('uWin').disabled=false; }); };
+}
+function openFall(k,d,id){
+  const ex=id?S.falls.find(f=>f.id===id):null; flow={k,d:ex?ex.d:d,trig:ex?ex.trig:(flow&&flow.k===k?flow.trig:null),fallId:id||null};
+  openModal(`<h2>무너진 곳을 보수한다</h2>
+    <div class="verse">대저 의인은 일곱번 넘어질지라도 다시 일어나려니와<b>잠언 24:16</b></div>
+    ${k==='eye'?'<div class="verse">만일 우리가 우리 죄를 자백하면 저는 미쁘시고 의로우사 우리 죄를 사하시며 모든 불의에서 우리를 깨끗케 하실 것이요<b>요한일서 1:9</b></div>':''}
+    <p class="lead" style="margin:0">넘어진 걸 적는 사람이 결국 성벽을 끝낸다. 자책은 공사에 도움이 안 된다. 어디가 뚫렸는지 보고, 메우고, 다시 쌓는다.</p>
+    <div class="panel"><div class="lab" style="margin-top:0">어떤 상황이었나</div>${trigChips(k)}
+      <div class="lab">다음에 같은 상황이면 나는</div><div class="inrow"><textarea id="fNote" placeholder="만약 ~하면, 나는 ~한다">${esc(ex?ex.note:'')}</textarea><button class="mic" data-mic="fNote">🎙</button></div><div class="hint" id="hint-fNote"></div>
+      <div class="lab">보수 작업</div><div id="repairList">${SEC[k].repair.map((r,i)=>`<div class="guard" data-rep="${i}"><span class="bx"></span><span>${esc(r)}</span></div>`).join('')}</div></div>
+    <div class="row"><button class="btn torch" id="fDone" style="flex:1">보수 완료 · 벽돌 한 장 복구</button><button class="btn" id="fLater">나중에 보수</button></div>`);
+  const saveFall=rep=>{ const note=$('fNote').value.trim(); let f=flow.fallId?S.falls.find(v=>v.id===flow.fallId):null;
+    if(!f){ f={id:rid(),k,d:flow.d,ts:Date.now()}; S.falls.push(f); S.log[k][flow.d]='fell'; }
+    f.trig=flow.trig; f.note=note; f.repaired=rep; if(note&&(k==='hand'||k==='eye')&&!S.plans[k]) S.plans[k]=note;
+    persist(); closeModal(); toast(rep?'보수 완료. 다시 쌓는다':'적어 뒀다. 보수는 성벽 탭에서'); };
+  $('fDone').onclick=()=>saveFall(true); $('fLater').onclick=()=>saveFall(false);
+}
+
+// ---------- 곳간 ----------
+let cat='의복';
+function renderPurse(){
+  const now=new Date(), ym=today().slice(0,7); $('monthLabel').textContent=(now.getMonth()+1)+'월';
+  const L=S.ledger.filter(e=>e.d.slice(0,7)===ym), sumOf=f=>L.filter(f).reduce((a,e)=>a+e.amt,0);
+  const inc=sumOf(e=>e.cat==='수입'), first=sumOf(e=>e.cat==='헌금'||e.cat==='저축'), clothes=sumOf(e=>e.cat==='의복'), out=sumOf(e=>e.cat!=='수입'&&e.cat!=='저축');
+  const saved=S.wait.filter(w=>w.decided==='pass').reduce((a,w)=>a+(w.price||0),0);
+  $('sum').innerHTML=`<div><b>${won(inc)}</b>들어온 돈</div><div><b>${won(first)}</b>먼저 뗀 것 (헌금·저축)</div><div><b>${won(out)}</b>나간 돈</div><div><b>${won(clothes)}</b>의복</div><div><b>${out?Math.round(clothes/out*100):0}%</b>지출 중 의복 비중</div><div><b>${won(saved)}</b>안 사서 지킨 돈 (누적)</div>`;
+  const pct=S.budget?Math.round(clothes/S.budget*100):0; const bar=$('clothesBar'); bar.className='bar '+(pct>100?'over':pct>=80?'warn':'ok'); bar.firstElementChild.style.width=Math.min(100,pct)+'%';
+  $('clothesPct').textContent=S.budget?`· ${won(clothes)} / ${won(S.budget)} (${pct}%)${pct>100?' — 예산을 넘었다':''}`:'· 아직 정하지 않았다';
+  if(document.activeElement!==$('budgetIn')) $('budgetIn').value=S.budget||'';
+  $('catChips').innerHTML=CATS.map(c=>`<button class="chip ${c===cat?'sel':''}" data-cat="${c}">${c}</button>`).join('');
+  $('ledger').innerHTML=L.length?L.slice().sort((a,b)=>b.ts-a.ts).slice(0,40).map(e=>`<div class="item"><div>${esc(e.cat)}${e.memo?' · '+esc(e.memo):''}<div class="m num">${e.d.slice(5)}</div></div><div><div class="amt" style="color:${e.cat==='수입'?'var(--kept)':'inherit'}">${e.cat==='수입'?'+':'−'}${won(e.amt)}</div><button class="x" data-ldel="${e.id}">지우기</button></div></div>`).join(''):'<div class="empty">이달에 적은 것이 없다. 작은 돈부터 적는 사람이 큰 돈을 맡는다.</div>';
+  const W=S.wait.filter(w=>!w.decided); $('waitMeta').textContent=W.length?W.length+'개 대기 중':'';
+  $('waitList').innerHTML=W.length?W.map(w=>{ const left=72-(Date.now()-w.ts)/3600000, ready=left<=0;
+    return `<div class="item"><div>${esc(w.name)}<div class="m num">${ready?'72시간이 지났다 — 이제 결정할 수 있다':'결정까지 '+Math.ceil(left)+'시간'}${w.price?' · 서른 번 입으면 한 번에 '+won(w.price/30):''}</div></div><div class="amt">${w.price?won(w.price):''}</div><div class="acts"><button class="btn small" data-wpass="${w.id}">안 산다 · 벽돌 +1</button>${ready?`<button class="btn small ghost" data-wbuy="${w.id}">다섯 가지 묻고 산다</button>`:''}</div></div>`; }).join(''):'<div class="empty">대기 중인 물건이 없다.</div>';
+}
+function openBuy(id){ const w=S.wait.find(v=>v.id===id); if(!w) return;
+  openModal(`<h2>사기 전에 다섯 가지</h2><div class="panel"><div style="font-weight:600">${esc(w.name)}${w.price?' · '+won(w.price):''}</div><div id="askList" style="margin-top:8px">${ASK.map((q,i)=>`<div class="guard" data-rep="${i}"><span class="bx"></span><span>${esc(q)}<small>떳떳하게 "그렇다 / 괜찮다"면 체크</small></span></div>`).join('')}</div></div>
+    <div class="row"><button class="btn" id="buyYes" style="flex:1" disabled>다섯 개 다 통과 · 산다</button><button class="btn torch" id="buyNo" style="flex:1">안 산다 · 벽돌 +1</button></div><button class="btn ghost small" data-close="1">더 생각한다</button>`);
+  $('buyYes').onclick=()=>{ w.decided='buy'; w.decidedAt=Date.now(); if(w.price) S.ledger.push({id:rid(),d:today(),ts:Date.now(),amt:w.price,cat:'의복',memo:w.name}); persist(); closeModal(); toast('기다렸다가 산 옷이다. 장부에 적었다'); };
+  $('buyNo').onclick=()=>passWait(id,true);
+}
+function passWait(id,fromModal){ const w=S.wait.find(v=>v.id===id); if(!w) return; w.decided='pass'; w.decidedAt=Date.now(); persist(); if(fromModal) closeModal(); else render(); toast(w.price?won(w.price)+'을 지켰다. 벽돌 +1':'벽돌 +1'); }
+
+// ---------- 기록 ----------
+function renderRec(){
+  const t=today();
+  $('cals').innerHTML=KEYS.map(k=>`<div class="lab" style="${k==='hand'?'margin-top:0':''}">${SEC[k].name} · ${bricks(k)}장</div><div class="cal">${Array.from({length:TOTAL},(_,i)=>{ const d=addDays(S.start,i), v=S.log[k][d]; return `<i class="${v==='kept'?'k':v==='fell'?'f':''} ${d===t?'t':''} ${d===S.goal.date?'star':''}"></i>`; }).join('')}</div>`).join('');
+  $('trigs').innerHTML=KEYS.map(k=>{ const cnt={}; S.wins.concat(S.falls).filter(e=>e.k===k&&e.trig).forEach(e=>cnt[e.trig]=(cnt[e.trig]||0)+1); const arr=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,3), max=arr.length?arr[0][1]:1;
+    return `<div class="lab" style="${k==='hand'?'margin-top:0':''}">${SEC[k].name}</div>`+(arr.length?arr.map(([n,c])=>`<div class="trig"><span>${esc(n)}</span><span class="num">${c}번</span><div class="bar"><i style="width:${Math.round(c/max*100)}%"></i></div></div>`).join(''):'<div class="empty" style="padding:4px">아직 기록이 없다.</div>'); }).join('');
+  if(document.activeElement!==$('startIn')) $('startIn').value=S.start;
+  if(document.activeElement!==$('goalLabelIn')) $('goalLabelIn').value=S.goal.label||'';
+  if(document.activeElement!==$('goalDateIn')) $('goalDateIn').value=S.goal.date||'';
+}
+$('startIn').addEventListener('change',e=>{ if(e.target.value){ S.start=e.target.value; persist(); render(); } });
+$('goalLabelIn').addEventListener('change',e=>{ S.goal.label=e.target.value.trim(); persist(); render(); });
+$('goalDateIn').addEventListener('change',e=>{ S.goal.date=e.target.value||''; persist(); render(); });
+$('bkCopy').onclick=()=>{ const txt=JSON.stringify(S); const fb=()=>{ $('bkArea').hidden=false; $('bkArea').value=txt; $('bkArea').select(); $('bkHint').textContent='아래 글을 전부 복사해 메모 앱에 붙여 두자.'; }; if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(()=>{ $('bkHint').textContent='복사했다. 메모 앱에 붙여 두자.'; },fb); else fb(); };
+$('bkPaste').onclick=()=>{ $('bkArea').hidden=false; $('bkArea').value=''; $('bkRun').hidden=false; };
+$('bkRun').onclick=()=>{ try{ const o=JSON.parse($('bkArea').value); if(!o||!o.log) throw 0; S=o; normalize(); persist(); $('bkArea').hidden=true; $('bkRun').hidden=true; $('bkHint').textContent='복원했다.'; render(); }catch(e){ $('bkHint').textContent='백업 형식이 아니다. 복사한 글 전체를 그대로 붙여 넣자.'; } };
+
+// ---------- 공통 클릭 ----------
+document.addEventListener('click',e=>{
+  const q=s=>e.target.closest(s); let b;
+  if(b=q('[data-go]')) return showTab(b.dataset.go);
+  if(b=q('[data-urge]')) return openUrge(b.dataset.urge);
+  if(b=q('[data-close]')) return closeModal();
+  if(b=q('[data-set]')){ const [k,d,v]=b.dataset.set.split('|'); return setDay(k,d,v); }
+  if(b=q('[data-repair]')){ const f=S.falls.find(v=>v.id===b.dataset.repair); return f&&openFall(f.k,f.d,f.id); }
+  if(b=q('[data-fallnow]')){ clearInterval(tick); tick=null; return openFall(b.dataset.fallnow,today()); }
+  if(b=q('[data-trig]')){ flow.trig=b.dataset.trig; $('trigChips').querySelectorAll('.chip').forEach(c=>c.classList.toggle('sel',c===b)); return; }
+  if(b=q('[data-rep]')){ b.classList.toggle('on'); b.querySelector('.bx').textContent=b.classList.contains('on')?'✓':''; const ask=$('askList'); if(ask) $('buyYes').disabled=ask.querySelectorAll('.guard.on').length<ASK.length; return; }
+  if(b=q('[data-guard]')){ const [k,i]=b.dataset.guard.split('|'); const a=S.guards[k], n=+i; S.guards[k]=a.includes(n)?a.filter(v=>v!==n):a.concat(n); persist(); return renderGuards(); }
+  if(b=q('[data-mic]')){ const id=b.dataset.mic, inp=$(id); return dictate(b,inp,$('hint-'+id),()=>{ if(id.startsWith('plan-')){ S.plans[id.slice(5)]=inp.value.trim(); persist(); } }); }
+  if(b=q('[data-cat]')){ cat=b.dataset.cat; return renderPurse(); }
+  if(b=q('[data-ldel]')){ S.ledger=S.ledger.filter(v=>v.id!==b.dataset.ldel); persist(); return render(); }
+  if(b=q('[data-wpass]')) return passWait(b.dataset.wpass);
+  if(b=q('[data-wbuy]')) return openBuy(b.dataset.wbuy);
+  if(e.target.id==='uWin'){ S.wins.push({id:rid(),k:flow.k,d:today(),ts:Date.now(),trig:flow.trig}); persist(); const n=winsOf(flow.k).length; closeModal(); return toast(n%5===0?'횃불 다섯 개 — 벽돌 한 장이 올라갔다':'이겼다. 횃불 '+n+'개째'); }
+  if(e.target.id==='wSave'){ const name=$('wName').value.trim(); if(!name){ $('wName').focus(); return; } S.wait.push({id:rid(),name,price:Math.max(0,+$('wPrice').value||0),ts:Date.now(),decided:null}); S.wins.push({id:rid(),k:'purse',d:today(),ts:Date.now(),trig:flow.trig}); persist(); closeModal(); showTab('purse'); return toast('적어 뒀다. 72시간 뒤에 보자'); }
+});
+$('budgetSave').onclick=()=>{ S.budget=Math.max(0,+$('budgetIn').value||0); persist(); render(); toast('이달 의복 예산을 정했다'); };
+$('ledgerAdd').onclick=()=>{ const amt=+$('amtIn').value; if(!amt||amt<=0){ $('amtIn').focus(); return; } S.ledger.push({id:rid(),d:today(),ts:Date.now(),amt,cat,memo:$('memoIn').value.trim()}); $('amtIn').value=''; $('memoIn').value=''; persist(); render(); };
+
+function render(){ renderHome(); renderGuards(); renderPurse(); renderRec(); }
+render();
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) render(); });
+
+// 두 번 탭 확대 방지
+let last=0, moved=false;
+document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
+document.addEventListener('touchstart',e=>{ moved=false; if(e.touches.length>1) e.preventDefault(); },{passive:false});
+document.addEventListener('touchmove',()=>{ moved=true; },{passive:true});
+document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
+document.addEventListener('touchend',e=>{ if(moved) return; const n=Date.now(), quick=n-last<400; last=n; if(!quick) return; if(e.target.closest('input,textarea,select')) return; e.preventDefault(); const c=e.target.closest('button,[data-guard],[data-rep]'); if(c) c.click(); },{passive:false});
+
+if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>
