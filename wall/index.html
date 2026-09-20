@@ -49,11 +49,11 @@ h2 small{font-family:var(--body);font-size:12px;color:var(--muted);letter-spacin
 /* 성벽 그림 */
 .scene{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0A0E18}
 .scene canvas{display:block;width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges}
-.gates{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}
+.gates{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
 .gates button{padding:9px 4px 10px;text-align:center;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:1px;align-items:center}
 .gates button:first-child{border-left:0}
-.gates .g{font-family:var(--display);font-size:16px;letter-spacing:.04em}
-.gates .c{font-size:12px;color:var(--muted)}
+.gates .g{font-family:var(--display);font-size:15px;letter-spacing:.02em;white-space:nowrap}
+.gates .c{font-size:11.5px;color:var(--muted);white-space:nowrap}
 .gates .c b{color:var(--text);font-weight:600}
 .rank{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:13px;color:var(--muted)}
 .rank b{font-family:var(--display);font-weight:400;font-size:17px;color:var(--torch);letter-spacing:.04em}
@@ -61,6 +61,16 @@ h2 small{font-family:var(--body);font-size:12px;color:var(--muted);letter-spacin
 .bar i{display:block;height:100%;background:var(--torch);border-radius:3px}
 .bar.ok i{background:var(--kept)}.bar.warn i{background:var(--torch)}.bar.over i{background:var(--fall)}
 .ally{font-size:13px;color:var(--stone);margin-top:8px;font-family:var(--serif)}
+
+.log{border-left:3px solid var(--torch);padding:2px 0 2px 12px}
+.log .d{font-size:12px;color:var(--torch);letter-spacing:.08em;font-weight:600}
+.log .h{font-family:var(--display);font-size:19px;letter-spacing:.03em;margin:2px 0 4px}
+.log .x{font-family:var(--serif);font-size:14.5px;line-height:1.8;color:var(--stone)}
+.log .now{font-size:13px;color:var(--muted);margin-top:8px}
+.taunt{margin-top:10px;padding:9px 12px;border-radius:8px;background:var(--fall-soft);border:1px dashed var(--fall);font-size:13.5px;color:#F0B5AE}
+.perfect{margin-top:10px;padding:9px 12px;border-radius:8px;background:var(--kept-soft);border:1px solid var(--kept);font-size:13.5px;color:#BFE0BC;text-align:center;font-weight:600}
+.cry{font-family:var(--display);font-size:19px;line-height:1.5;color:var(--torch);text-align:center;letter-spacing:.03em}
+.cry small{display:block;font-family:var(--body);font-size:12px;color:var(--faint);letter-spacing:0}
 
 /* 오늘 점검 */
 .check{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
@@ -140,14 +150,14 @@ input::placeholder,textarea::placeholder{color:var(--faint)}
 <div class="wrap">
   <header class="top">
     <h1>성벽</h1>
-    <div class="pills"><span class="pill">공사 <b class="num" id="pDay">1</b>/52일</span><span class="pill" id="pGoalWrap"><span id="pGoalLabel">면접</span> <b class="num" id="pGoal"></b></span></div>
+    <div class="pills"><span class="pill" id="pStreakWrap" hidden>출근 <b class="num" id="pStreak"></b>일째</span><span class="pill">공사 <b class="num" id="pDay">1</b>/52일</span><span class="pill" id="pGoalWrap"><span id="pGoalLabel">면접</span> <b class="num" id="pGoal"></b></span></div>
   </header>
 
   <!-- 성벽 -->
   <section class="page on" id="p-home">
     <div class="verse">자기의 마음을 제어하지 아니하는 자는 성읍이 무너지고 성벽이 없는 것 같으니라<b>잠언 25:28 · 개역한글</b></div>
     <div class="scene">
-      <canvas id="wall" width="192" height="120" aria-label="세 구간의 성벽 공사 현황"></canvas>
+      <canvas id="wall" width="240" height="150" aria-label="세 구간의 성벽 공사 현황"></canvas>
       <div class="gates" id="gates"></div>
     </div>
     <div class="panel">
@@ -155,6 +165,7 @@ input::placeholder,textarea::placeholder{color:var(--faint)}
       <div class="bar"><i id="rankBar"></i></div>
       <div class="ally" id="ally"></div>
     </div>
+    <div class="panel"><div class="log"><div class="d" id="logDay"></div><div class="h" id="logTitle"></div><div class="x" id="logText"></div><div class="now" id="logNow"></div></div><div id="logExtra"></div></div>
     <div id="breaches"></div>
     <div class="panel">
       <h2>오늘의 점검<small id="todayLabel"></small></h2>
@@ -163,7 +174,7 @@ input::placeholder,textarea::placeholder{color:var(--faint)}
     </div>
     <div class="panel">
       <h2>느헤미야의 52일</h2>
-      <p class="lead" style="margin:0">무너진 예루살렘 성벽은 52일 만에 다시 섰다(느 6:15). 일꾼들은 한 손으로 쌓고 한 손에는 병기를 들었다. 이 앱도 같다 — 매일 한 장씩 쌓고, 충동이 오면 그 자리에서 싸운다.</p>
+      <p class="lead" style="margin:0">무너진 예루살렘 성벽은 52일 만에 다시 섰다(느 6:15). 일꾼들은 한 손으로 쌓고 한 손에는 병기를 들었다. 이 앱도 같다 — 매일 한 장씩 쌓고, 충동이 오면 그 자리에서 싸운다. 성벽 그림을 누르면 일꾼들이 한마디씩 한다.</p>
     </div>
   </section>
 
@@ -226,6 +237,24 @@ input::placeholder,textarea::placeholder{color:var(--faint)}
     <div class="panel"><h2>방비<small>유혹이 닿는 길을 끊는다</small></h2><div id="guards-purse"></div></div>
   </section>
 
+  <!-- 때 -->
+  <section class="page" id="p-time">
+    <div class="verse">세월을 아끼라 때가 악하니라<b>에베소서 5:16</b></div>
+    <button class="sos" data-urge="time">웹툰이 보고 싶다</button>
+    <div class="panel">
+      <h2>때의 문<small id="timeMeta"></small></h2>
+      <p class="lead">웹툰은 한 편이 끝나는 자리에 다음 편 버튼이 있다. 그래서 "한 편만"이 안 된다. 이기는 법은 줄이는 게 아니라 <b>여는 길 자체를 막는 것</b>이다. 수능까지는 완전히 끊는다.</p>
+      <div class="sum" id="timeSum"></div>
+      <div class="lab">예전에 하루 평균 보던 시간(분)</div>
+      <div class="row"><input type="number" inputmode="numeric" id="perDayIn" style="flex:1;min-width:0"><button class="btn small" id="perDaySave">정하기</button></div>
+    </div>
+    <div class="panel"><h2>방비<small>여는 길을 막는다</small></h2><div id="guards-time"></div></div>
+    <div class="panel"><h2>내 작전<small>만약 ~하면, 나는 ~한다</small></h2>
+      <div class="inrow"><textarea id="plan-time" placeholder="예: 쉬는 시간에 웹툰 생각이 나면, 자리에서 일어나 물을 마시고 스트레칭 1분을 한다."></textarea><button class="mic" data-mic="plan-time">🎙</button></div>
+      <div class="hint" id="hint-plan-time"></div>
+    </div>
+  </section>
+
   <!-- 기록 -->
   <section class="page" id="p-rec">
     <div class="panel"><h2>52일 공사 일지</h2><div id="cals"></div><div class="hint">초록 = 지킨 날 · 빨강 = 넘어진 날 · 주황 테두리 = 오늘 · 파란 테두리 = 목표일</div></div>
@@ -246,6 +275,7 @@ input::placeholder,textarea::placeholder{color:var(--faint)}
   <button data-tab="hand"><span class="g">手</span>손</button>
   <button data-tab="eye"><span class="g">目</span>눈</button>
   <button data-tab="purse"><span class="g">庫</span>곳간</button>
+  <button data-tab="time"><span class="g">時</span>때</button>
   <button data-tab="rec"><span class="g">記</span>기록</button>
 </nav>
 
@@ -277,11 +307,27 @@ const SEC={
   purse:{name:'곳간의 문',short:'곳간',what:'충동구매 없이 예산 안에서 썼다',
     trig:['쇼핑앱 구경하다','세일·쿠폰 알림','SNS에서 코디 보고','기분이 가라앉아서','친구가 산 걸 보고','기타'],
     guards:[['쇼핑앱 알림을 전부 껐다','세일은 내 필요가 아니라 그들의 필요다.'],['장바구니를 비우고 앱에서 로그아웃했다','사려면 귀찮아야 한다.'],['저장된 카드·간편결제 정보를 지웠다',''],["사고 싶은 건 '대기 목록'에만 적는다",'72시간 뒤에만 결정.'],['용돈이 들어오면 헌금·저축부터 뗀다','남은 것이 내가 쓸 돈이다.']],
-    repair:['산 것을 장부에 정직하게 적었다','환불·반품이 가능한지 확인했다','어떤 상황이었는지 위에 골랐다']}
+    repair:['산 것을 장부에 정직하게 적었다','환불·반품이 가능한지 확인했다','어떤 상황이었는지 위에 골랐다']},
+  time:{name:'때의 문',short:'때',what:'웹툰을 보지 않았다',
+    trig:['공부 쉬는 시간','자기 전','밥 먹을 때','연재 요일·알림','지루해서','기타'],
+    guards:[['웹툰 앱을 전부 지웠다','네이버웹툰, 카카오웹툰·페이지 등. 다시 깔려면 귀찮아야 한다.'],['브라우저에서도 웹툰 사이트를 막았다',"스크린 타임 > 콘텐츠 제한 > 웹 콘텐츠 > '허용 안 함'에 주소 추가"],['관심 웹툰 알림을 모두 껐다','연재 요일 알림이 가장 센 유혹이다.'],['쿠키·캐시 자동 충전을 해지했다',''],['쉬는 시간에 할 것을 정해 뒀다','물 한 잔, 스트레칭, 창밖 보기. 폰이 아닌 것으로.'],['공부할 때 폰은 금욕상자에 들어간다','']],
+    repair:['웹툰 앱·탭을 지금 닫고 지웠다','어떤 상황이었는지 위에 골랐다','그 길목에 방비 하나를 더 세웠다']}
 };
-const KEYS=['hand','eye','purse'];
-const RANKS=[[0,'일꾼'],[10,'석공'],[25,'파수꾼'],[45,'문지기'],[70,'나팔수'],[100,'성벽 감독'],[140,'성벽 재건자']];
-const ALLIES=[[7,'나팔수가 곁에 섰다. 위급하면 나팔을 분다. (느 4:18)'],[20,'금장색 웃시엘이 옆 구간을 맡았다. (느 3:8)'],[40,'제사장 엘리아십이 일어나 양문을 세웠다. (느 3:1)'],[65,'살룸과 그 딸들이 함께 쌓기 시작했다. (느 3:12)'],[95,'드고아 사람들이 한 구간을 더 맡았다. (느 3:27)'],[130,'레위 사람들이 성벽 위에서 찬양하며 봉헌을 준비한다. (느 12:27)']];
+const KEYS=['hand','eye','purse','time'];
+const RANKS=[[0,'일꾼'],[12,'석공'],[30,'파수꾼'],[55,'문지기'],[90,'나팔수'],[130,'성벽 감독'],[180,'성벽 재건자']];
+const ALLIES=[[8,'나팔수가 곁에 섰다. 위급하면 나팔을 분다. (느 4:18)'],[25,'금장색 웃시엘이 옆 구간을 맡았다. (느 3:8)'],[50,'제사장 엘리아십이 일어나 양문을 세웠다. (느 3:1)'],[80,'살룸과 그 딸들이 함께 쌓기 시작했다. (느 3:12)'],[120,'드고아 사람들이 한 구간을 더 맡았다. (느 3:27)'],[170,'레위 사람들이 성벽 위에서 찬양하며 봉헌을 준비한다. (느 12:27)']];
+const STORY=[
+ [1,'밤의 시찰','느헤미야는 밤에 홀로 나가 무너진 성벽을 돌아보았다. 고치려면 먼저 어디가 무너졌는지 정직하게 봐야 한다. "자, 예루살렘 성을 중건하여 다시 수치를 받지 말자." (느 2:17)'],
+ [4,'각자 자기 집 앞을','성벽은 한 사람이 다 쌓지 않았다. 저마다 자기 집 맞은편을 맡았다(느 3장). 네 구간은 네 집 앞이다. 거창한 데가 아니라 매일 지나는 그 자리.'],
+ [8,'비웃음','산발랏과 도비야가 비웃었다. "저들의 건축하는 성벽은 여우가 올라가도 곧 무너지리라." (느 4:3) 느헤미야는 대꾸하지 않고 기도한 뒤 계속 쌓았다.'],
+ [14,'절반','"고가 절반에 미쳤으니 이는 백성이 마음 들여 역사하였음이니라." (느 4:6) 절반쯤에서 가장 지친다. 흙무더기는 아직 많고 힘은 빠진다(느 4:10). 그래도 절반은 절반이다.'],
+ [21,'한 손에는 연장, 한 손에는 병기','위협이 커지자 일꾼들은 한 손으로 쌓고 한 손으로 병기를 잡았다(느 4:17). 쌓는 일과 싸우는 일은 따로가 아니다. 충동 버튼이 네 병기다.'],
+ [30,'안에서 생긴 문제','밖의 적보다 안의 문제가 공사를 멈출 뻔했다(느 5장). 느헤미야는 덮지 않고 드러내어 바로잡았다. 넘어진 날을 적는 것이 같은 일이다.'],
+ [38,'오노 평지의 초대','적들이 네 번이나 불렀다. "오노 평지에서 만나자." 느헤미야의 답은 매번 같았다. "내가 이제 큰 역사를 하니 내려가지 못하겠노라." (느 6:3) 유혹에는 토론이 아니라 같은 대답을 되풀이한다.'],
+ [45,'손을 힘있게','거짓 소문과 겁주는 말이 이어졌다. 느헤미야의 기도는 한 줄이었다. "하나님이여 이제 내 손을 힘있게 하옵소서." (느 6:9)'],
+ [52,'완공','"성 역사가 오십 이일만에 끝나매… 이 역사를 우리 하나님이 이루신 것을 앎이니라." (느 6:15-16) 그리고 봉헌의 날, "여호와를 기뻐하는 것이 너희의 힘이니라." (느 8:10)']
+];
+const CHEERS=['한 장만 더.','내려가지 못하겠노라!','오늘 몫은 오늘.','네 구간, 네가 지킨다.','어제보다 한 장 높다.','나팔 소리 들리면 그리로 모여라. (느 4:20)'];
 const CATS=['의복','식비·간식','교통','문화·취미','헌금','저축','기타','수입'];
 const ASK=['옷장에 비슷한 게 이미 있지 않나?','서른 번 넘게 입을 옷인가?','이달 의복 예산 안인가?','이걸 사느라 헌금·저축이 줄지 않나?','72시간이 지난 지금도 정말 원하나?'];
 
@@ -293,7 +339,7 @@ function normalize(){
   S=S||{}; S.start=S.start||today(); S.goal=S.goal||{label:'면접',date:'2026-10-31'};
   S.log=S.log||{}; KEYS.forEach(k=>S.log[k]=S.log[k]||{});
   S.wins=S.wins||[]; S.falls=S.falls||[]; S.guards=S.guards||{}; KEYS.forEach(k=>S.guards[k]=S.guards[k]||[]);
-  S.plans=S.plans||{}; S.wait=S.wait||[]; S.ledger=S.ledger||[]; S.budget=S.budget||0;
+  S.plans=S.plans||{}; if(S.perDay===undefined) S.perDay=40; S.wait=S.wait||[]; S.ledger=S.ledger||[]; S.budget=S.budget||0;
 }
 normalize();
 function persist(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
@@ -314,44 +360,77 @@ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showTab(b.dat
 
 // ---------- 성벽 그림 (픽셀) ----------
 const SHADE=['#8C8577','#B5AD9C','#79736A','#A39B8A'];
-let frame=0;
+const FIG=['#E0B15A','#C77B6B','#8FBF8A','#B59BD6','#E8E2D2','#7FC7C9'];
+const WIN=[[14,96],[20,104],[30,88],[36,100],[52,112],[66,92],[72,104],[84,84],[90,98],[96,110],[110,70],[116,82],[122,94],[128,70],[134,84],[116,106],[128,106],[148,90],[154,102],[160,114],[172,86],[178,98],[186,110],[198,94],[204,106],[214,88],[220,100],[226,112],[44,120],[78,118],[142,120],[166,122],[192,120],[208,118],[232,108],[8,114]];
+let frame=0, drop=null;
+function skyNow(){ const h=new Date().getHours();
+  if(h>=7&&h<17) return {sky:['#5E9BD6','#7FB2E2','#A3CBEE','#C6E0F5'],night:false,sun:true,ground:'#4E5F3E',g2:'#627650',far:'#8AA0B4',frame:'#7E93A8'};
+  if((h>=17&&h<20)||(h>=5&&h<7)) return {sky:['#2B2A4C','#5B3F66','#A6586A','#E59866'],night:false,ground:'#2A2F3A',g2:'#363C49',far:'#3E3655',frame:'#5A4C6E'};
+  return {sky:['#070A12','#0A0F1B','#0E1526','#131C31'],night:true,ground:'#1B2233',g2:'#232C41',far:'#161C2D',frame:'#232C41'}; }
+function perfectDays(){ const all={}; KEYS.forEach(k=>Object.entries(S.log[k]).forEach(([d,v])=>{ if(v==='kept') all[d]=(all[d]||0)+1; })); return Object.values(all).filter(n=>n===KEYS.length).length; }
 function drawWall(){
-  const c=$('wall'), x=c.getContext('2d'), W=192, H=120, G=106; x.imageSmoothingEnabled=false;
-  ['#070A12','#0A0F1B','#0E1526','#131C31'].forEach((col,i)=>{ x.fillStyle=col; x.fillRect(0,i*27,W,27); });
-  x.fillStyle='#EDE6D6'; [[12,9],[40,20],[70,6],[101,15],[128,8],[176,24],[58,33],[22,40],[186,6]].forEach(([a,b],i)=>{ if((frame+i)%7) x.fillRect(a,b,1,1); });
-  x.fillStyle='#F3E3B0'; x.fillRect(150,10,8,8); x.fillStyle='#0A0F1B'; x.fillRect(153,9,6,6);
-  x.fillStyle='#1B2233'; x.fillRect(0,G,W,H-G); x.fillStyle='#232C41'; x.fillRect(0,G,W,1);
-  const BW=14,BH=6,COLS=4,ROWS=13, recent=addDays(today(),-2);
+  const c=$('wall'), x=c.getContext('2d'), W=240, H=150, G=134, P=skyNow(); x.imageSmoothingEnabled=false;
+  P.sky.forEach((col,i)=>{ x.fillStyle=col; x.fillRect(0,i*34,W,34); });
+  if(P.night){ x.fillStyle='#EDE6D6'; [[12,9],[40,20],[70,6],[101,15],[128,8],[176,24],[58,33],[22,40],[206,12],[226,30],[150,38]].forEach(([a,b],i)=>{ if((frame+i)%7) x.fillRect(a,b,1,1); }); x.fillStyle='#F3E3B0'; x.fillRect(196,10,8,8); x.fillStyle=P.sky[0]; x.fillRect(199,9,6,6); }
+  else if(P.sun){ x.fillStyle='#FFE9A8'; x.fillRect(196,12,10,10); x.fillStyle='#FFFFFF'; x.fillRect(30,18,18,4); x.fillRect(36,14,10,4); x.fillRect(120,26,22,4); }
+  else { x.fillStyle='#FFD08A'; x.fillRect(200,84,12,6); }
+  // 성 안의 마을과 성전 — 벽돌이 쌓일수록 창에 불이 켜진다
+  const tot=totalBricks(); x.fillStyle=P.far;
+  [[6,92,22],[28,80,16],[48,106,24],[62,86,18],[82,78,20],[144,84,20],[168,80,18],[190,88,22],[212,82,20]].forEach(([bx,by,bw])=>x.fillRect(bx,by,bw,G-by));
+  x.fillRect(106,62,32,G-62); x.fillRect(112,54,20,8); x.fillRect(118,48,8,6);
+  if(tot>=100){ x.fillStyle='#F2A33A'; x.fillRect(118,46,8,2); }
+  const lit=Math.min(WIN.length,Math.floor(tot/4)); for(let i=0;i<lit;i++){ x.fillStyle=(P.night||!P.sun)?'#FFD77A':'#DDE7EE'; x.fillRect(WIN[i][0],WIN[i][1],2,3); }
+  x.fillStyle=P.ground; x.fillRect(0,G,W,H-G); x.fillStyle=P.g2; x.fillRect(0,G,W,1);
+  const BW=13,BH=6,COLS=4,ROWS=13, recent=addDays(today(),-2), allies=ALLIES.filter(a=>tot>=a[0]).length, flags=Math.min(KEYS.length,perfectDays());
+  let dp=1; if(drop){ dp=Math.min(1,(Date.now()-drop.t0)/480); }
   KEYS.forEach((k,si)=>{
-    const ox=8+si*62, n=bricks(k), w=COLS*BW;
-    x.strokeStyle='#232C41'; x.lineWidth=1; x.strokeRect(ox+.5,G-ROWS*BH+.5,w-1,ROWS*BH-1);
+    const ox=6+si*58, nAll=bricks(k), w=COLS*BW, falling=drop&&drop.k===k&&dp<1&&nAll>0, n=falling?nAll-1:nAll;
+    x.strokeStyle=P.frame; x.lineWidth=1; x.strokeRect(ox+.5,G-ROWS*BH+.5,w-1,ROWS*BH-1);
     for(let r=0;r<ROWS;r++){ const inRow=Math.max(0,Math.min(COLS,n-r*COLS)); if(!inRow) break;
-      const y=G-(r+1)*BH, fillW=inRow*BW; x.save(); x.beginPath(); x.rect(ox,y,fillW,BH); x.clip();
-      const off=r%2?-BW/2:0;
+      const y=G-(r+1)*BH; x.save(); x.beginPath(); x.rect(ox,y,inRow*BW,BH); x.clip();
+      const off=r%2?-Math.floor(BW/2):0;
       for(let cI=0;cI<=COLS;cI++){ x.fillStyle=SHADE[(r*5+cI*3+si)%4]; x.fillRect(ox+off+cI*BW,y,BW-1,BH-1); }
       x.restore(); }
-    const rows=Math.ceil(n/COLS), topY=G-rows*BH;
-    if(n>=TOTAL){ x.fillStyle='#B5AD9C'; for(let m=0;m<4;m++) x.fillRect(ox+2+m*14,topY-4,8,4); }
+    if(falling){ const r=Math.floor((nAll-1)/COLS), col=(nAll-1)%COLS, fy=G-(r+1)*BH-Math.round((1-dp)*(1-dp)*46); x.fillStyle='#D8D0BE'; x.fillRect(ox+col*BW,fy,BW-1,BH-1); }
+    const rows=Math.ceil(nAll/COLS), topY=G-rows*BH;
+    if(nAll>=TOTAL){ x.fillStyle='#B5AD9C'; for(let m=0;m<4;m++) x.fillRect(ox+1+m*13,topY-4,8,4); }
     const open=fallsOf(k).filter(f=>!f.repaired).length;
     if(open){ x.fillStyle='#D4574A'; const cx=ox+w/2; [[0,0],[1,2],[-1,4],[0,6],[2,8]].forEach(([dx,dy])=>x.fillRect(cx+dx,Math.min(G-2,topY+dy),1,2)); x.fillStyle='#79736A'; x.fillRect(ox+w-9,G-2,4,2); x.fillRect(ox+w-4,G-1,3,1); }
     if(S.wins.some(v=>v.k===k&&v.d>=recent)){ const tx=ox+3, ty=topY-7; x.fillStyle='#5A3D22'; x.fillRect(tx,ty+3,1,4); x.fillStyle='#F2A33A'; x.fillRect(tx-1,ty+(frame%2),3,3); x.fillStyle='#FFD77A'; x.fillRect(tx,ty+1+(frame%2),1,2); }
-    if(S.log[k][today()]==='kept'){ const px=ox+w-12, py=topY-8; x.fillStyle='#EDE6D6'; x.fillRect(px+1,py,2,2); x.fillStyle='#7FA6D9'; x.fillRect(px,py+2,4,3); x.fillStyle='#3A4258'; x.fillRect(px,py+5,1,3); x.fillRect(px+3,py+5,1,3); x.fillStyle='#B5AD9C'; x.fillRect(px+5,py+2+(frame%2),3,2); }
+    if(si<flags){ const fx=ox+w-3, fy=topY-12; x.fillStyle='#EDE6D6'; x.fillRect(fx,fy,1,12); x.fillStyle='#6FA36B'; x.fillRect(fx-5+(frame%2),fy,5,3); }
+    const man=(px,py,col,work)=>{ x.fillStyle='#EBD3B0'; x.fillRect(px+1,py,2,2); x.fillStyle=col; x.fillRect(px,py+2,4,3); x.fillStyle='#2E3448'; x.fillRect(px,py+5,1,3); x.fillRect(px+3,py+5,1,3); if(work){ x.fillStyle='#B5AD9C'; x.fillRect(px+5,py+2+(frame%2),3,2); } };
+    if(S.log[k][today()]==='kept') man(ox+w-18,topY-8,'#7FA6D9',true);
+    for(let a=0;a<allies;a++){ if(a%KEYS.length===si) man(ox+10+Math.floor(a/KEYS.length)*9,topY-8,FIG[a%FIG.length],(frame+a)%3===0); }
   });
+  if(drop&&dp>=1) drop=null;
 }
-if(!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(()=>{ frame++; if(!document.hidden&&$('p-home').classList.contains('on')) drawWall(); },450);
+function animDrop(k){ drop={k,t0:Date.now()}; const step=()=>{ drawWall(); if(drop) requestAnimationFrame(step); }; requestAnimationFrame(step); tok(); }
+function tok(){ try{ const ac=new (window.AudioContext||window.webkitAudioContext)(), o=ac.createOscillator(), g=ac.createGain(); o.type='triangle'; o.frequency.setValueAtTime(190,ac.currentTime+.4); o.frequency.exponentialRampToValueAtTime(90,ac.currentTime+.55); o.connect(g); g.connect(ac.destination); g.gain.setValueAtTime(.0001,ac.currentTime+.4); g.gain.exponentialRampToValueAtTime(.25,ac.currentTime+.42); g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+.7); o.start(ac.currentTime+.38); o.stop(ac.currentTime+.75); }catch(e){} }
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(()=>{ frame++; if(!document.hidden&&!drop&&$('p-home').classList.contains('on')) drawWall(); },450);
+$('wall').addEventListener('click',()=>{ const tot=totalBricks(), got=ALLIES.filter(a=>tot>=a[0]); const pool=CHEERS.concat(got.map(a=>a[1])); toast(pool[Math.floor(Math.random()*pool.length)]); });
 
 // ---------- 홈 ----------
 function renderHome(){
   const t=today(), dn=Math.max(1,dayDiff(S.start,t)+1);
   $('pDay').textContent=Math.min(dn,TOTAL); $('todayLabel').textContent=t;
   if(S.goal.date){ const n=dayDiff(t,S.goal.date); $('pGoalWrap').hidden=false; $('pGoalLabel').textContent=S.goal.label||'목표'; $('pGoal').textContent=n>0?'D-'+n:n===0?'D-DAY':'D+'+(-n); } else $('pGoalWrap').hidden=true;
-  $('gates').innerHTML=KEYS.map(k=>`<button data-go="${k}"><span class="g">${SEC[k].name}</span><span class="c num"><b>${bricks(k)}</b>/${TOTAL}장 · 횃불 ${winsOf(k).length}</span></button>`).join('');
+  $('gates').innerHTML=KEYS.map(k=>`<button data-go="${k}"><span class="g">${SEC[k].name}</span><span class="c num"><b>${bricks(k)}</b>/${TOTAL} · 🔥${winsOf(k).length}</span></button>`).join('');
+  // 출근 연속
+  const any=d=>KEYS.some(k=>S.log[k][d]); let stk=0, cur=any(t)?t:addDays(t,-1); while(any(cur)&&stk<999){ stk++; cur=addDays(cur,-1); }
+  $('pStreakWrap').hidden=stk<2; $('pStreak').textContent=stk;
+  // 공사 일지
+  const cd=Math.min(dn,TOTAL); let beat=STORY[0]; STORY.forEach(b=>{ if(cd>=b[0]) beat=b; });
+  $('logDay').textContent='공사 일지 · '+cd+'일째'; $('logTitle').textContent=beat[1]; $('logText').textContent=beat[2];
+  const low=KEYS.slice().sort((a,b)=>bricks(a)-bricks(b))[0], left=KEYS.filter(k=>!S.log[k][t]);
+  $('logNow').textContent=left.length?`오늘 남은 점검 ${left.length}곳 · 가장 낮은 구간은 ${SEC[low].name}(${bricks(low)}장)`:'오늘 점검을 모두 마쳤다.';
+  const openN=S.falls.filter(f=>!f.repaired).length, perfToday=KEYS.every(k=>S.log[k][t]==='kept');
+  $('logExtra').innerHTML=(openN?`<div class="taunt">산발랏이 비웃는다. "여우가 올라가도 곧 무너지리라." — 대꾸는 보수로 한다. 무너진 곳 ${openN}군데.</div>`:'')+(perfToday?`<div class="perfect">네 문을 모두 지킨 날 · 깃발을 올렸다 (누적 ${perfectDays()}일)</div>`:'');
   const tot=totalBricks(); let ri=0; RANKS.forEach((r,i)=>{ if(tot>=r[0]) ri=i; });
   const next=RANKS[ri+1]; $('rankName').textContent=RANKS[ri][1];
   $('rankNext').textContent=next?`${next[1]}까지 ${next[0]-tot}장`:'완공';
   $('rankBar').style.width=(next?Math.round((tot-RANKS[ri][0])/(next[0]-RANKS[ri][0])*100):100)+'%';
   const got=ALLIES.filter(a=>tot>=a[0]), nx=ALLIES.find(a=>tot<a[0]);
-  $('ally').textContent=got.length?got[got.length-1][1]:'아직은 혼자 쌓는다. 벽돌 '+(nx?nx[0]:7)+'장이 되면 첫 동료가 온다.';
+  $('ally').textContent=(got.length?got[got.length-1][1]:'아직은 혼자 쌓는다.')+(nx?' · 다음 동료까지 '+(nx[0]-tot)+'장':'');
   const open=S.falls.filter(f=>!f.repaired);
   $('breaches').innerHTML=open.map(f=>`<div class="breach"><span>${SEC[f.k].name} · ${f.d.slice(5)} 무너진 곳</span><button class="btn small" data-repair="${f.id}">보수하기</button></div>`).join('');
   const y=addDays(t,-1);
@@ -364,18 +443,22 @@ function setDay(k,d,v){
   if(cur===v){ delete S.log[k][d]; if(v==='fell') S.falls=S.falls.filter(f=>!(f.k===k&&f.d===d)); persist(); render(); return; }
   if(v==='fell'){ openFall(k,d); return; }
   S.falls=S.falls.filter(f=>!(f.k===k&&f.d===d)); S.log[k][d]='kept'; persist(); render();
-  if(d===today()) toast('벽돌 한 장 올렸다');
+  if(d===today()){ animDrop(k); toast(KEYS.every(q=>S.log[q][d]==='kept')?'네 문을 다 지켰다. 깃발을 올린다':'벽돌 한 장 올렸다'); }
 }
 
 // ---------- 방비 · 작전 ----------
 function renderGuards(){
   KEYS.forEach(k=>{ $('guards-'+k).innerHTML=SEC[k].guards.map((g,i)=>`<div class="guard ${S.guards[k].includes(i)?'on':''}" data-guard="${k}|${i}"><span class="bx">${S.guards[k].includes(i)?'✓':''}</span><span>${esc(g[0])}${g[1]?`<small>${esc(g[1])}</small>`:''}</span></div>`).join(''); });
-  ['hand','eye'].forEach(k=>{ const el=$('plan-'+k); if(document.activeElement!==el&&!(activeDict)) el.value=S.plans[k]||''; });
+  ['hand','eye','time'].forEach(k=>{ const el=$('plan-'+k); if(document.activeElement!==el&&!(activeDict)) el.value=S.plans[k]||''; });
   $('handMeta').textContent='이긴 충동 '+winsOf('hand').length+'번'; $('eyeMeta').textContent='이긴 충동 '+winsOf('eye').length+'번';
+  const tk=Object.values(S.log.time).filter(v=>v==='kept').length, mins=tk*(S.perDay||0);
+  $('timeMeta').textContent='이긴 충동 '+winsOf('time').length+'번';
+  $('timeSum').innerHTML=`<div><b>${tk}일</b>안 본 날</div><div><b>${mins>=60?(mins/60).toFixed(1)+'시간':mins+'분'}</b>되찾은 시간</div><div><b>${Math.floor(mins/50)}교시</b>공부로 치면 (50분)</div>`;
+  if(document.activeElement!==$('perDayIn')) $('perDayIn').value=S.perDay||'';
   const n=S.goal.date?dayDiff(today(),S.goal.date):null;
   $('nailPlan').innerHTML=n===null?'':n>0?`${esc(S.goal.label||'목표일')}까지 <b>${n}일</b>. 손톱은 하루 약 0.1mm, ${n}일이면 <b>${(n*0.1).toFixed(1)}mm</b> 자란다. 지금 시작하면 그날 단정한 손끝으로 앉을 수 있다. 3~4일 전에 길이를 맞춰 다듬자.`:'목표일이 지났다. 기록 탭에서 다음 목표일을 정하자.';
 }
-['hand','eye'].forEach(k=>$('plan-'+k).addEventListener('change',e=>{ S.plans[k]=e.target.value.trim(); persist(); }));
+['hand','eye','time'].forEach(k=>$('plan-'+k).addEventListener('change',e=>{ S.plans[k]=e.target.value.trim(); persist(); }));
 
 // ---------- 받아쓰기 ----------
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition; let activeDict=null;
@@ -413,18 +496,20 @@ function openUrge(k){
     <div class="lab">어쩌다 보게 됐나</div>${trigChips(k)}</div>
     <div class="row"><button class="btn torch" id="wSave" style="flex:1">대기 목록에 올린다</button><button class="btn ghost" data-close="1">닫기</button></div>
     <button class="btn danger small" data-fallnow="purse">이미 사 버렸다</button>`); return; }
-  const hand=k==='hand', sec=hand?60:600;
-  openModal(`<h2>${hand?'손을 묶는다':'자리를 떠난다'}</h2>
+  const hand=k==='hand', tm=k==='time', sec=hand?60:tm?300:600;
+  openModal(`<h2>${hand?'손을 묶는다':tm?'닫고 돌아간다':'자리를 떠난다'}</h2>
+    <div class="cry">"내가 이제 큰 역사를 하니<br>내려가지 못하겠노라"<small>느헤미야 6:3 — 소리 내어 한 번 말한다</small></div>
     ${hand?`<div class="panel"><div class="steps"><div>손을 입에서 떼고, <b>양손 주먹을 꽉 쥔다.</b></div><div>주먹을 허벅지 위에 올리거나 깔고 앉는다.</div><div>60초가 끝날 때까지 그대로. 숨은 천천히.</div></div></div>`
+      :tm?`<div class="panel"><div class="steps"><div><b>웹툰 앱·탭을 지금 닫는다.</b> "이것만 보고"는 없다.</div><div><b>폰을 금욕상자에 넣는다.</b> 공부 중이면 더더욱.</div><div>5분 동안 원래 하던 일로 돌아간다. 쉬는 시간이었다면 물 한 잔, 스트레칭, 창밖.</div><div>5분 뒤에도 보고 싶으면 — 대개는 사라져 있다.</div></div></div>`
       :`<div class="verse">사람이 감당할 시험 밖에는 너희에게 당한 것이 없나니 오직 하나님은 미쁘사 너희가 감당치 못할 시험 당함을 허락지 아니하시고 시험 당할 즈음에 또한 피할 길을 내사 너희로 능히 감당하게 하시느니라<b>고린도전서 10:13</b></div>
       <div class="panel"><div class="steps"><div><b>지금 일어난다.</b> 있던 자리(침대·방)를 떠난다.</div><div><b>폰을 금욕상자에 넣는다.</b> 상자가 멀면 거실에 두고 온다.</div><div>10분만 다른 걸 한다 — 턱걸이·링딥스 한 세트, 찬양 한 곡 부르기, 물 한 잔, 바깥 공기.</div><div>짧게 기도한다. "주님, 피할 길을 주셨으니 그 길로 갑니다."</div></div></div>
       <p class="lead" style="margin:0">폰을 상자에 넣기 전에 아래 타이머만 눌러 두자. 돌아와서 결과를 적으면 된다.</p>`}
     <div class="clock num" id="clock">${mmss(sec)}</div>
-    <button class="btn wide" id="tStart">${hand?'60초 시작':'10분 시작'}</button>
+    <button class="btn wide" id="tStart">${hand?'60초 시작':tm?'5분 시작':'10분 시작'}</button>
     <div class="panel"><div class="lab" style="margin-top:0">어떤 상황이었나 (알아차림 훈련)</div>${trigChips(k)}</div>
     <div class="row"><button class="btn torch" id="uWin" style="flex:1" disabled>이겼다 · 횃불을 올린다</button><button class="btn ghost" data-close="1">닫기</button></div>
-    <button class="btn danger small" data-fallnow="${k}">${hand?'이미 뜯었다':'넘어졌다'}</button>`);
-  $('tStart').onclick=()=>{ $('tStart').disabled=true; runTimer(sec,hand?55:120,(left,ok)=>{ const c=$('clock'); if(!c) return; c.textContent=mmss(left); if(ok) $('uWin').disabled=false; if(left<=0) $('uWin').disabled=false; }); };
+    <button class="btn danger small" data-fallnow="${k}">${hand?'이미 뜯었다':tm?'이미 봤다':'넘어졌다'}</button>`);
+  $('tStart').onclick=()=>{ $('tStart').disabled=true; runTimer(sec,hand?55:tm?60:120,(left,ok)=>{ const c=$('clock'); if(!c) return; c.textContent=mmss(left); if(ok) $('uWin').disabled=false; if(left<=0) $('uWin').disabled=false; }); };
 }
 function openFall(k,d,id){
   const ex=id?S.falls.find(f=>f.id===id):null; flow={k,d:ex?ex.d:d,trig:ex?ex.trig:(flow&&flow.k===k?flow.trig:null),fallId:id||null};
@@ -438,7 +523,7 @@ function openFall(k,d,id){
     <div class="row"><button class="btn torch" id="fDone" style="flex:1">보수 완료 · 벽돌 한 장 복구</button><button class="btn" id="fLater">나중에 보수</button></div>`);
   const saveFall=rep=>{ const note=$('fNote').value.trim(); let f=flow.fallId?S.falls.find(v=>v.id===flow.fallId):null;
     if(!f){ f={id:rid(),k,d:flow.d,ts:Date.now()}; S.falls.push(f); S.log[k][flow.d]='fell'; }
-    f.trig=flow.trig; f.note=note; f.repaired=rep; if(note&&(k==='hand'||k==='eye')&&!S.plans[k]) S.plans[k]=note;
+    f.trig=flow.trig; f.note=note; f.repaired=rep; if(note&&k!=='purse'&&!S.plans[k]) S.plans[k]=note;
     persist(); closeModal(); toast(rep?'보수 완료. 다시 쌓는다':'적어 뒀다. 보수는 성벽 탭에서'); };
   $('fDone').onclick=()=>saveFall(true); $('fLater').onclick=()=>saveFall(false);
 }
@@ -505,6 +590,7 @@ document.addEventListener('click',e=>{
   if(e.target.id==='uWin'){ S.wins.push({id:rid(),k:flow.k,d:today(),ts:Date.now(),trig:flow.trig}); persist(); const n=winsOf(flow.k).length; closeModal(); return toast(n%5===0?'횃불 다섯 개 — 벽돌 한 장이 올라갔다':'이겼다. 횃불 '+n+'개째'); }
   if(e.target.id==='wSave'){ const name=$('wName').value.trim(); if(!name){ $('wName').focus(); return; } S.wait.push({id:rid(),name,price:Math.max(0,+$('wPrice').value||0),ts:Date.now(),decided:null}); S.wins.push({id:rid(),k:'purse',d:today(),ts:Date.now(),trig:flow.trig}); persist(); closeModal(); showTab('purse'); return toast('적어 뒀다. 72시간 뒤에 보자'); }
 });
+$('perDaySave').onclick=()=>{ S.perDay=Math.max(0,+$('perDayIn').value||0); persist(); render(); toast('정했다'); };
 $('budgetSave').onclick=()=>{ S.budget=Math.max(0,+$('budgetIn').value||0); persist(); render(); toast('이달 의복 예산을 정했다'); };
 $('ledgerAdd').onclick=()=>{ const amt=+$('amtIn').value; if(!amt||amt<=0){ $('amtIn').focus(); return; } S.ledger.push({id:rid(),d:today(),ts:Date.now(),amt,cat,memo:$('memoIn').value.trim()}); $('amtIn').value=''; $('memoIn').value=''; persist(); render(); };
 

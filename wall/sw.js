@@ -1,5 +1,5 @@
 // 성벽 — 오프라인 지원. 같은 github.io 주소의 다른 앱 캐시는 건드리지 않는다.
-const CACHE = "wall-v1";
+const CACHE = "wall-v2";
 const CORE = ["./", "index.html", "icon.png"];
 self.addEventListener("install", (e) => { e.waitUntil(caches.open(CACHE).then(async (c) => { for (const u of CORE) { try { await c.add(u); } catch (err) {} } self.skipWaiting(); })); });
 self.addEventListener("activate", (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k.startsWith("wall-") && k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
