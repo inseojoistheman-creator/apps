@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1F6F5B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="살까 말까">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<title>살까 말까</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+</head>
+<body>
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)} html,body{height:auto;min-height:100%}
+img{max-width:100%}[hidden]{display:none!important}
+
+:root{
+  --bg:#F5F4EE; --surface:#FFFFFF; --surface2:#EEEDE6; --line:#DCDAD0; --line2:#C9C6BA;
+  --ink:#1E2422; --muted:#6B746F; --faint:#9AA39D;
+  --accent:#1F6F5B; --accent-soft:#DDEDE6; --accent-ink:#FFFFFF;
+  --amber:#B7791F; --amber-soft:#F6EAD2; --red:#B3413A; --red-soft:#F5DEDB; --good:#2E7D4F; --good-soft:#DDEFE2; --blue:#3B5F8A; --blue-soft:#DEE7F2;
+  --shadow:0 8px 24px rgba(30,36,34,.08);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ color-scheme:dark;
+  --bg:#15191A; --surface:#1E2426; --surface2:#262D2F; --line:#2E3639; --line2:#3C4649;
+  --ink:#EAEDEA; --muted:#A5AFAA; --faint:#6E7873;
+  --accent:#5FBFA2; --accent-soft:#1D3A32; --accent-ink:#0F1A16;
+  --amber:#E0A93F; --amber-soft:#3A2D12; --red:#E06A62; --red-soft:#3D1F1D; --good:#5FCB8A; --good-soft:#1B3526; --blue:#8FB2E0; --blue-soft:#1E2C3D;
+  --shadow:0 8px 24px rgba(0,0,0,.35); } }
+:root[data-theme="dark"]{ color-scheme:dark;
+  --bg:#15191A; --surface:#1E2426; --surface2:#262D2F; --line:#2E3639; --line2:#3C4649;
+  --ink:#EAEDEA; --muted:#A5AFAA; --faint:#6E7873;
+  --accent:#5FBFA2; --accent-soft:#1D3A32; --accent-ink:#0F1A16;
+  --amber:#E0A93F; --amber-soft:#3A2D12; --red:#E06A62; --red-soft:#3D1F1D; --good:#5FCB8A; --good-soft:#1B3526; --blue:#8FB2E0; --blue-soft:#1E2C3D;
+  --shadow:0 8px 24px rgba(0,0,0,.35); }
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans KR",system-ui,-apple-system,sans-serif;font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+html,body{touch-action:manipulation}
+button{font:inherit;cursor:pointer;color:inherit}
+input,select,textarea{font:inherit;color:inherit}
+.serif{font-family:"Noto Serif KR",serif}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+.app{display:grid;grid-template-columns:240px 1fr 380px;height:100%;min-height:100vh}
+@media (max-width:1000px){.app{grid-template-columns:200px 1fr}.pane{position:fixed;inset:0;z-index:30;display:none;overflow:auto}.pane.open{display:block}}
+@media (max-width:640px){.app{grid-template-columns:1fr}.side{display:none}.side.open{display:block;position:fixed;inset:0;z-index:20;overflow:auto}}
+/* sidebar */
+.side{background:var(--surface2);border-right:1px solid var(--line);padding:18px 14px 24px;overflow:auto}
+.brand{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.brand h1{font-family:"Noto Serif KR",serif;font-size:22px;margin:0;letter-spacing:-.5px}
+.brand small{color:var(--faint);font-size:12px}
+.tag{font-size:12px;color:var(--muted);margin-bottom:16px}
+.nav{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.nav button{display:flex;justify-content:space-between;align-items:center;background:none;border:0;border-radius:8px;padding:8px 10px;text-align:left;font-weight:500;color:var(--ink)}
+.nav button:hover{background:var(--surface)}
+.nav button.on{background:var(--accent);color:var(--accent-ink)}
+.nav button .n{font-family:"IBM Plex Mono",monospace;font-size:12px;opacity:.75}
+.nav .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.sect{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--faint);margin:14px 4px 6px}
+.budget{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.budget .row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:4px}
+.budget .row b{color:var(--ink);font-family:"IBM Plex Mono",monospace}
+.bar{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;margin:6px 0}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.bar i.over{background:var(--red)}
+.budget input{width:100%;margin-top:6px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);font-family:"IBM Plex Mono",monospace;font-size:13px}
+.saved{margin-top:12px;background:var(--good-soft);border-radius:12px;padding:12px}
+.saved small{display:block;font-size:11.5px;color:var(--good);letter-spacing:.5px}
+.saved b{font-family:"Noto Serif KR",serif;font-size:24px;color:var(--good);display:block;line-height:1.2}
+.saved span{font-size:12px;color:var(--muted)}
+.verse{margin-top:16px;font-size:12.5px;color:var(--muted);line-height:1.6;border-left:2px solid var(--line2);padding-left:10px}
+/* main */
+.main{display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{display:flex;gap:10px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--surface)}
+.search{flex:1;display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:7px 12px;color:var(--muted)}
+.search input{flex:1;border:0;background:none;outline:none;min-width:0}
+.search kbd{font-size:11px;background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:0 5px;color:var(--faint)}
+.btn{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-weight:600;font-size:13.5px;white-space:nowrap}
+.btn:hover{border-color:var(--line2)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.danger{color:var(--red)}
+.btn.sm{padding:5px 10px;font-size:12.5px;border-radius:8px}
+.btn.icon{padding:8px 10px}
+.sortrow{display:flex;gap:6px;align-items:center;padding:10px 18px;font-size:12.5px;color:var(--muted);border-bottom:1px solid var(--line)}
+.sortrow select{background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:4px 8px;font-size:12.5px}
+.sortrow .sp{flex:1}
+.list{flex:1;overflow:auto;padding:12px 18px 40px}
+.item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:border-color .12s,transform .08s}
+.item:hover{border-color:var(--line2)}
+.item.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.item .st{width:10px;height:44px;border-radius:5px;background:var(--line2)}
+.item.think .st{background:var(--amber)}.item.buy .st{background:var(--accent)}.item.bought .st{background:var(--blue)}.item.skip .st{background:var(--good)}
+.item .nm{font-weight:600;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.item .meta{font-size:12.5px;color:var(--muted);margin-top:2px;display:flex;gap:10px;flex-wrap:wrap}
+.item .price{font-family:"IBM Plex Mono",monospace;font-size:15px;font-weight:600;text-align:right;white-space:nowrap}
+.item .price small{display:block;font-size:11.5px;color:var(--faint);font-weight:500;font-family:"IBM Plex Sans KR",sans-serif}
+.chip{font-size:11px;padding:1px 7px;border-radius:999px;background:var(--surface2);color:var(--muted);font-weight:500}
+.chip.cool{background:var(--amber-soft);color:var(--amber)}
+.chip.ready{background:var(--accent-soft);color:var(--accent)}
+.chip.rev{background:var(--blue-soft);color:var(--blue)}
+.score{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--faint)}
+.empty{text-align:center;color:var(--faint);padding:60px 20px;line-height:1.8}
+.empty b{display:block;color:var(--muted);font-family:"Noto Serif KR",serif;font-size:18px;margin-bottom:6px}
+/* insights */
+.insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.tile small{display:block;font-size:11.5px;color:var(--muted);letter-spacing:.3px}
+.tile b{display:block;font-family:"Noto Serif KR",serif;font-size:22px;margin-top:2px;line-height:1.2}
+.tile b.mono{font-family:"IBM Plex Mono",monospace;font-size:19px}
+.tile span{font-size:12px;color:var(--faint)}
+table{width:100%;border-collapse:collapse;font-size:13px;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th{text-align:left;font-size:11.5px;color:var(--muted);font-weight:500;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--surface2)}
+td{padding:8px 12px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+td.r,th.r{text-align:right}
+/* detail pane */
+.pane{background:var(--surface);border-left:1px solid var(--line);overflow:auto;padding:18px 20px 40px}
+.pane h2{font-family:"Noto Serif KR",serif;font-size:20px;margin:0 0 4px;letter-spacing:-.3px;text-wrap:balance}
+.pane .sub{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+.f{margin-bottom:12px}
+.f label{display:block;font-size:11.5px;color:var(--muted);letter-spacing:.4px;margin-bottom:4px}
+.f input,.f select,.f textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface2);outline:none}
+.f input:focus,.f textarea:focus,.f select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.f textarea{min-height:64px;resize:vertical;line-height:1.5}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stars{display:flex;gap:4px}
+.stars button{width:32px;height:30px;border:1px solid var(--line);background:var(--surface2);border-radius:7px;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--muted)}
+.stars button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.checks{display:flex;flex-direction:column;gap:6px}
+.chk{display:flex;gap:10px;align-items:flex-start;background:var(--surface2);border-radius:9px;padding:8px 10px;cursor:pointer;font-size:13px;line-height:1.45}
+.chk input{margin-top:3px}
+.chk.on{background:var(--accent-soft)}
+.cool{background:var(--amber-soft);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--amber);margin:12px 0}
+.cool.ok{background:var(--accent-soft);color:var(--accent)}
+.cool b{font-family:"IBM Plex Mono",monospace}
+.hours{font-size:12.5px;color:var(--muted);margin-top:-6px;margin-bottom:12px}
+.hours b{font-family:"IBM Plex Mono",monospace;color:var(--ink)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.status{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 4px}
+.status button{border:1px solid var(--line);background:var(--surface2);border-radius:9px;padding:8px 4px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.status button.on{color:#fff;border-color:transparent}
+.status button.think.on{background:var(--amber)}.status button.buy.on{background:var(--accent)}.status button.bought.on{background:var(--blue)}.status button.skip.on{background:var(--good)}
+.review{background:var(--blue-soft);border-radius:10px;padding:10px 12px;margin-top:12px}
+.review small{display:block;font-size:11.5px;color:var(--blue);letter-spacing:.4px;margin-bottom:6px}
+.hint{font-size:12px;color:var(--faint);margin-top:6px;line-height:1.5}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.toast.on{opacity:1}
+.keys{font-size:11.5px;color:var(--faint);margin-top:18px;line-height:1.8}
+.keys kbd{font-family:"IBM Plex Mono",monospace;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:0 5px;font-size:11px}
+.close{display:none}
+@media (max-width:1000px){.close{display:inline-block}}
+.mobbar{display:none}
+@media (max-width:640px){.mobbar{display:flex;gap:6px;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--surface);overflow-x:auto}.mobbar button{white-space:nowrap}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="app">
+  <aside class="side" id="side">
+    <div class="brand"><h1>살까 말까</h1><small>wishlist</small></div>
+    <div class="tag">사고 싶은 건 일단 적는다. 사는 건 나중에.</div>
+    <div class="nav" id="nav">
+      <button data-v="all" class="on"><span>전체</span><span class="n" id="cAll">0</span></button>
+      <button data-v="think"><span><i class="dot" style="background:var(--amber)"></i>고민 중</span><span class="n" id="cThink">0</span></button>
+      <button data-v="buy"><span><i class="dot" style="background:var(--accent)"></i>살 것</span><span class="n" id="cBuy">0</span></button>
+      <button data-v="bought"><span><i class="dot" style="background:var(--blue)"></i>샀다</span><span class="n" id="cBought">0</span></button>
+      <button data-v="skip"><span><i class="dot" style="background:var(--good)"></i>안 사기로</span><span class="n" id="cSkip">0</span></button>
+      <button data-v="insight"><span>돌아보기</span><span class="n">📊</span></button>
+    </div>
+    <div class="sect">이번 달 예산</div>
+    <div class="budget">
+      <div class="row"><span>쓴 돈</span><b id="bSpent">0</b></div>
+      <div class="row"><span>살 것 합계</span><b id="bPlan">0</b></div>
+      <div class="bar"><i id="bFill"></i></div>
+      <div class="row"><span>남는 돈</span><b id="bLeft">0</b></div>
+      <input type="number" id="budgetIn" placeholder="월 예산 (원)" min="0" step="10000">
+    </div>
+    <div class="saved"><small>안 사서 지켜낸 돈</small><b class="mono" id="savedAmt">0원</b><span id="savedN">아직 없음</span></div>
+    <div class="sect">냉각 기간</div>
+    <div class="budget"><div class="row"><span>적고 나서</span><b><span id="coolDaysTxt">14</span>일</b></div><input type="range" id="coolIn" min="3" max="30" step="1" style="width:100%"><div class="hint">이 기간이 지나야 "살 것"으로 옮길 수 있다. 그때도 원하면 진짜 원하는 것.</div></div>
+    <div class="verse" id="verse"></div>
+    <div class="keys"><kbd>N</kbd> 새 항목 · <kbd>/</kbd> 검색 · <kbd>↑↓</kbd> 이동 · <kbd>⌘S</kbd> 저장 · <kbd>Esc</kbd> 닫기</div>
+    <div class="actions" style="border:0;padding-top:8px"><button class="btn sm" id="bkCopy">백업 복사</button><button class="btn sm" id="bkPaste">복원</button></div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <button class="btn icon" id="menuBtn" style="display:none">☰</button>
+      <div class="search"><span>⌕</span><input id="q" placeholder="이름, 카테고리, 이유로 찾기"><kbd>/</kbd></div>
+      <button class="btn primary" id="newBtn">+ 사고 싶은 것</button>
+    </div>
+    <div class="mobbar" id="mobbar"></div>
+    <div class="sortrow"><span id="viewTitle">전체</span><span class="sp"></span><span>정렬</span><select id="sort"><option value="added">최근 적은 순</option><option value="score">원함×필요 높은 순</option><option value="price">비싼 순</option><option value="cheap">싼 순</option><option value="ready">냉각 끝난 순</option></select></div>
+    <div class="list" id="list"></div>
+  </main>
+
+  <section class="pane" id="pane">
+    <div id="paneEmpty" class="empty"><b>왼쪽에서 하나 고르거나</b>N 키로 새로 적는다.<br>적는 순간 냉각 시계가 돌기 시작한다.</div>
+    <div id="paneForm" hidden>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 id="pTitle">새 항목</h2><button class="btn sm close" id="closePane">닫기</button></div>
+      <div class="sub" id="pSub"></div>
+      <div class="f"><label>이름</label><input id="fName" placeholder="예) 네이비 후리스"></div>
+      <div class="f2"><div class="f"><label>가격 (원)</label><input id="fPrice" type="number" min="0" step="1000" placeholder="0"></div><div class="f"><label>카테고리</label><select id="fCat"></select></div></div>
+      <div class="hours" id="fHours"></div>
+      <div class="f"><label>링크 (선택)</label><input id="fUrl" placeholder="https://"></div>
+      <div class="f"><label>왜 사고 싶나</label><textarea id="fWhy" placeholder="솔직하게. '그냥 예뻐서'도 답이다."></textarea></div>
+      <div class="f2">
+        <div class="f"><label>얼마나 원하나</label><div class="stars" id="fWant"></div></div>
+        <div class="f"><label>얼마나 필요한가</label><div class="stars" id="fNeed"></div></div>
+      </div>
+      <div class="f"><label>사기 전 점검</label>
+        <div class="checks" id="fChecks"></div>
+        <div class="hint">넷 다 체크되면 사도 후회가 적었던 물건이다. 둘 이하면 대개 한 달 뒤엔 잊는다.</div>
+      </div>
+      <div class="cool" id="fCool"></div>
+      <div class="f"><label>상태</label>
+        <div class="status" id="fStatus"><button class="think" data-s="think">고민 중</button><button class="buy" data-s="buy">살 것</button><button class="bought" data-s="bought">샀다</button><button class="skip" data-s="skip">안 사기로</button></div>
+      </div>
+      <div id="fBoughtBox" hidden><div class="f2"><div class="f"><label>실제 산 가격</label><input id="fPaid" type="number" min="0" step="1000"></div><div class="f"><label>산 날</label><input id="fBoughtAt" type="date"></div></div>
+        <div class="review"><small>한 달 뒤 돌아보기 · 잘 샀나?</small><div class="stars" id="fRev"></div><textarea id="fRevNote" placeholder="자주 쓰나? 안 샀어도 됐나? 다음엔 뭘 볼까?" style="width:100%;margin-top:8px;min-height:50px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface)"></textarea></div></div>
+      <div class="f"><label>메모</label><textarea id="fNote" placeholder="대안, 비교한 것, 세일 시기…" style="min-height:48px"></textarea></div>
+      <div class="actions"><button class="btn primary" id="saveBtn">저장</button><button class="btn danger" id="delBtn">삭제</button><span style="flex:1"></span><span class="hint" id="syncMsg">이 기기에 저장</span></div>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const keyOf=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>keyOf(new Date());
+const won=n=>(Math.round(n||0)).toLocaleString('ko-KR')+'원';
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36);
+const CATS=['옷','신발·가방','전자기기','책·문구','운동','음악·악기','음식·간식','생활용품','취미','선물','기타'];
+const CHECKS=[['problem','이게 없으면 실제로 무슨 문제가 생기나? 답이 떠오른다.'],['alt','이미 갖고 있는 걸로 대신할 수 없다.'],['month','한 달 뒤에도 똑같이 원할 것 같다.'],['practical','실용적이다: 때 안 타고, 세탁·관리가 쉽고, 오래 쓴다.']];
+const VERSES=['"네 보물 있는 그 곳에는 네 마음도 있느니라" (마 6:21)','"자족하는 마음이 있으면 경건은 큰 이익이 되느니라" (딤전 6:6)','"삼가 모든 탐심을 물리치라 사람의 생명이 그 소유의 넉넉한 데 있지 아니하니라" (눅 12:15)','"지혜로운 자의 집에는 귀한 보배와 기름이 있으나 미련한 자는 이것을 다 삼켜 버리느니라" (잠 21:20)','"먹을 것과 입을 것이 있은즉 족한 줄로 알 것이니라" (딤전 6:8)','"청지기에게 구할 것은 충성이니라" (고전 4:2)'];
+$('verse').textContent=VERSES[new Date().getDate()%VERSES.length];
+
+// ---------- state ----------
+const KEY='salkka-v1';
+let S={items:[],budget:0,coolDays:14,hourly:10030,updatedAt:0};
+try{ const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r)); }catch(e){}
+if(!Array.isArray(S.items)) S.items=[];
+let db=null,docRef=null,wT=null,applying=false;
+function persist(){ S.updatedAt=Date.now(); try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){} if(docRef&&!applying){ clearTimeout(wT); wT=setTimeout(async()=>{ try{ await docRef.set(JSON.parse(JSON.stringify(S))); $('syncMsg').textContent='아이폰·맥 동기화됨'; }catch(e){ $('syncMsg').textContent='이 기기에 저장 (동기화 실패)'; } },500);} }
+(async()=>{ try{ db=await (window.claude?.use?.('db')??Promise.resolve(null)); if(!db) return; docRef=db.doc('state/main'); const s=await docRef.get(); if(s.exists){ const r=s.data(); if((r.updatedAt||0)>(S.updatedAt||0)){ applying=true; S=Object.assign(S,r); try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){} renderAll(); applying=false; } else if((S.updatedAt||0)>(r.updatedAt||0)) persist(); } else persist(); $('syncMsg').textContent='아이폰·맥 동기화됨'; docRef.onSnapshot(sn=>{ if(!sn.exists||sn.metadata.hasPendingWrites) return; const r=sn.data(); if((r.updatedAt||0)>(S.updatedAt||0)){ applying=true; S=Object.assign(S,r); renderAll(); applying=false; } },()=>{}); }catch(e){} })();
+
+// ---------- helpers ----------
+const daysSince=k=>Math.floor((new Date(today()+'T00:00:00')-new Date(k+'T00:00:00'))/86400000);
+const coolLeft=it=>Math.max(0,S.coolDays-daysSince(it.added));
+const scoreOf=it=>(it.want||0)*(it.need||0);
+const checksN=it=>CHECKS.filter(c=>it.checks&&it.checks[c[0]]).length;
+const monthKey=k=>(k||'').slice(0,7);
+function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('on'),1800); }
+
+// ---------- views ----------
+let view='all', sel=null, q='';
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{ view=b.dataset.v; document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('on',x===b)); $('side').classList.remove('open'); renderList(); });
+$('mobbar').innerHTML=['all:전체','think:고민 중','buy:살 것','bought:샀다','skip:안 사기로','insight:돌아보기'].map(s=>{ const [k,v]=s.split(':'); return `<button class="btn sm" data-v="${k}">${v}</button>`; }).join('');
+$('mobbar').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; view=b.dataset.v; document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('on',x.dataset.v===view)); renderList(); };
+$('q').oninput=e=>{ q=e.target.value.trim().toLowerCase(); renderList(); };
+$('sort').onchange=renderList;
+function filtered(){ let a=S.items.slice(); if(view!=='all'&&view!=='insight') a=a.filter(i=>i.status===view); if(q) a=a.filter(i=>[i.name,i.cat,i.why,i.note].join(' ').toLowerCase().includes(q)); const s=$('sort').value; a.sort((x,y)=> s==='score'?scoreOf(y)-scoreOf(x): s==='price'?(y.price||0)-(x.price||0): s==='cheap'?(x.price||0)-(y.price||0): s==='ready'?coolLeft(x)-coolLeft(y): (y.added+y.id).localeCompare(x.added+x.id)); return a; }
+const VT={all:'전체',think:'고민 중',buy:'살 것',bought:'샀다',skip:'안 사기로',insight:'돌아보기'};
+function renderList(){ $('viewTitle').textContent=VT[view]; if(view==='insight'){ renderInsight(); return; } const a=filtered(); const L=$('list');
+  if(!a.length){ L.innerHTML='<div class="empty"><b>'+(q?'검색 결과가 없다':'비어 있다')+'</b>'+(q?'':'사고 싶은 게 떠오르면 N을 누른다. 적는 것만으로 절반은 식는다.')+'</div>'; return; }
+  L.innerHTML=a.map(it=>{ const cl=coolLeft(it); const chip= it.status==='think'?(cl>0?`<span class="chip cool">냉각 ${cl}일 남음</span>`:`<span class="chip ready">냉각 끝 · 결정할 때</span>`): it.status==='bought'&&!(it.review&&it.review.score)&&daysSince(it.boughtAt||it.added)>=30?`<span class="chip rev">한 달 지남 · 돌아보기</span>`:''; const sub= it.status==='bought'?'샀다 · '+(it.boughtAt||''): it.status==='skip'?'안 사기로 · '+won(it.price)+' 지킴': 'D+'+daysSince(it.added); return `<div class="item ${it.status} ${sel===it.id?'sel':''}" data-id="${it.id}"><div class="st"></div><div><div class="nm">${esc(it.name)||'(이름 없음)'} ${chip}</div><div class="meta"><span class="chip">${esc(it.cat||'기타')}</span><span>${sub}</span><span class="score">원함 ${it.want||0} × 필요 ${it.need||0} = ${scoreOf(it)}</span><span>점검 ${checksN(it)}/4</span></div></div><div class="price">${won(it.status==='bought'&&it.paid?it.paid:it.price)}<small>${hoursTxt(it.price)}</small></div></div>`; }).join('');
+  L.querySelectorAll('.item').forEach(el=>el.onclick=()=>openItem(el.dataset.id)); }
+function hoursTxt(p){ if(!p||!S.hourly) return ''; const h=p/S.hourly; return h<1?'알바 '+Math.round(h*60)+'분':'알바 '+h.toFixed(1)+'시간'; }
+function esc(s){ return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function renderInsight(){ const L=$('list'); const m=today().slice(0,7); const bought=S.items.filter(i=>i.status==='bought'); const skip=S.items.filter(i=>i.status==='skip'); const spentM=bought.filter(i=>monthKey(i.boughtAt)===m).reduce((a,i)=>a+(i.paid||i.price||0),0); const rev=bought.filter(i=>i.review&&i.review.score); const avg=rev.length?(rev.reduce((a,i)=>a+i.review.score,0)/rev.length).toFixed(1):'–'; const byCat={}; rev.forEach(i=>{ const c=i.cat||'기타'; byCat[c]=byCat[c]||[]; byCat[c].push(i.review.score); }); const cats=Object.entries(byCat).map(([c,a])=>[c,a.reduce((x,y)=>x+y,0)/a.length,a.length]).sort((a,b)=>b[1]-a[1]); const regret=rev.filter(i=>i.review.score<=2); const lowChecks=bought.filter(i=>checksN(i)<=2); const hi=rev.filter(i=>checksN(i)>=3); const hiAvg=hi.length?(hi.reduce((a,i)=>a+i.review.score,0)/hi.length).toFixed(1):'–'; const lo=rev.filter(i=>checksN(i)<=2); const loAvg=lo.length?(lo.reduce((a,i)=>a+i.review.score,0)/lo.length).toFixed(1):'–';
+  L.innerHTML=`<div class="insights"><div class="tile"><small>이번 달 쓴 돈</small><b class="mono">${won(spentM)}</b><span>${S.budget?'예산의 '+Math.round(spentM/S.budget*100)+'%':'예산을 정해 두자'}</span></div><div class="tile"><small>안 사서 지킨 돈 (누적)</small><b class="mono">${won(skip.reduce((a,i)=>a+(i.price||0),0))}</b><span>${skip.length}개 참았다</span></div><div class="tile"><small>산 물건 평균 만족도</small><b>${avg} / 5</b><span>${rev.length}개 돌아봄</span></div><div class="tile"><small>점검 3개 이상 vs 2개 이하</small><b>${hiAvg} · ${loAvg}</b><span>만족도 비교</span></div></div>
+  <div class="sect" style="margin:6px 4px">카테고리별 만족도</div>${cats.length?`<table><thead><tr><th>카테고리</th><th class="r">평균</th><th class="r">개수</th></tr></thead><tbody>${cats.map(c=>`<tr><td>${esc(c[0])}</td><td class="r mono">${c[1].toFixed(1)}</td><td class="r mono">${c[2]}</td></tr>`).join('')}</tbody></table>`:'<div class="hint">산 물건에 만족도를 매기면 어느 카테고리에서 돈이 헛되는지 보인다.</div>'}
+  <div class="sect" style="margin:16px 4px">후회한 구매</div>${regret.length?`<table><tbody>${regret.map(i=>`<tr><td>${esc(i.name)}</td><td>${esc(i.review.note||'')}</td><td class="r mono">${won(i.paid||i.price)}</td></tr>`).join('')}</tbody></table>`:'<div class="hint">아직 없다. 좋은 신호다.</div>'}
+  <div class="sect" style="margin:16px 4px">돌아볼 때가 된 것 (산 지 30일)</div>${(()=>{ const d=bought.filter(i=>!(i.review&&i.review.score)&&daysSince(i.boughtAt||i.added)>=30); return d.length?`<table><tbody>${d.map(i=>`<tr><td><a href="#" data-open="${i.id}">${esc(i.name)}</a></td><td class="r mono">${won(i.paid||i.price)}</td></tr>`).join('')}</tbody></table>`:'<div class="hint">없다.</div>'; })()}
+  <div class="hint" style="margin-top:16px">점검 항목을 많이 채운 물건이 만족도가 높게 나오면, 점검이 실제로 작동하고 있다는 뜻이다. 반대면 점검 문항을 네 기준으로 바꿔라.</div>`;
+  L.querySelectorAll('[data-open]').forEach(a=>a.onclick=e=>{ e.preventDefault(); openItem(a.dataset.open); }); }
+
+// ---------- sidebar ----------
+function renderSide(){ const c={think:0,buy:0,bought:0,skip:0}; S.items.forEach(i=>c[i.status]=(c[i.status]||0)+1); $('cAll').textContent=S.items.length; $('cThink').textContent=c.think; $('cBuy').textContent=c.buy; $('cBought').textContent=c.bought; $('cSkip').textContent=c.skip;
+  const m=today().slice(0,7); const spent=S.items.filter(i=>i.status==='bought'&&monthKey(i.boughtAt)===m).reduce((a,i)=>a+(i.paid||i.price||0),0); const plan=S.items.filter(i=>i.status==='buy').reduce((a,i)=>a+(i.price||0),0); $('bSpent').textContent=won(spent); $('bPlan').textContent=won(plan); const left=S.budget-spent-plan; $('bLeft').textContent=S.budget?won(left):'예산 없음'; const pct=S.budget?Math.min(100,(spent+plan)/S.budget*100):0; $('bFill').style.width=pct+'%'; $('bFill').className=left<0?'over':''; if(document.activeElement!==$('budgetIn')) $('budgetIn').value=S.budget||'';
+  const sk=S.items.filter(i=>i.status==='skip'); $('savedAmt').textContent=won(sk.reduce((a,i)=>a+(i.price||0),0)); $('savedN').textContent=sk.length?sk.length+'개를 참았다':'아직 없음'; $('coolDaysTxt').textContent=S.coolDays; $('coolIn').value=S.coolDays; }
+$('budgetIn').onchange=e=>{ S.budget=Math.max(0,parseInt(e.target.value)||0); persist(); renderAll(); };
+$('coolIn').oninput=e=>{ S.coolDays=+e.target.value; $('coolDaysTxt').textContent=S.coolDays; }; $('coolIn').onchange=()=>{ persist(); renderAll(); };
+
+// ---------- pane / form ----------
+let cur=null; // editing object (copy)
+$('fCat').innerHTML=CATS.map(c=>`<option>${c}</option>`).join('');
+function stars(id,key){ const el=$(id); el.innerHTML=[1,2,3,4,5].map(n=>`<button data-n="${n}">${n}</button>`).join(''); el.onclick=e=>{ const b=e.target.closest('button'); if(!b||!cur) return; cur[key]=+b.dataset.n; paintStars(id,cur[key]); }; }
+function paintStars(id,v){ $(id).querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.n<=v)); }
+stars('fWant','want'); stars('fNeed','need');
+$('fRev').innerHTML=[1,2,3,4,5].map(n=>`<button data-n="${n}">${n}</button>`).join(''); $('fRev').onclick=e=>{ const b=e.target.closest('button'); if(!b||!cur) return; cur.review=cur.review||{}; cur.review.score=+b.dataset.n; cur.review.at=today(); paintStars('fRev',cur.review.score); };
+$('fChecks').innerHTML=CHECKS.map(c=>`<label class="chk" data-k="${c[0]}"><input type="checkbox"><span>${c[1]}</span></label>`).join('');
+$('fChecks').addEventListener('change',e=>{ const l=e.target.closest('.chk'); if(!l||!cur) return; cur.checks=cur.checks||{}; cur.checks[l.dataset.k]=e.target.checked; l.classList.toggle('on',e.target.checked); renderCool(); });
+$('fStatus').onclick=e=>{ const b=e.target.closest('button'); if(!b||!cur) return; const s=b.dataset.s; if(s==='buy'&&coolLeft(cur)>0&&cur.status==='think'){ toast('냉각 '+coolLeft(cur)+'일 남았다. 그때도 원하면 옮기자.'); return; } cur.status=s; if(s==='bought'&&!cur.boughtAt) cur.boughtAt=today(); if(s==='bought'&&!cur.paid) cur.paid=cur.price; paintStatus(); };
+function paintStatus(){ $('fStatus').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.s===cur.status)); $('fBoughtBox').hidden=cur.status!=='bought'; if(cur.status==='bought'){ $('fPaid').value=cur.paid||cur.price||''; $('fBoughtAt').value=cur.boughtAt||today(); paintStars('fRev',(cur.review&&cur.review.score)||0); $('fRevNote').value=(cur.review&&cur.review.note)||''; } renderCool(); }
+function renderCool(){ const el=$('fCool'); if(!cur){ el.hidden=true; return; } el.hidden=false; const cl=coolLeft(cur), n=checksN(cur); if(cur.status==='think'){ if(cl>0){ el.className='cool'; el.innerHTML='냉각 중 · <b>'+cl+'일</b> 남음 · 적은 지 D+'+daysSince(cur.added)+'. 지금은 "살 것"으로 못 옮긴다. 점검 '+n+'/4.'; } else { el.className='cool ok'; el.innerHTML='냉각 끝. 아직도 원하면 진짜다. 점검 '+n+'/4 · '+(n>=3?'사도 될 만하다.':'점검이 부족하다. 안 사는 쪽이 유리하다.'); } } else if(cur.status==='skip'){ el.className='cool ok'; el.innerHTML='안 사기로 했다. <b>'+won(cur.price)+'</b>을 지켰다.'; } else if(cur.status==='buy'){ el.className='cool ok'; el.innerHTML='살 것. 사면 "샀다"로 옮기고 한 달 뒤 만족도를 남긴다.'; } else { el.className='cool ok'; el.innerHTML='산 지 '+daysSince(cur.boughtAt||cur.added)+'일. '+(daysSince(cur.boughtAt||cur.added)>=30?'돌아볼 때다.':'한 달 뒤에 돌아보자.'); } }
+$('fPrice').oninput=()=>{ if(cur){ cur.price=parseInt($('fPrice').value)||0; } $('fHours').innerHTML=cur&&cur.price?'최저시급 기준 <b>'+hoursTxt(cur.price)+'</b> 어치':''; };
+function openItem(id){ const it=S.items.find(i=>i.id===id); if(!it) return; sel=id; cur=JSON.parse(JSON.stringify(it)); fillForm(); renderList(); }
+function newItem(){ sel=null; cur={id:uid(),name:'',price:0,cat:'옷',url:'',why:'',want:3,need:2,checks:{},status:'think',added:today(),note:''}; fillForm(true); setTimeout(()=>$('fName').focus(),50); }
+function fillForm(isNew){ $('paneEmpty').hidden=true; $('paneForm').hidden=false; $('pane').classList.add('open'); $('pTitle').textContent=isNew?'새로 적기':(cur.name||'항목'); $('pSub').textContent=isNew?'적은 날 '+cur.added+' · 오늘부터 냉각 '+S.coolDays+'일':'적은 날 '+cur.added+' · D+'+daysSince(cur.added); $('fName').value=cur.name; $('fPrice').value=cur.price||''; $('fCat').value=CATS.includes(cur.cat)?cur.cat:'기타'; $('fUrl').value=cur.url||''; $('fWhy').value=cur.why||''; $('fNote').value=cur.note||''; paintStars('fWant',cur.want||0); paintStars('fNeed',cur.need||0); $('fChecks').querySelectorAll('.chk').forEach(l=>{ const on=!!(cur.checks&&cur.checks[l.dataset.k]); l.querySelector('input').checked=on; l.classList.toggle('on',on); }); $('fPrice').oninput(); paintStatus(); $('delBtn').hidden=!!isNew; }
+function save(){ if(!cur) return; cur.name=$('fName').value.trim(); cur.price=parseInt($('fPrice').value)||0; cur.cat=$('fCat').value; cur.url=$('fUrl').value.trim(); cur.why=$('fWhy').value.trim(); cur.note=$('fNote').value.trim(); if(cur.status==='bought'){ cur.paid=parseInt($('fPaid').value)||cur.price; cur.boughtAt=$('fBoughtAt').value||today(); cur.review=cur.review||{}; cur.review.note=$('fRevNote').value.trim(); } if(!cur.name){ $('fName').focus(); toast('이름을 적자.'); return; } const i=S.items.findIndex(x=>x.id===cur.id); if(i>=0) S.items[i]=cur; else S.items.unshift(cur); sel=cur.id; persist(); renderAll(); toast('저장했다.'); }
+function del(){ if(!cur) return; if(!cur._confirm){ cur._confirm=true; $('delBtn').textContent='정말 삭제'; setTimeout(()=>{ if(cur){ cur._confirm=false; $('delBtn').textContent='삭제'; } },2500); return; } S.items=S.items.filter(x=>x.id!==cur.id); cur=null; sel=null; closePane(); persist(); renderAll(); toast('삭제했다.'); }
+function closePane(){ $('paneForm').hidden=true; $('paneEmpty').hidden=false; $('pane').classList.remove('open'); cur=null; sel=null; $('delBtn').textContent='삭제'; renderList(); }
+$('saveBtn').onclick=save; $('delBtn').onclick=del; $('closePane').onclick=closePane; $('newBtn').onclick=newItem;
+$('menuBtn').onclick=()=>$('side').classList.toggle('open');
+if(matchMedia('(max-width:640px)').matches) $('menuBtn').style.display='';
+document.addEventListener('keydown',e=>{ const tag=e.target.tagName; const typing=['INPUT','TEXTAREA','SELECT'].includes(tag); if((e.metaKey||e.ctrlKey)&&e.key==='s'){ e.preventDefault(); save(); return; } if(e.key==='Escape'){ if(typing) e.target.blur(); else closePane(); return; } if(typing) return; if(e.key==='n'||e.key==='N'){ e.preventDefault(); newItem(); } else if(e.key==='/'){ e.preventDefault(); $('q').focus(); } else if(e.key==='ArrowDown'||e.key==='ArrowUp'){ const a=filtered(); if(!a.length) return; let i=a.findIndex(x=>x.id===sel); i=e.key==='ArrowDown'?Math.min(a.length-1,i+1):Math.max(0,i-1); openItem(a[i].id); e.preventDefault(); } });
+
+// ---------- backup ----------
+$('bkCopy').onclick=async()=>{ const t=JSON.stringify(S); try{ await navigator.clipboard.writeText(t); toast('백업을 복사했다. 메모 앱에 붙여 두자.'); }catch(e){ const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); toast('복사 실패. 텍스트를 직접 복사하자.'); setTimeout(()=>ta.remove(),8000); } };
+$('bkPaste').onclick=()=>{ const ta=document.createElement('textarea'); ta.placeholder='백업 문자열을 붙여 넣고 Enter'; ta.style.cssText='position:fixed;left:50%;top:30%;transform:translateX(-50%);width:min(90vw,480px);height:120px;z-index:60;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)'; document.body.appendChild(ta); ta.focus(); ta.onkeydown=ev=>{ if(ev.key==='Enter'){ ev.preventDefault(); try{ const r=JSON.parse(ta.value); if(!Array.isArray(r.items)) throw 0; S=Object.assign(S,r); persist(); renderAll(); toast('복원했다.'); }catch(e){ toast('형식이 맞지 않는다.'); } ta.remove(); } if(ev.key==='Escape') ta.remove(); }; };
+
+// ---------- sample on first run ----------
+if(!S.items.length&&!S._seen){ S._seen=true; const d=new Date(); d.setDate(d.getDate()-9); S.items=[{id:uid(),name:'예시 · 네이비 후리스',price:59000,cat:'옷',url:'',why:'학교 갈 때 입을 것. 때 안 타는 색.',want:4,need:3,checks:{problem:true,alt:false,month:true,practical:true},status:'think',added:keyOf(d),note:'검은색과 비교. 세탁 덜 해도 되는 쪽.'}]; persist(); }
+function renderAll(){ renderSide(); renderList(); if(cur&&sel){ const it=S.items.find(i=>i.id===sel); if(it){ cur=JSON.parse(JSON.stringify(it)); fillForm(); } } }
+renderAll();
+})();
+</script>
+<script>document.addEventListener("dblclick",e=>{ if(!['INPUT','TEXTAREA'].includes(e.target.tagName)) e.preventDefault(); },{passive:false});</script>
+
+
+<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(()=>{});});}</script>
+</body>
+</html>
