@@ -165,8 +165,8 @@ header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12p
         <button data-v="lapse">타임랩스</button><button data-v="live">실시간 녹화</button><button data-v="mirror">화면만 (녹화 안 함)</button>
       </span>
       <p class="help" id="modeHelp" style="margin-top:8px"></p>
-      <div class="lbl" style="margin-top:14px"><span>목표 시간</span></div>
-      <div class="row" id="goalChips"></div>
+      <div class="lbl" style="margin-top:14px"><span>시간</span></div>
+      <p class="help" id="bestHelp"></p>
       <div class="lbl" style="margin-top:14px"><span>과목</span></div>
       <div class="row" id="subjChips"></div>
       <input class="txt" id="taskIn" maxlength="60" placeholder="이번 감시 동안 끝낼 것 (화면에 같이 찍힌다)" style="margin-top:10px">
@@ -176,7 +176,7 @@ header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12p
     <div class="card">
       <div class="lbl"><span>감시 일지</span><span class="mono" id="sessClock">00:00:00</span></div>
       <div class="stat">
-        <div><small>자리 이탈</small><b id="stLeave">0</b></div>
+        <div><small>최고 기록</small><b id="stBest">-</b></div>
         <div><small>불시 점검</small><b id="stCheck">0/0</b></div>
         <div><small>정지 경고</small><b id="stIdle">0</b></div>
       </div>
@@ -211,13 +211,14 @@ header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12p
 <section class="page" id="p-set" hidden>
   <div class="grid eq">
   <div class="card">
+    <div class="setrow"><div><b>다른 화면으로 갈 때</b><p>‘허용’이면 영어 듣기나 문제 풀이 창으로 가도 시간이 계속 간다. ‘엄격’이면 시간이 멈추고 이탈로 기록한다.</p></div><span class="seg" id="sLeave"><button data-v="allow">허용</button><button data-v="strict">엄격</button></span></div>
     <div class="setrow"><div><b>불시 점검</b><p>예고 없이 점검이 뜬다. 60초 안에 눌러야 한다.</p></div><span class="seg" id="sCheck"><button data-v="off">끔</button><button data-v="some">가끔 (20~40분)</button><button data-v="often">자주 (8~15분)</button></span></div>
     <div class="setrow"><div><b>정지 경고</b><p>화면 속 움직임이 이만큼 없으면 깨운다. 조는 걸 잡는다.</p></div><span class="seg" id="sIdle"><button data-v="0">끔</button><button data-v="3">3분</button><button data-v="5">5분</button><button data-v="10">10분</button></span></div>
     <div class="setrow"><div><b>감시관 목소리</b><p>이탈·점검·경고를 소리 내 말한다.</p></div><span class="seg" id="sVoice"><button data-v="1">켬</button><button data-v="0">끔</button></span></div>
     <div class="setrow"><div><b>증거 사진</b><p>몇 분마다 한 장씩 찍을까.</p></div><span class="seg" id="sSnap"><button data-v="0">끔</button><button data-v="5">5분</button><button data-v="10">10분</button><button data-v="15">15분</button></span></div>
   </div>
   <div class="card">
-    <div class="setrow"><div><b>타임랩스 길이</b><p>몇 시간을 찍어도 결과 영상은 이 길이쯤으로 줄어든다.</p></div><span class="seg" id="sLapse"><button data-v="30">30초</button><button data-v="60">1분</button><button data-v="90">1분 30초</button></span></div>
+    <div class="setrow"><div><b>타임랩스 길이</b><p>몇 시간을 찍어도 결과 영상은 이 길이쯤으로 줄어든다. 오래 할수록 더 빨리 감긴다.</p></div><span class="seg" id="sLapse"><button data-v="30">30초</button><button data-v="60">1분</button><button data-v="90">1분 30초</button></span></div>
     <div class="setrow"><div><b>실시간 녹화 화질</b><p>높을수록 용량이 크다. 1시간에 약 200MB · 500MB · 1GB.</p></div><span class="seg" id="sQual"><button data-v="low">낮음</button><button data-v="mid">보통</button><button data-v="high">높음</button></span></div>
     <div class="setrow"><div><b>실시간 녹화에 소리</b><p>마이크로 공부하는 소리까지 담는다.</p></div><span class="seg" id="sMic"><button data-v="0">안 담음</button><button data-v="1">담음</button></span></div>
     <div class="setrow"><div><b>거울처럼 좌우 반전</b><p>앞 카메라일 때만.</p></div><span class="seg" id="sMirror"><button data-v="1">반전</button><button data-v="0">그대로</button></span></div>
@@ -248,8 +249,8 @@ const TOUCH=matchMedia('(pointer:coarse)').matches;
 let toastT;function toast(m,ms=2800){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,ms);}
 
 /* ---------- 상태 ---------- */
-let S={sessions:[],set:{mode:'lapse',goal:50,subj:'국어',subjects:['국어','수학','영어','사문','생윤','한국사','성경','기타'],check:'some',idle:5,voice:1,snap:5,lapse:60,qual:'mid',mic:0,mirror:1,facing:'user'},live:null};
-try{const r=JSON.parse(localStorage.getItem(KEY)||'null');if(r){S=Object.assign(S,r);S.set=Object.assign({},{mode:'lapse',goal:50,subj:'국어',subjects:['국어'],check:'some',idle:5,voice:1,snap:5,lapse:60,qual:'mid',mic:0,mirror:1,facing:'user'},r.set||{});}}catch(e){}
+let S={sessions:[],set:{mode:'lapse',goal:50,subj:'국어',subjects:['국어','수학','영어','사문','생윤','한국사','성경','기타'],leave:'allow',check:'some',idle:5,voice:1,snap:5,lapse:60,qual:'mid',mic:0,mirror:1,facing:'user'},live:null};
+try{const r=JSON.parse(localStorage.getItem(KEY)||'null');if(r){S=Object.assign(S,r);S.set=Object.assign({},{mode:'lapse',goal:50,subj:'국어',subjects:['국어'],leave:'allow',check:'some',idle:5,voice:1,snap:5,lapse:60,qual:'mid',mic:0,mirror:1,facing:'user'},r.set||{});}}catch(e){}
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 // 앱이 감시 도중 닫혔으면 마지막 기록 시각까지로 마감
 if(S.live){const L=S.live;if(L.beat&&L.beat-L.start>60e3){S.sessions.push(Object.assign({},L,{end:L.beat,min:Math.round(L.focus/60e3),cut:true}));}S.live=null;persist();}
@@ -292,8 +293,9 @@ function overlay(c,W,H,now){
   sh(hms(now),W-m,m+u*1.25,'right');
   if(RUN){const el=RUN.focus/1000;
     sh(`${S.set.subj}${RUN.task?'  ·  '+RUN.task:''}`.slice(0,48),m,H-m-u*2.5);
-    sh(`집중 ${dur(el)}  /  목표 ${fmtMin(RUN.goal)}`,m,H-m-u*1.2,'left',el>=RUN.goal*60?'#5BB98C':'#E9E6DF');
-    sh(`이탈 ${RUN.leaves.length}  점검 ${RUN.checks.filter(x=>x.ok).length}/${RUN.checks.length}`,W-m,H-m-u*1.2,'right');}
+    const nb=RUN.best>=600&&el>RUN.best;
+    sh(`집중 ${dur(el)}`,m,H-m-u*1.2,'left',nb?'#5BB98C':'#E9E6DF');
+    sh(`${nb?'최고 기록 갱신 중':'최고 '+(RUN.best?dur(RUN.best):'--:--:--')}  점검 ${RUN.checks.filter(x=>x.ok).length}/${RUN.checks.length}${S.set.leave==='strict'?'  이탈 '+RUN.leaves.length:''}`,W-m,H-m-u*1.2,'right',nb?'#5BB98C':'#E9E6DF');}
   else sh('STANDBY',m,H-m-u*1.2);
 }
 function draw(now){
@@ -305,7 +307,7 @@ let lastMot=0;
 function loop(){const now=Date.now(); draw(now); if(now-lastMot>=1000){lastMot=now;motionTick(now);} requestAnimationFrame(loop);}
 requestAnimationFrame(loop);
 // 화면이 숨겨져 rAF가 멈춰도 녹화 프레임이 이어지도록
-setInterval(()=>{if(document.hidden&&RUN&&RUN.rec)draw(Date.now());},250);
+setInterval(()=>{if(document.hidden&&RUN&&RUN.rec&&S.set.leave==='allow')draw(Date.now());},250);
 
 /* ---------- 움직임 ---------- */
 const mcv=document.createElement('canvas');mcv.width=32;mcv.height=18;const mctx=mcv.getContext('2d',{willReadFrequently:true});let prevG=null;
@@ -343,9 +345,9 @@ async function start(){
   ac(); if(!STREAM&&!(await camStart())) return;
   await new Promise(r=>{if(vid.readyState>=2)r();else vid.onloadeddata=()=>r();setTimeout(r,2500);});
   const now=Date.now(); const mode=S.set.mode;
-  RUN={id:'s'+now.toString(36),start:now,goal:S.set.goal,subj:S.set.subj,task:$('taskIn').value.trim(),mode,focus:0,tick:now,paused:false,
-    leaves:[],checks:[],idles:0,act:[],accM:0,accN:0,minStart:now,lastMove:now,idleWarned:false,rec:false,goalHit:false,
-    nextCheck:now+nextCheckGap(),nextSnap:now+S.set.snap*60e3,nextFrame:now,frameGap:lapseGap(S.set.goal),awayAt:null,events:[]};
+  RUN={id:'s'+now.toString(36),start:now,best:bestSec(),hours:0,bestHit:false,subj:S.set.subj,task:$('taskIn').value.trim(),mode,focus:0,tick:now,paused:false,
+    leaves:[],checks:[],idles:0,act:[],accM:0,accN:0,minStart:now,lastMove:now,idleWarned:false,rec:false,
+    nextCheck:now+nextCheckGap(),nextSnap:now+S.set.snap*60e3,nextFrame:now,frameGap:1000,awayAt:null,events:[]};
   FRAMES=[];SNAPS=[];CHUNKS=[];$('snaps').innerHTML='';$('events').innerHTML='';
   if(mode==='live'){
     const mime=pickMime(); if(!mime||!cv.captureStream){toast('이 브라우저는 실시간 녹화를 못 한다. 타임랩스로 바꾼다');S.set.mode='lapse';RUN.mode='lapse';}
@@ -355,36 +357,37 @@ async function start(){
   if(RUN.mode==='lapse')RUN.rec=true;
   S.live=liveMeta();persist();
   ev('g',`감시 시작 · ${RUN.subj}${RUN.task?' · '+RUN.task:''}`);
-  say(`감시를 시작한다. 목표 ${fmtMin(RUN.goal)}. 카메라가 계속 보고 있다.`); beep(1,660);
+  say(`감시를 시작한다. 0초부터 센다. 카메라가 계속 보고 있다.`); beep(1,660);
   wake(true); setUI();
 }
 function nextCheckGap(){const c=S.set.check;if(c==='off')return Infinity;const [a,b]=c==='often'?[8,15]:[20,40];return (a+Math.random()*(b-a))*60e3;}
-function lapseGap(goal){const frames=S.set.lapse*30;return Math.max(500,goal*60e3/frames);}
-function liveMeta(){const R=RUN;return {id:R.id,start:R.start,goal:R.goal,subj:R.subj,task:R.task,mode:R.mode,focus:R.focus,beat:Date.now(),leaves:R.leaves,checks:R.checks,idles:R.idles,act:R.act};}
+function bestSec(){return S.sessions.reduce((a,s)=>Math.max(a,s.sec||s.min*60||0),0);}
+function liveMeta(){const R=RUN;return {id:R.id,start:R.start,sec:Math.round(R.focus/1000),subj:R.subj,task:R.task,mode:R.mode,focus:R.focus,beat:Date.now(),leaves:R.leaves,checks:R.checks,idles:R.idles,act:R.act};}
 function ev(cls,txt,t=Date.now()){if(RUN)RUN.events.push([t,cls,txt]);const el=$('events');const d=document.createElement('div');d.innerHTML=`<span class="t">${hm(t)}</span><span class="${cls}">${esc(txt)}</span>`;el.prepend(d);}
-function updStat(){if(!RUN)return;$('stLeave').textContent=RUN.leaves.length;$('stCheck').textContent=`${RUN.checks.filter(c=>c.ok).length}/${RUN.checks.length}`;$('stIdle').textContent=RUN.idles;}
+function updStat(){if(!RUN)return;$('stBest').textContent=RUN.best?dur(RUN.best).replace(/^00:/,''):'-';$('stCheck').textContent=`${RUN.checks.filter(c=>c.ok).length}/${RUN.checks.length}`;$('stIdle').textContent=RUN.idles;}
 function setUI(){const on=!!RUN;$('ctrlIdle').hidden=on;$('ctrlRun').hidden=!on;$('setupCard').hidden=on;$('recDot').classList.toggle('on',on&&!RUN.paused&&RUN.rec);
   $('pausedTag').hidden=!(on&&RUN.paused);$('pauseBtn').textContent=on&&RUN.paused?'다시 시작':'휴식';
   $('hdrTxt').textContent=on?(RUN.paused?'휴식 중':'감시 중 · '+({lapse:'타임랩스',live:'실시간 녹화',mirror:'화면만'}[RUN.mode])):'대기 중';
   document.querySelectorAll('#tabs button').forEach(b=>b.disabled=on&&b.dataset.p!=='watch');}
 function pause(){if(!RUN)return;RUN.paused=!RUN.paused;if(RUN.paused){REC?.state==='recording'&&REC.pause();ev('w','휴식 시작');}else{REC?.state==='paused'&&REC.resume();RUN.lastMove=Date.now();ev('g','휴식 끝, 다시 감시');}setUI();}
 $('startBtn').onclick=start;$('pauseBtn').onclick=pause;
-$('endBtn').onclick=()=>{if(!RUN)return;dialog(`<h3>감시를 끝낼까</h3><p class="help">지금까지 집중 ${dur(RUN.focus/1000)}. ${RUN.focus<RUN.goal*60e3?`목표 ${fmtMin(RUN.goal)}까지 ${fmtMin((RUN.goal*60e3-RUN.focus)/60e3)} 남았다.`:'목표를 채웠다.'}</p><div class="acts"><button class="btn" data-close>계속 감시</button><button class="btn dang" id="doEnd">끝낸다</button></div>`,o=>o.querySelector('#doEnd').onclick=()=>{closeDialog();finish();});};
+$('endBtn').onclick=()=>{if(!RUN)return;dialog(`<h3>감시를 끝낼까</h3><p class="help">지금까지 집중 ${dur(RUN.focus/1000)}. ${RUN.best>=600&&RUN.focus/1000>RUN.best?'최고 기록을 넘었다.':RUN.best?`최고 기록 ${dur(RUN.best)}까지 ${dur(RUN.best-RUN.focus/1000)} 남았다.`:'첫 기록이다.'}</p><div class="acts"><button class="btn" data-close>계속 감시</button><button class="btn dang" id="doEnd">끝낸다</button></div>`,o=>o.querySelector('#doEnd').onclick=()=>{closeDialog();finish();});};
 
 // 타임랩스 프레임
-setInterval(()=>{if(!RUN||RUN.paused||document.hidden||RUN.mode!=='lapse')return;const now=Date.now();if(now>=RUN.nextFrame){RUN.nextFrame=Math.max(RUN.nextFrame+RUN.frameGap,now-RUN.frameGap);grabFrame();}},200);
+setInterval(()=>{if(!RUN||RUN.paused||(document.hidden&&S.set.leave!=='allow')||RUN.mode!=='lapse')return;const now=Date.now();if(now>=RUN.nextFrame){RUN.nextFrame=Math.max(RUN.nextFrame+RUN.frameGap,now-RUN.frameGap);grabFrame();}},200);
 // 1초마다
 setInterval(()=>{if(!RUN)return;const now=Date.now();
-  if(!RUN.paused&&!RUN.awayAt){RUN.focus+=Math.min(5000,now-RUN.tick);} RUN.tick=now;
+  if(!RUN.paused&&!RUN.awayAt){RUN.focus+=S.set.leave==='allow'?Math.max(0,now-RUN.tick):Math.min(5000,now-RUN.tick);} RUN.tick=now;
   $('sessClock').textContent=dur(RUN.focus/1000);
-  if(!RUN.goalHit&&RUN.focus>=RUN.goal*60e3){RUN.goalHit=true;ev('g','목표 시간 달성');say('목표 시간을 채웠다. 더 해도 되고, 끝내도 된다.');beep(3,990);}
+  const h=Math.floor(RUN.focus/3600e3); if(h>RUN.hours){RUN.hours=h;ev('g',`${h}시간 돌파`);say(`${h}시간 돌파. 계속 간다.`);beep(3,990);}
+  if(!RUN.bestHit&&RUN.best>=600&&RUN.focus/1000>RUN.best){RUN.bestHit=true;ev('g','최고 기록 갱신');say('최고 기록을 넘었다. 지금부터는 전부 새 기록이다.');beep(3,1180);}
   if(RUN.paused||document.hidden) return;
   if(S.set.snap&&now>=RUN.nextSnap){RUN.nextSnap=now+S.set.snap*60e3;grabSnap();}
   if(now>=RUN.nextCheck&&$('checkBox').hidden){RUN.nextCheck=now+nextCheckGap();spotCheck();}
   if(now%60000<1000){S.live=liveMeta();persist();}
 },1000);
 function shot(w,q){const W=cv.width,H=cv.height;if(!W)return Promise.resolve(null);const sc=Math.min(1,w/Math.max(W,H));const c=document.createElement('canvas');c.width=Math.round(W*sc);c.height=Math.round(H*sc);c.getContext('2d').drawImage(cv,0,0,c.width,c.height);return new Promise(r=>c.toBlob(b=>r(b),'image/jpeg',q));}
-async function grabFrame(){const b=await shot(720,.7);if(!b)return;FRAMES.push(b);if(FRAMES.length>5400){FRAMES=FRAMES.filter((_,i)=>i%2===0);RUN.frameGap*=2;}}
+async function grabFrame(){const b=await shot(720,.7);if(!b)return;FRAMES.push(b);if(FRAMES.length>=S.set.lapse*60){FRAMES=FRAMES.filter((_,i)=>i%2===0);RUN.frameGap*=2;}}
 async function grabSnap(){const b=await shot(480,.75);if(!b)return;const t=Date.now();SNAPS.push({b,t});const img=document.createElement('img');img.src=URL.createObjectURL(b);img.alt=hm(t)+' 증거 사진';img.title=hm(t);$('snaps').prepend(img);while($('snaps').children.length>8)$('snaps').lastChild.remove();}
 
 /* 불시 점검 */
@@ -396,7 +399,7 @@ function spotCheck(){const box=$('checkBox');box.hidden=false;let left=60;$('che
 /* 자리 이탈 */
 document.addEventListener('visibilitychange',async()=>{
   if(!RUN)return;
-  if(document.hidden){if(!RUN.paused&&!RUN.awayAt){RUN.awayAt=Date.now();S.live=liveMeta();persist();}}
+  if(document.hidden){if(S.set.leave==='strict'&&!RUN.paused&&!RUN.awayAt){RUN.awayAt=Date.now();S.live=liveMeta();persist();}}
   else{wake(true);
     if(RUN.awayAt){const ms=Date.now()-RUN.awayAt;const at=RUN.awayAt;RUN.awayAt=null;RUN.tick=Date.now();
       if(ms>8000){RUN.leaves.push({at,ms});ev('r',`화면 이탈 ${dur(ms/1000).replace(/^00:/,'')}`,at);say(`이탈 ${ms>=60e3?Math.floor(ms/60e3)+'분 ':''}${Math.round(ms/1000)%60}초. 기록에 남겼다.`);beep(2,440);updStat();}}
@@ -406,10 +409,10 @@ document.addEventListener('visibilitychange',async()=>{
 /* ---------- 마무리 ---------- */
 async function finish(){
   const R=RUN; RUN=null; setUI(); wake(false);
-  const end=Date.now(); const sess={id:R.id,start:R.start,end,min:Math.round(R.focus/60e3),goal:R.goal,subj:R.subj,task:R.task,mode:R.mode,leaves:R.leaves,checks:R.checks,idles:R.idles,act:R.act};
+  const end=Date.now(); const sess={id:R.id,start:R.start,end,min:Math.round(R.focus/60e3),sec:Math.round(R.focus/1000),subj:R.subj,task:R.task,mode:R.mode,leaves:R.leaves,checks:R.checks,idles:R.idles,act:R.act};
   S.sessions.push(sess);S.live=null;persist();
-  say(`감시 끝. 집중 ${fmtMin(R.focus/60e3)}. 이탈 ${R.leaves.length}번.`);
-  const sumHtml=`<div class="stat" style="margin-bottom:12px"><div><small>집중</small><b>${dur(R.focus/1000).slice(0,5)}</b></div><div><small>이탈</small><b>${R.leaves.length}</b></div><div><small>점검</small><b>${R.checks.filter(c=>c.ok).length}/${R.checks.length}</b></div></div>`;
+  say(`감시 끝. 집중 ${fmtMin(R.focus/60e3)}.${R.best>=600&&R.focus/1000>R.best?' 최고 기록이다.':''}`);
+  const sumHtml=`<div class="stat" style="margin-bottom:12px"><div><small>집중</small><b>${dur(R.focus/1000)}</b></div><div><small>최고 기록</small><b>${dur(Math.max(R.best,R.focus/1000))}</b></div><div><small>점검</small><b>${R.checks.filter(c=>c.ok).length}/${R.checks.length}</b></div></div>`;
   dialog(`<h3>감시 기록을 정리하는 중</h3>${sumHtml}<p class="help" id="finTxt">영상을 만드는 중이다. 화면을 켜 두고 기다린다.</p><div class="prog"><i id="finBar"></i></div><div class="acts" id="finActs" hidden><button class="btn" id="goLib">보관함 보기</button><button class="btn" data-close>닫기</button></div>`);
   const title=`${ymd(R.start).slice(5).replace('-','.')} ${R.subj} · ${fmtMin(R.focus/60e3)}`;
   try{
@@ -424,9 +427,9 @@ async function finish(){
 async function renderLapse(frames,onp){
   const mime=pickMime(); if(!mime||!HTMLCanvasElement.prototype.captureStream) return null;
   const first=await createImageBitmap(frames[0]); const c=document.createElement('canvas'); c.width=first.width; c.height=first.height; const x=c.getContext('2d');
-  x.drawImage(first,0,0); const st=c.captureStream(30); const rec=new MediaRecorder(st,{mimeType:mime,videoBitsPerSecond:3e6}); const ch=[]; rec.ondataavailable=e=>e.data.size&&ch.push(e.data);
+  x.drawImage(first,0,0); const fps=Math.max(15,Math.min(60,Math.round(frames.length/S.set.lapse)));const st=c.captureStream(fps); const rec=new MediaRecorder(st,{mimeType:mime,videoBitsPerSecond:3e6}); const ch=[]; rec.ondataavailable=e=>e.data.size&&ch.push(e.data);
   const done=new Promise(r=>rec.onstop=r); rec.start(1000);
-  const step=1000/30; let t0=performance.now();
+  const step=1000/fps; let t0=performance.now();
   for(let i=0;i<frames.length;i++){const bm=i===0?first:await createImageBitmap(frames[i]);x.drawImage(bm,0,0,c.width,c.height);bm.close?.();
     const wait=t0+(i+1)*step-performance.now(); if(wait>0)await new Promise(r=>setTimeout(r,wait)); if(i%15===0)onp(i/frames.length);}
   await new Promise(r=>setTimeout(r,300)); rec.stop(); await done; return new Blob(ch,{type:mime.split(';')[0]});
@@ -436,7 +439,7 @@ async function contactSheet(snaps,R,title){
   const cw=480,ch=Math.round(480*imgs[0].height/imgs[0].width),gap=10,head=110; const rows=Math.ceil(imgs.length/cols);
   const c=document.createElement('canvas');c.width=cols*cw+(cols+1)*gap;c.height=head+rows*(ch+gap)+gap+40;const x=c.getContext('2d');
   x.fillStyle='#0E1113';x.fillRect(0,0,c.width,c.height);x.fillStyle='#E9E6DF';x.font='600 34px "IBM Plex Sans KR", sans-serif';x.textBaseline='top';x.fillText('공부 CCTV · 증거 사진',gap+6,22);
-  x.font='22px "Share Tech Mono", monospace';x.fillStyle='#8D939A';x.fillText(`${ymd(R.start)} ${hm(R.start)}–${hm(Date.now())}  ·  ${R.subj}  ·  집중 ${fmtMin(R.focus/60e3)}  ·  이탈 ${R.leaves.length}`,gap+6,68);
+  x.font='22px "Share Tech Mono", monospace';x.fillStyle='#8D939A';x.fillText(`${ymd(R.start)} ${hm(R.start)}–${hm(Date.now())}  ·  ${R.subj}  ·  집중 ${dur(R.focus/1000)}`,gap+6,68);
   imgs.forEach((im,i)=>{const cx=gap+(i%cols)*(cw+gap),cy=head+Math.floor(i/cols)*(ch+gap);x.drawImage(im,cx,cy,cw,ch);x.fillStyle='rgba(0,0,0,.6)';x.fillRect(cx,cy+ch-30,84,30);x.fillStyle='#E9E6DF';x.font='20px "Share Tech Mono", monospace';x.fillText(hm(snaps[i].t),cx+10,cy+ch-26);});
   if(R.task){x.fillStyle='#8D939A';x.font='20px "IBM Plex Sans KR", sans-serif';x.fillText('할 일 · '+R.task,gap+6,c.height-34);}
   return new Promise(r=>c.toBlob(b=>r(b),'image/jpeg',.85));
@@ -461,26 +464,25 @@ async function saveItem(m){if(!m)return;const ext=m.kind==='sheet'?'jpg':(m.mime
 function minOn(d){return S.sessions.filter(s=>ymd(s.start)===d).reduce((a,s)=>a+s.min,0);}
 function renderLog(){const today=ymd(Date.now());let st=0;const d=new Date();if(!minOn(ymd(d)))d.setDate(d.getDate()-1);while(minOn(ymd(d))>0){st++;d.setDate(d.getDate()-1);}
   const wk=[];for(let i=6;i>=0;i--){const x=new Date();x.setDate(x.getDate()-i);wk.push({k:ymd(x),l:['일','월','화','수','목','금','토'][x.getDay()],m:minOn(ymd(x))});}
-  const wsum=wk.reduce((a,x)=>a+x.m,0);const recent=S.sessions.slice(-20);const avgLeave=recent.length?(recent.reduce((a,s)=>a+s.leaves.length,0)/recent.length).toFixed(1):'-';
+  const wsum=wk.reduce((a,x)=>a+x.m,0);const recent=S.sessions.slice(-20);
   const chk=recent.flatMap(s=>s.checks);const chkRate=chk.length?Math.round(chk.filter(c=>c.ok).length/chk.length*100)+'%':'-';
-  $('tiles').innerHTML=`<div class="tile"><small>오늘 감시</small><b>${fmtMin(minOn(today))}</b><span>${S.sessions.filter(s=>ymd(s.start)===today).length}번</span></div><div class="tile"><small>연속</small><b>${st}일</b><span>하루 한 번 이상</span></div><div class="tile"><small>이번 주</small><b>${fmtMin(wsum)}</b><span>하루 평균 ${fmtMin(wsum/7)}</span></div><div class="tile"><small>평균 이탈 · 점검 통과</small><b>${avgLeave} · ${chkRate}</b><span>최근 20번</span></div>`;
+  $('tiles').innerHTML=`<div class="tile"><small>오늘 감시</small><b>${fmtMin(minOn(today))}</b><span>${S.sessions.filter(s=>ymd(s.start)===today).length}번</span></div><div class="tile"><small>연속</small><b>${st}일</b><span>하루 한 번 이상</span></div><div class="tile"><small>이번 주</small><b>${fmtMin(wsum)}</b><span>하루 평균 ${fmtMin(wsum/7)}</span></div><div class="tile"><small>최고 기록</small><b>${bestSec()?dur(bestSec()):'-'}</b><span>점검 통과 ${chkRate}</span></div>`;
   const W=560,H=180,pl=30,pb=24,pt=14,mx=Math.max(120,...wk.map(x=>x.m));const y=v=>pt+(H-pt-pb)*(1-v/mx);const bw=(W-pl)/7;let s='';
   for(let v=0;v<=mx;v+=mx>360?120:60)s+=`<line x1="${pl}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="#2A3036"/><text x="${pl-5}" y="${y(v)+4}" text-anchor="end" font-size="10" fill="#8D939A">${v/60}h</text>`;
   wk.forEach((x,i)=>{const bx=pl+i*bw+bw*.22;s+=`<rect x="${bx}" y="${y(x.m)}" width="${bw*.56}" height="${H-pb-y(x.m)}" rx="3" fill="${x.k===today?'#E9E6DF':'#5D646B'}"/><text x="${bx+bw*.28}" y="${H-7}" text-anchor="middle" font-size="11" fill="${x.k===today?'#E9E6DF':'#8D939A'}">${x.l}</text>${x.m?`<text x="${bx+bw*.28}" y="${y(x.m)-5}" text-anchor="middle" font-size="10" fill="#E9E6DF">${x.m}</text>`:''}`;});
   $('wk').innerHTML=s;
   const rows=S.sessions.slice(-60).reverse();
-  $('logTbl').innerHTML=`<tr><th>날짜</th><th>시간대</th><th>과목</th><th>집중</th><th>방식</th><th>이탈</th><th>점검</th><th>정지 경고</th><th>할 일</th></tr>`+(rows.length?rows.map(r=>`<tr><td class="mono">${ymd(r.start).slice(5)}</td><td class="mono">${hm(r.start)}–${hm(r.end)}</td><td>${esc(r.subj)}</td><td class="mono">${fmtMin(r.min)}${r.min>=r.goal?' ✓':''}</td><td>${{lapse:'타임랩스',live:'녹화',mirror:'화면만'}[r.mode]||''}</td><td class="mono" style="color:${r.leaves.length?'var(--rec)':'inherit'}">${r.leaves.length}</td><td class="mono">${r.checks.filter(c=>c.ok).length}/${r.checks.length}</td><td class="mono">${r.idles}</td><td style="color:var(--mute)">${esc(r.task||'')}</td></tr>`).join(''):'<tr><td colspan="9" style="color:var(--mute)">아직 기록이 없다.</td></tr>');}
+  $('logTbl').innerHTML=`<tr><th>날짜</th><th>시간대</th><th>과목</th><th>집중</th><th>방식</th><th>이탈</th><th>점검</th><th>정지 경고</th><th>할 일</th></tr>`+(rows.length?rows.map(r=>`<tr><td class="mono">${ymd(r.start).slice(5)}</td><td class="mono">${hm(r.start)}–${hm(r.end)}</td><td>${esc(r.subj)}</td><td class="mono">${r.sec?dur(r.sec):fmtMin(r.min)}${(r.sec||0)>0&&(r.sec||0)===bestSec()?' ★':''}</td><td>${{lapse:'타임랩스',live:'녹화',mirror:'화면만'}[r.mode]||''}</td><td class="mono" style="color:${r.leaves.length?'var(--rec)':'inherit'}">${r.leaves.length}</td><td class="mono">${r.checks.filter(c=>c.ok).length}/${r.checks.length}</td><td class="mono">${r.idles}</td><td style="color:var(--mute)">${esc(r.task||'')}</td></tr>`).join(''):'<tr><td colspan="9" style="color:var(--mute)">아직 기록이 없다.</td></tr>');}
 
 /* ---------- 설정·선택 ---------- */
-const MODEHELP={lapse:'몇 초마다 한 장씩 찍어서, 끝나면 1분짜리 빨리감기 영상으로 만든다. 용량이 작아서 매일 쓰기 좋다.',live:'실제 속도로 그대로 녹화한다. 용량이 크니 길게 찍을 땐 화질을 낮춘다.',mirror:'녹화 없이 감시 화면만 띄운다. 증거 사진과 기록은 남는다.'};
+const MODEHELP={lapse:'몇 초마다 한 장씩 찍어서, 끝나면 1분쯤짜리 빨리감기 영상으로 만든다. 용량이 작아서 매일 쓰기 좋다.',live:'실제 속도로 그대로 녹화한다. 용량이 크니 길게 찍을 땐 화질을 낮춘다.',mirror:'녹화 없이 감시 화면만 띄운다. 증거 사진과 기록은 남는다.'};
 function renderSetup(){document.querySelectorAll('#modeSeg button').forEach(b=>{b.classList.toggle('on',b.dataset.v===S.set.mode);b.onclick=()=>{S.set.mode=b.dataset.v;persist();renderSetup();};});
   $('modeHelp').textContent=MODEHELP[S.set.mode];
-  $('goalChips').innerHTML=[25,50,80,100,120,180].map(g=>`<button class="chip ${S.set.goal===g?'on':''}" data-g="${g}">${fmtMin(g)}</button>`).join('');
-  $('goalChips').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{S.set.goal=+b.dataset.g;persist();renderSetup();});
+  {const b=bestSec();$('bestHelp').innerHTML=`정해진 끝이 없다. 시작하면 스톱워치처럼 0초부터 세고, 내가 끝낼 때까지 간다. 1시간마다 알려 주고, 최고 기록을 넘으면 알려 준다.${b?` 지금 최고 기록은 <b class="mono">${dur(b)}</b>.`:''}`;}
   $('subjChips').innerHTML=S.set.subjects.map(s=>`<button class="chip ${S.set.subj===s?'on':''}" data-s="${esc(s)}">${esc(s)}</button>`).join('');
   $('subjChips').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{S.set.subj=b.dataset.s;persist();renderSetup();});
   $('snapTxt').textContent=S.set.snap?S.set.snap+'분마다':'끔';}
-function renderSet(){const segs={sCheck:'check',sIdle:'idle',sVoice:'voice',sSnap:'snap',sLapse:'lapse',sQual:'qual',sMic:'mic',sMirror:'mirror'};
+function renderSet(){const segs={sLeave:'leave',sCheck:'check',sIdle:'idle',sVoice:'voice',sSnap:'snap',sLapse:'lapse',sQual:'qual',sMic:'mic',sMirror:'mirror'};
   for(const [id,k] of Object.entries(segs))$(id).querySelectorAll('button').forEach(b=>{const v=/^\d+$/.test(b.dataset.v)?+b.dataset.v:b.dataset.v;b.classList.toggle('on',S.set[k]===v);b.onclick=()=>{S.set[k]=v;persist();renderSet();};});
   $('sSubj').value=S.set.subjects.join(', ');$('sSubj').onchange=e=>{const a=e.target.value.split(',').map(s=>s.trim()).filter(Boolean).slice(0,16);if(a.length){S.set.subjects=a;if(!a.includes(S.set.subj))S.set.subj=a[0];persist();renderSetup();toast('과목을 바꿨다');}};}
 function dialog(html,bind){const o=$('ovl');o.innerHTML=`<div class="overlay"><div class="dialog" role="dialog" aria-modal="true">${html}</div></div>`;const ov=o.firstChild;ov.onclick=e=>{if(e.target.hasAttribute('data-close'))closeDialog();};bind&&bind(ov);}
