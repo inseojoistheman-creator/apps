@@ -1,0 +1,1079 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#14213D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="작은 습관">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>아주 작은 습관</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;700;800&family=DM+Serif+Display:ital@1&display=swap">
+<style>
+/* Layout: 짙은 남색 판 위에 일곱 개 진도 막대(기초~마무리)와 1%의 복리 곡선 색(주황). 오늘 화면의 중심은 내 습관 체크(좋은 습관은 정체성에 던지는 한 표, 나쁜 습관은 지켰다/넘어졌다)와 충동 버튼. 실천 탭이 습관 공방. 맥에서는 두 단. */
+:root{
+  --bg:#F1F3F6; --card:#FCFDFE; --sunk:#E3E7EE; --line:#D2D8E2; --ink:#141B2B; --mute:#556074; --faint:#8992A4;
+  --navy:#1D4FA3; --navy-soft:#DCE6F7; --brass:#C96A12; --brass-soft:#F8E6D2; --holly:#23744F; --holly-soft:#D7EDE1; --wine:#B23A3A; --wine-soft:#F6DEDC;
+  --on-navy:#FFFFFF; --hall:#14213D; --on-hall:#F2F5FA; --hall-bar:#F2994A;
+  --f-head:"Gothic A1",-apple-system,"Apple SD Gothic Neo",sans-serif;
+  --f-body:"Gothic A1",-apple-system,"Apple SD Gothic Neo",sans-serif;
+  --f-latin:"DM Serif Display",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F131B; --card:#161C27; --sunk:#1E2532; --line:#2A3345; --ink:#E5E9F0; --mute:#9BA5B7; --faint:#6A7488;
+  --navy:#7FA7EE; --navy-soft:#1A2744; --brass:#F2994A; --brass-soft:#3A2614; --holly:#62C795; --holly-soft:#153324; --wine:#EE8A85; --wine-soft:#3C1C1B;
+  --on-navy:#0C111B; --hall:#152038; --on-hall:#E7EBF3; --hall-bar:#F2994A; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0F131B; --card:#161C27; --sunk:#1E2532; --line:#2A3345; --ink:#E5E9F0; --mute:#9BA5B7; --faint:#6A7488;
+  --navy:#7FA7EE; --navy-soft:#1A2744; --brass:#F2994A; --brass-soft:#3A2614; --holly:#62C795; --holly-soft:#153324; --wine:#EE8A85; --wine-soft:#3C1C1B;
+  --on-navy:#0C111B; --hall:#152038; --on-hall:#E7EBF3; --hall-bar:#F2994A; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;touch-action:manipulation}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0;line-height:1.35;font-weight:800}
+.wrap{max-width:1080px;margin:0 auto;padding-block:14px calc(96px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.top .ttl{font-family:var(--f-head);font-weight:800;font-size:19px}
+.top .sync{font-size:11.5px;color:var(--faint);margin-left:auto}
+.page{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.page>.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+@media (max-width:820px){.page{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{font-size:18px;margin-bottom:6px}
+.card h3{font-size:15.5px;margin-bottom:4px}
+.lbl{font-size:12px;letter-spacing:.05em;color:var(--mute);font-weight:700;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.help{font-size:13.5px;color:var(--mute);margin:0}
+.help b{color:var(--ink)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 14px;font-weight:500}
+.btn.pri{background:var(--navy);border-color:var(--navy);color:var(--on-navy);font-weight:700}
+.btn.brass{background:var(--brass);border-color:var(--brass);color:var(--on-navy);font-weight:700}
+.btn.ghost{background:transparent}
+.btn.wide{width:100%}
+.btn.sm{padding:6px 10px;font-size:13px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;font-size:13.5px}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.txt{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;font:inherit;color:inherit}
+textarea.txt{resize:vertical;min-height:72px;line-height:1.65}
+.scale{display:flex;gap:6px}
+.scale button{flex:1;border:1px solid var(--line);background:transparent;border-radius:9px;padding:6px 0;font-size:13px}
+.scale button.on{background:var(--navy);border-color:var(--navy);color:var(--on-navy);font-weight:700}
+/* 복도와 문 */
+.hall{background:var(--hall);color:var(--on-hall);border:0;border-radius:16px;padding:18px 18px 16px;position:relative;overflow:hidden}
+.hall .kicker{font-family:var(--f-latin);font-style:italic;font-size:16px;opacity:.85}
+.hall h1{font-size:30px;margin:2px 0 4px}
+.hall .sub{font-size:13px;opacity:.85}
+.hall .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.hall .stats div{background:color-mix(in srgb,var(--on-hall) 10%,transparent);border-radius:10px;padding:8px 10px}
+.hall .stats small{display:block;font-size:11px;opacity:.75}
+.hall .stats b{font-size:18px;font-variant-numeric:tabular-nums}
+.quote{font-family:var(--f-head);font-size:16px;line-height:1.7;font-weight:700}
+.quote cite{display:block;font-family:var(--f-body);font-style:normal;font-weight:400;font-size:12.5px;color:var(--mute);margin-top:6px}
+.verse{font-family:var(--f-head);font-weight:700;font-size:15px;line-height:1.75}
+.verse cite{display:block;font-family:var(--f-body);font-weight:400;font-style:normal;font-size:12px;color:var(--mute);margin-top:4px}
+.ptk{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.ptk:last-child{border-bottom:0}
+.ptk .chk{width:26px;height:26px;border-radius:8px;border:1.5px solid var(--line);background:transparent;flex:none;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--on-navy);padding:0}
+.ptk .chk.on{background:var(--holly);border-color:var(--holly)}
+.ptk .tx{flex:1;min-width:0}
+.ptk .tx b{font-weight:700;font-size:14.5px}
+.ptk .tx small{display:block;color:var(--mute);font-size:12.5px;line-height:1.5}
+.ptk .src{font-size:11px;color:var(--faint);white-space:nowrap}
+.sixdots{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:3px;margin:8px 0}
+.sixdots i{aspect-ratio:1;border-radius:3px;background:var(--sunk);display:block}
+.sixdots i.ok{background:var(--holly)}
+.sixdots i.fail{background:var(--wine)}
+.sixdots i.today{outline:2px solid var(--brass);outline-offset:-2px}
+.timer{font-variant-numeric:tabular-nums;font-size:40px;font-weight:700;text-align:center;font-family:var(--f-body)}
+/* 읽기 */
+.bookttl{font-family:var(--f-head);font-weight:800;font-size:17px;margin:14px 2px 2px}
+.booksub{font-size:12.5px;color:var(--mute);margin:0 2px 8px}
+.lsn{width:100%;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:11px 14px;display:flex;gap:10px;align-items:center;margin-bottom:6px}
+.lsn .no{font-size:12px;color:var(--faint);width:30px;flex:none;font-variant-numeric:tabular-nums}
+.lsn .tt{flex:1;min-width:0;font-weight:700}
+.lsn .tt small{display:block;font-weight:400;color:var(--mute);font-size:12.5px;line-height:1.5}
+.lsn .rd{font-size:12px;color:var(--holly);font-weight:700}
+.reader{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.reader .head .crumb{font-size:12.5px;color:var(--mute)}
+.reader .head h1{font-size:27px;margin:4px 0 8px}
+.reader .one{font-family:var(--f-head);font-weight:700;font-size:17px;line-height:1.7;border-left:3px solid var(--brass);padding-left:12px;margin:0}
+.reader .body p{margin:0 0 12px}
+.reader .body ul{margin:0 0 12px;padding-left:20px}
+.reader .body li{margin-bottom:6px}
+.pic{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.pic:last-child{border-bottom:0}
+.pic .ic{color:var(--brass);font-family:var(--f-latin);font-style:italic;font-size:18px;line-height:1.2}
+.pres{background:var(--navy-soft);border:1px solid color-mix(in srgb,var(--navy) 30%,var(--line))}
+.pres .lbl{color:var(--navy)}
+.pres p{margin:0;font-size:14.5px}
+.qa{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.qa b{font-size:14.5px}
+.navrow{display:flex;justify-content:space-between;gap:8px}
+/* 문답 */
+.flash{min-height:180px;display:flex;flex-direction:column;gap:12px}
+.flash .qq{font-family:var(--f-head);font-weight:800;font-size:20px;line-height:1.5}
+.flash .aa{font-size:15px;background:var(--sunk);border-radius:10px;padding:12px 14px}
+.tag{display:inline-block;font-size:11.5px;border-radius:999px;padding:1px 9px;font-weight:700}
+.tag.ok{background:var(--holly-soft);color:var(--holly)}
+.tag.no{background:var(--sunk);color:var(--mute)}
+.cardlist button{width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:9px 2px;display:flex;gap:8px;align-items:center;font-size:14px}
+.cardlist button span.t{flex:1;min-width:0}
+/* 기록 */
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal .d{aspect-ratio:1;border-radius:6px;background:var(--sunk);font-size:10.5px;display:flex;align-items:flex-start;justify-content:flex-end;padding:2px 4px;color:var(--faint);max-width:100%}
+.cal .d.l1{background:color-mix(in srgb,var(--holly) 30%,var(--sunk));color:var(--ink)}
+.cal .d.l2{background:color-mix(in srgb,var(--holly) 60%,var(--sunk));color:var(--ink)}
+.cal .d.l3{background:var(--holly);color:var(--on-navy)}
+.cal .d.today{outline:2px solid var(--brass);outline-offset:-2px}
+.cal .h{font-size:11px;color:var(--faint);text-align:center}
+.entry{border-bottom:1px solid var(--line);padding:10px 0;font-size:14px}
+.entry:last-child{border-bottom:0}
+.entry .meta{font-size:12px;color:var(--faint);display:flex;justify-content:space-between;gap:8px}
+.entry .tx{white-space:pre-wrap;overflow-wrap:anywhere}
+.x{border:0;background:none;color:var(--faint);padding:0 4px;font-size:13px}
+/* tabs */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--card) 93%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px max(10px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px));display:flex;justify-content:center;gap:4px}
+nav.tabs button{flex:1;max-width:130px;border:0;background:none;border-radius:10px;padding:6px 0;font-size:12px;color:var(--mute);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav.tabs button svg{width:22px;height:22px}
+nav.tabs button.on{color:var(--navy);font-weight:700}
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(8,12,22,.5);display:flex;align-items:flex-end;justify-content:center;padding:16px}
+@media (min-width:640px){.overlay{align-items:center}}
+.dialog{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;max-width:560px;width:100%;max-height:90vh;overflow:auto}
+.dialog h3{font-size:19px;margin-bottom:6px}
+.dialog .acts2{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:14px}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:13.5px;z-index:90;max-width:calc(100% - 32px);text-align:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.parts{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px;margin-top:14px}
+.part{border:0;background:color-mix(in srgb,var(--on-hall) 10%,transparent);border-radius:10px;padding:8px 10px;color:inherit;text-align:left;display:flex;flex-direction:column;gap:5px;font-size:12px;line-height:1.3;min-width:0}
+.part span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.part small{opacity:.72;font-size:11px;font-variant-numeric:tabular-nums}
+.pbar{display:block;height:6px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--brass);border-radius:inherit}
+.hall .pbar{background:color-mix(in srgb,var(--on-hall) 18%,transparent)}
+.hall .pbar i{background:var(--hall-bar)}
+.btn.acc2{background:var(--holly);border-color:var(--holly);color:var(--on-navy);font-weight:700}
+.note{background:var(--navy-soft);border:1px solid color-mix(in srgb,var(--navy) 30%,var(--line))}
+.note .lbl{color:var(--navy)}
+.note p{margin:0;font-size:14.5px}
+.actcard{background:var(--brass-soft);border-color:color-mix(in srgb,var(--brass) 35%,var(--line))}
+.actcard .lbl{color:var(--brass)}
+.sublbl{font-size:12.5px;color:var(--mute);font-weight:700;margin:10px 0 6px}
+.big{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.trend{display:flex;align-items:flex-end;gap:6px;height:90px;margin-top:6px}
+.trend div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%;font-size:10.5px;color:var(--faint);min-width:0}
+.trend i{display:block;width:100%;max-width:34px;border-radius:6px 6px 2px 2px;background:var(--navy)}
+.trend i.now{background:var(--brass)}
+.sc{padding:10px 0;border-bottom:1px solid var(--line)}
+.sc:last-child{border-bottom:0}
+.sc .h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.sc .h b{font-size:14.5px}
+.sc small{display:block;color:var(--mute);font-size:12.5px;line-height:1.5;margin-bottom:6px}
+.delta{font-size:12px;font-weight:700;white-space:nowrap}
+.delta.up{color:var(--holly)}.delta.down{color:var(--wine)}.delta.eq{color:var(--faint)}
+.pgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.pgrid button{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 4px;font-weight:700;font-size:14px}
+.pgrid button.right{background:var(--holly-soft);border-color:var(--holly);color:var(--holly)}
+.pgrid button.wrong{background:var(--wine-soft);border-color:var(--wine);color:var(--wine)}
+.pgrid button:disabled{cursor:default}
+details.prin{border:1px solid var(--line);border-radius:12px;padding:0 14px;margin-bottom:8px;background:var(--card)}
+details.prin summary{cursor:pointer;padding:12px 0;font-weight:700;display:flex;justify-content:space-between;gap:8px;list-style:none}
+details.prin summary::-webkit-details-marker{display:none}
+details.prin summary small{font-weight:400;color:var(--mute);font-size:12.5px;text-align:right}
+details.prin ul{margin:0 0 10px;padding-left:18px;font-size:14px}
+details.prin li{margin-bottom:4px}
+details.prin p{font-size:14px;margin:0 0 10px}
+.stat6{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.stat6 div{background:var(--sunk);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--mute)}
+.stat6 b{display:block;font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums}
+
+.hrow{display:flex;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.hrow:last-child{border-bottom:0}
+.hrow .tx{flex:1;min-width:0}
+.hrow .tx b{font-size:14.5px;display:block}
+.hrow .tx small{display:block;color:var(--mute);font-size:12.5px;line-height:1.5}
+.hbtns{display:flex;gap:6px;flex:none}
+.hb{border:1.5px solid var(--line);background:transparent;border-radius:9px;padding:6px 10px;font-size:13px;font-weight:700;color:var(--mute)}
+.hb.on.done{background:var(--holly);border-color:var(--holly);color:var(--on-navy)}
+.hb.on.two{background:var(--navy);border-color:var(--navy);color:var(--on-navy)}
+.hb.on.slip{background:var(--wine);border-color:var(--wine);color:var(--on-navy)}
+.kind{font-size:10.5px;font-weight:800;letter-spacing:.06em;border-radius:6px;padding:1px 6px;margin-right:4px;vertical-align:1px}
+.kind.b{background:var(--holly-soft);color:var(--holly)}.kind.x{background:var(--wine-soft);color:var(--wine)}
+.warn{font-size:12px;font-weight:700;color:var(--wine)}
+.streak{font-size:12px;font-weight:700;color:var(--brass);font-variant-numeric:tabular-nums}
+.fld{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.fld label{font-size:12.5px;font-weight:700;color:var(--mute)}
+.fld label i{font-style:normal;font-weight:400;color:var(--faint)}
+.plan{display:grid;gap:8px;margin:10px 0}
+.plan div{background:var(--sunk);border-radius:10px;padding:9px 12px;font-size:14px}
+.plan div b{display:block;font-size:11.5px;color:var(--mute);letter-spacing:.04em}
+.urge{border:1.5px solid var(--wine);color:var(--wine);background:var(--wine-soft);border-radius:12px;padding:10px 12px;font-weight:800;font-size:14px;text-align:left}
+.dots14{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:3px;margin-top:6px}
+.dots14 i{aspect-ratio:1;border-radius:3px;background:var(--sunk);display:block}
+.dots14 i.ok{background:var(--holly)}.dots14 i.two{background:var(--navy)}.dots14 i.fail{background:var(--wine)}
+.sv{display:flex;gap:4px;flex:none}
+.sv button{width:34px;border:1px solid var(--line);background:transparent;border-radius:8px;padding:4px 0;font-weight:800}
+.sv button.on.p{background:var(--holly);border-color:var(--holly);color:var(--on-navy)}
+.sv button.on.e{background:var(--faint);border-color:var(--faint);color:var(--on-navy)}
+.sv button.on.m{background:var(--wine);border-color:var(--wine);color:var(--on-navy)}
+.pgrid.five{grid-template-columns:repeat(3,minmax(0,1fr))}
+.top .sync{margin-left:8px!important}
+.wakebtn{margin-left:auto;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 11px;font-size:12px;font-weight:700;color:var(--mute);white-space:nowrap}
+.wakebtn.on{border-color:var(--brass);color:var(--brass)}
+.wakeseg{display:flex;gap:6px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <span class="ttl">아주 작은 습관</span>
+    <button class="wakebtn" id="wakeBtn" aria-pressed="true">화면 켜둠</button>
+    <span class="sync" id="syncTxt">이 기기에만 저장</span>
+  </header>
+  <main id="view"></main>
+</div>
+<nav class="tabs" id="tabs" aria-label="화면">
+  <button data-v="home" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>오늘</button>
+  <button data-v="read"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 21V4h9l5 5v12z"/><path d="M14 4v5h5"/><path d="M12 13v6M9 16h6"/></svg>읽기</button>
+  <button data-v="practice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12l5 5L20 6"/></svg>실천</button>
+  <button data-v="qa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v11H9l-5 4z"/><path d="M10 9.5a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6.9V13M12 15.2v.3"/></svg>카드</button>
+  <button data-v="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 3h14v18H5z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>기록</button>
+</nav>
+<div id="ovl"></div>
+<div class="toast" id="toast" hidden></div>
+<script>
+/* ---------- 제임스 클리어 『아주 작은 습관의 힘(Atomic Habits)』 요약·재구성 (원문 인용 없이 풀어 씀) ---------- */
+const BOOKS=[
+ {n:0,t:'기초 · 작은 습관의 힘',s:'왜 아주 작은 변화가 결국 큰 차이를 만드는가'},
+ {n:1,t:'1법칙 · 분명하게',s:'신호를 눈에 띄게 하라 — 알아차림, 구체적 계획, 환경 설계'},
+ {n:2,t:'2법칙 · 매력적으로',s:'열망을 키워라 — 도파민, 문화의 힘, 생각의 틀 바꾸기'},
+ {n:3,t:'3법칙 · 쉽게',s:'반응을 쉽게 하라 — 반복, 마찰 줄이기, 2분 규칙, 자동화'},
+ {n:4,t:'4법칙 · 만족스럽게',s:'보상을 즉각적으로 — 강화, 습관 추적, 책임 파트너'},
+ {n:5,t:'고급 전술 · 잘함에서 정말 잘함으로',s:'재능과 유전자, 골디락스 법칙, 성찰과 검토'},
+ {n:6,t:'마무리 · 결론과 작은 교훈들',s:'오래가는 결과의 비밀, 그리고 네 법칙이 알려 주는 인간 본성'}
+];
+const L=[
+/* 서론 */
+{id:'intro',b:0,t:'나의 이야기 — 야구 방망이에서 우수 선수상까지',one:'처음에는 사소해 보이는 변화도 몇 년 동안 꾸준히 이어 가면 놀라운 결과로 불어난다.',
+body:`<p>저자 제임스 클리어는 고등학교 2학년을 마치던 날, 친구가 휘두른 야구 방망이가 손에서 빠져 날아오는 바람에 얼굴 한가운데를 정통으로 맞았다. 코가 부서지고, 두개골 여러 곳이 금 가고, 양쪽 눈구멍 뼈까지 깨졌다. 양호실에서 연도와 대통령 이름을 틀리게 말하고 엄마 이름조차 한참 만에 떠올렸고, 곧 의식을 잃었다.</p>
+<p>병원에서 그는 발작을 일으키고 스스로 숨조차 쉬지 못해 헬기로 큰 병원에 옮겨졌고, 결국 약물로 유도된 혼수상태에 들어갔다. 깨어난 뒤에도 코를 풀다가 깨진 눈구멍 사이로 공기가 들어가 한쪽 눈알이 튀어나오는 일까지 겪었다. 몇 주 동안 사물이 둘로 보였고, 운전을 다시 하기까지 8개월이 걸렸으며, 재활 치료에서 똑바로 걷는 연습부터 다시 했다.</p>
+<p>야구 선수가 꿈이던 그는 1년 뒤 학교 대표팀에서 3학년 중 유일하게 탈락했다. 마지막 학년에 겨우 대표팀에 들었지만 고교 시절 전체를 통틀어 경기에 나선 시간은 한 경기 남짓이었다. 그래도 그는 상황을 바꿀 책임이 자기에게 있다고 믿었다.</p>
+<p>전환점은 대학(데니슨 대학교)이었다. 주전이 될 가망이 없으니 그는 <b>삶의 기본을 정돈하는 데</b> 집중했다. 친구들이 밤새 게임할 때 일찍 자는 습관을 들였고, 어수선한 기숙사에서도 방을 깔끔하게 유지했다. 이 사소한 변화들이 삶을 다스리고 있다는 감각을 주었고, 자신감이 공부로 번져 첫해에 전 과목 A를 받았다. 일주일에 여러 번 웨이트를 하는 습관으로 몸무게도 약 77kg에서 91kg으로 늘었다.</p>
+<p>2학년에 선발 투수가 되었고, 3학년에 주장, 4학년에는 수면·공부·근력 습관이 한꺼번에 열매를 맺었다. 부상 후 6년 만에 그는 학교 최고의 남자 선수로 뽑혔고, 전국에서 33명만 받는 학업·운동 우수 선수 명단에 이름을 올렸으며, 대학 최고 학업상도 받았다. 극적인 한 순간은 없었다. 작은 승리와 작은 돌파가 길게 이어졌을 뿐이다.</p>
+<p>그는 2012년부터 블로그에 매주 월요일과 목요일 글을 올리는 습관을 시작했고, 이 단순한 습관이 몇 년 만에 수십만 명의 구독자, 기업 강연, 습관 교육 과정, 그리고 이 책으로 이어졌다. 그는 이 책을 연구 논문이 아니라 <b>사용 설명서</b>라고 부른다.</p>
+<p>책의 뼈대는 습관의 4단계 모형인 <b>신호 → 열망 → 반응 → 보상</b>, 그리고 여기서 나온 <b>행동 변화의 네 가지 법칙</b>이다. 스키너의 "자극-반응-보상", 두히그의 "신호-반복 행동-보상"을 바탕으로 하되, 바깥 자극뿐 아니라 생각·감정 같은 내면 상태까지 함께 설명하려 한다. 저자는 이 책이 계속 변하는 것이 아니라 <b>변하지 않는 인간 행동의 기본 원리</b>에 관한 책이라고 말한다.</p>`,
+pics:['얼굴로 날아온 야구 방망이 · 혼수상태와 재활, 대표팀 탈락에서 다시 시작','깔끔한 기숙사 방과 이른 취침 · 아주 사소한 정돈이 통제감과 자신감을 돌려주었다','6년 뒤의 시상식 · 한 번의 결정적 순간이 아니라 작은 승리의 긴 행렬','월·목 블로그 글쓰기 · 단순한 글쓰기 습관이 구독자 수십만 명과 책으로 자랐다'],
+q:['요즘 내 삶에서 "통제할 수 있는 아주 작은 기본"(잠, 책상 정리, 기상 시간)은 무엇인가?','나는 한 번의 큰 결심과 꾸준한 작은 습관 중 어느 쪽에 더 기대 왔나?'],
+act:'오늘 밤 잠들기 전 책상 위를 3분만 정리하고, 내일 일어날 시간을 하나 정해 지킨다.',
+ref:[]},
+/* 기초 */
+{id:'c1',b:0,t:'아주 작은 습관의 놀라운 힘',one:'습관은 자기 계발의 복리다. 목표가 아니라 시스템에 집중하라.',
+body:`<p>2003년 영국 사이클 대표팀은 100년 가까이 평범했다. 올림픽 금메달은 1908년 이후 하나뿐이었고, 투르 드 프랑스 우승자는 한 명도 없었다. 한 유명 자전거 회사는 영국 팀이 자기 자전거를 타면 판매가 떨어질까 봐 장비 판매를 거절할 정도였다. 새 감독 <b>데이브 브레일스퍼드</b>는 <b>"사소한 이득의 누적"</b>이라는 전략을 썼다. 자전거 타기에 들어가는 모든 요소를 쪼개 각각 1%씩만 낫게 만들면 합쳐서 큰 차이가 난다는 생각이다.</p>
+<p>그들은 안장을 편하게 바꾸고, 타이어에 알코올을 발라 접지력을 높이고, 근육 온도를 유지하는 전열 반바지를 입히고, 풍동에서 옷감을 시험했다. 거기서 멈추지 않고 회복이 가장 빠른 마사지 젤을 찾고, 외과 의사에게 감기를 덜 걸리는 손 씻기 법을 배우고, 선수마다 가장 잘 자는 베개와 매트리스를 찾고, 정비 트럭 안을 흰색으로 칠해 먼지를 잘 보이게 했다. 5년 뒤 베이징 올림픽에서 도로·트랙 종목 금메달의 약 60%를 가져갔고, 2012년 런던에서는 올림픽 기록 9개와 세계 기록 7개를 세웠다. 이후 6년 동안 투르 드 프랑스를 다섯 번 우승했다.</p>
+<p>우리는 한 번의 결정적 순간을 과대평가하고 매일의 작은 개선을 과소평가한다. 1년 동안 매일 1%씩 나아지면 약 <b>37배</b>가 되고, 매일 1%씩 나빠지면 거의 <b>0</b>에 가까워진다. 습관은 돈의 복리처럼 반복될수록 불어난다. 하루하루는 차이가 안 보이지만 몇 년 뒤에 돌아보면 좋은 습관의 가치와 나쁜 습관의 대가가 선명해진다. 비행기 항로를 몇 도만 틀어도 도착지가 수백 km 달라지는 것과 같다.</p>
+<p>그래서 지금의 성적보다 <b>지금의 궤도</b>가 중요하다. 결과는 습관의 <b>후행 지표</b>다. 몸무게는 식습관의, 지식은 학습 습관의, 방의 어수선함은 정리 습관의 뒤늦은 성적표다. 시간은 무엇이든 먹이는 대로 키운다. 좋은 습관은 시간을 내 편으로, 나쁜 습관은 적으로 만든다. 생산성·지식·관계는 좋은 쪽으로 복리가 붙고, 스트레스·부정적 생각·분노는 나쁜 쪽으로 복리가 붙는다.</p>
+<p><b>얼음 조각</b>을 떠올려 보자. 화씨 25도인 방이 1도씩 따뜻해져도 31도까지는 아무 일도 없다. 그러다 32도(0°C)가 되는 순간 녹기 시작한다. 직전의 1도와 다를 바 없는 1도가 큰 변화를 연다. 대나무도 처음 몇 년은 땅속에 뿌리를 뻗느라 거의 안 보이다가 몇 주 만에 수십 미터 솟는다. 습관도 임계점을 넘기 전까지는 효과가 없어 보이는 <b>실망의 계곡</b>을 지난다. 저자는 이것을 <b>잠재력의 고원</b>이라 부른다. 노력은 사라진 게 아니라 저장되고 있다. 백 번 내리쳐도 금 하나 안 가던 돌이 백한 번째에 쪼개질 때, 쪼갠 것은 마지막 한 번이 아니라 그전의 모든 망치질이다.</p>
+<p>그렇다면 무엇이 고원을 버티게 할까? 저자는 <b>목표를 잊고 시스템에 집중하라</b>고 말한다. 목표는 원하는 결과이고, 시스템은 그 결과로 이끄는 과정이다. 목표가 쓸모없지는 않다. 방향을 정하는 데 좋다. 하지만 진전을 만드는 것은 시스템이다. 목표에만 집중하면 네 가지 문제가 생긴다.</p>
+<ul><li><b>승자와 패자의 목표는 같다</b> — 모든 수험생이 합격을 원한다. 목표는 승패를 가르지 못한다(생존자 편향).</li><li><b>목표 달성은 일시적 변화다</b> — 방을 한 번 치워도 어지르는 습관이 그대로면 다시 어질러진다. 결과가 아니라 결과를 만드는 시스템을 고쳐야 한다.</li><li><b>목표는 행복을 미룬다</b> — "목표를 이루면 행복해지겠지"라는 생각은 행복을 늘 다음으로 미루고, 성공 아니면 실패라는 좁은 틀에 가둔다. 과정을 사랑하면 시스템이 돌아가는 동안 언제든 만족할 수 있다.</li><li><b>목표는 장기적 성장과 충돌한다</b> — 대회가 끝나면 훈련을 멈추는 요요 현상. 목표는 게임에서 이기기 위한 것이고, 시스템은 게임을 계속하기 위한 것이다.</li></ul>
+<p>습관을 바꾸기 어렵다면 문제는 내가 아니라 내 시스템이다. 사람은 목표의 높이까지 올라가는 것이 아니라 <b>시스템의 수준으로 떨어진다</b>. "아주 작은(atomic)" 습관이란 작고 쉬운 동시에 원자처럼 거대한 힘의 원천이 되는, 더 큰 시스템을 이루는 기본 단위의 습관이다.</p>`,
+pics:['영국 사이클 팀의 1% · 흰색으로 칠한 트럭 내부, 선수별 베개, 손 씻기 교육','1.01의 365제곱 · 매일 1% 성장은 1년 뒤 약 37배, 1% 퇴보는 거의 0','화씨 31도의 얼음 · 변화가 없어 보여도 열은 쌓이고 있다(잠재력의 고원)','석공의 백한 번째 망치질 · 돌을 쪼갠 건 그전의 모든 망치질','어지러운 방 · 한 번 치우는 목표 vs 어지르지 않는 시스템'],
+q:['지금 내 성적이 아니라 "지금의 궤도"를 그려 보면 1년 뒤 나는 어디에 있을까?','내 목표(등급, 대학) 대신 매일 돌아가는 시스템은 무엇인가? 그 시스템이 없다면 무엇부터 만들까?'],
+act:'"수능 목표 점수" 옆에 "그 점수를 만드는 매일의 시스템" 세 줄(언제, 무엇을, 얼마나)을 적는다.',
+ref:[]},
+{id:'c2',b:0,t:'습관은 정체성을 만들고, 정체성은 습관을 만든다',one:'무엇을 이룰지가 아니라 어떤 사람이 될지에 집중하라. 모든 행동은 되고 싶은 나에게 던지는 한 표다.',
+body:`<p>습관을 바꾸기 어려운 이유는 두 가지다. 엉뚱한 것을 바꾸려 하고, 엉뚱한 방식으로 바꾸려 하기 때문이다. 이 장은 첫 번째를 다룬다. 변화에는 양파 껍질처럼 <b>세 층</b>이 있다. 가장 바깥은 <b>결과</b>(살 빼기, 합격), 중간은 <b>과정</b>(운동 루틴, 공부 계획), 가장 깊은 곳은 <b>정체성</b>(나는 어떤 사람이라는 믿음)이다. 결과는 무엇을 얻느냐, 과정은 무엇을 하느냐, 정체성은 무엇을 믿느냐의 문제다.</p>
+<p>어느 층이 더 좋다는 게 아니라 <b>방향</b>이 문제다. 대부분은 원하는 결과에서 출발하는 <b>결과 기반 습관</b>을 만든다. 저자는 되고 싶은 사람에서 출발하는 <b>정체성 기반 습관</b>을 권한다. 담배를 권유받은 두 사람을 보자. 한 명은 "끊는 중이에요"라고 말한다. 여전히 자신을 흡연자로 여기는 것이다. 다른 한 명은 "저는 담배를 안 피워요"라고 말한다. 작은 차이지만 정체성이 바뀌었다는 신호다.</p>
+<p>모든 행동 체계 뒤에는 믿음 체계가 있고, 자기 모습과 어긋나는 행동은 오래가지 못한다. 기업가 브라이언 클라크는 어릴 때부터 손톱을 물어뜯었다. 의지로 잠시 참은 뒤 난생처음 손톱 관리를 받았는데, 깔끔해진 손톱을 보고 처음으로 손톱이 <b>자랑스러워졌다</b>. 그 뒤로 다시는 뜯지 않았다. 습관이 정체성의 일부가 될 때 가장 강한 내적 동기가 생긴다. "나는 이것을 원하는 사람"과 "나는 이런 사람"은 전혀 다르다. 목표는 책 한 권 읽기가 아니라 <b>읽는 사람</b>이 되는 것이고, 마라톤 완주가 아니라 <b>달리는 사람</b>이 되는 것이다. 실제로 "투표하기"를 하고 싶은 행동으로 여긴 사람보다 "투표하는 사람"으로 여긴 사람이 더 많이 투표했다.</p>
+<p>정체성은 양날의 검이기도 하다. "나는 길치야", "나는 아침형 인간이 아니야", "나는 수학을 못해" 같은 이야기를 오래 되풀이하면 사실처럼 굳어 버리고, "그건 내가 아니야"라며 변화를 거부하게 된다. 생각이 정체성에 깊이 묶일수록 바꾸기 어렵다. 그래서 진보에는 <b>배운 것을 버리는 일</b>이 필요하다. 믿음을 계속 고치고, 정체성을 넓히고 업그레이드해야 한다.</p>
+<p>그렇다면 정체성은 어디서 올까? <b>습관에서 나온다</b>. 정체성(identity)이라는 말은 라틴어로 "존재"와 "반복해서"라는 뜻에서 왔다. 정체성은 말 그대로 "반복된 존재"다. 지금의 정체성을 믿는 이유는 증거가 있기 때문이다. 20년 동안 매주 교회에 갔다면 신앙인이라는 증거가, 매일 밤 생물을 한 시간씩 공부했다면 성실한 학생이라는 증거가 있다. 저자도 원래 글을 잘 쓰는 사람이 아니었지만 일주일에 두 번 글을 올리며 증거가 쌓이자 작가가 되었다.</p>
+<p>그래서 <b>모든 행동은 되고 싶은 사람에게 던지는 한 표</b>다. 한 표로 선거가 끝나지 않듯, 한 번의 행동이 믿음을 바꾸지는 않는다. 하지만 표가 쌓이면 새 정체성의 증거도 쌓인다. 완벽할 필요는 없다. 선거에서 이기려면 만장일치가 아니라 <b>과반수</b>면 된다. 나쁜 습관에 몇 표 던졌다고 무너지지 않는다. 다만 늘 같은 표를 던지면 늘 같은 결과를 얻는다.</p>
+<p>정체성을 바꾸는 과정은 <b>두 단계</b>다. ① 어떤 사람이 되고 싶은지 정한다. ② 작은 승리로 스스로에게 증명한다. 막막하면 원하는 결과에서 거꾸로 묻는다. "그 결과를 얻을 사람은 어떤 사람일까?" 100파운드(약 45kg)를 뺀 저자의 친구는 하루 종일 "건강한 사람이라면 어떻게 할까?"를 물었다. 걸을까 택시를 탈까, 부리토를 먹을까 샐러드를 먹을까. 습관은 정체성을 만들고 정체성은 습관을 만드는 <b>피드백 고리</b>다. 결과가 아니라 가치와 정체성이 이 고리를 이끌게 하라. 결국 습관이 중요한 진짜 이유는 무언가를 <b>갖게</b> 해 주어서가 아니라 누군가가 <b>되게</b> 해 주기 때문이다.</p>`,
+pics:['양파의 세 껍질 · 결과(얻는 것) → 과정(하는 것) → 정체성(믿는 것)','"끊는 중이에요" vs "안 피워요" · 같은 거절, 다른 정체성','손톱 관리를 받은 브라이언 클라크 · 자랑스러움이 생기자 물어뜯기가 멈췄다','투표함 · 모든 행동은 되고 싶은 나에게 던지는 한 표, 과반수면 이긴다','"건강한 사람이라면?" · 하루 종일 이 질문으로 선택한 친구'],
+q:['내가 자주 하는 "나는 원래 ___를 못해"라는 말은 무엇이고, 그 말에 반대하는 증거를 만들 작은 행동은 무엇인가?','내가 원하는 결과(성적, 몸, 신앙)를 얻을 사람은 어떤 사람일까? 그 사람이라면 오늘 무엇을 할까?'],
+act:'"나는 ___ 사람이다" 한 문장을 정하고, 오늘 그 정체성에 던지는 한 표(아주 작은 행동)를 하나 실천해 기록한다.',
+ref:[],
+note:`그리스도인의 가장 깊은 정체성은 습관으로 쌓아 올리는 것이 아니라 은혜로 주어진다. 개혁신앙은 우리가 행위가 아니라 믿음으로 의롭다 함을 받는다고 고백한다(엡 2:8-9). 그러니 "한 표를 던져 하나님의 자녀가 된다"는 식으로 이 장을 읽으면 안 된다. 다만 이미 받은 새 정체성에 걸맞게 살아가는 성화의 과정에서 말씀 읽기·기도·예배 같은 꾸준한 습관은 하나님이 쓰시는 귀한 통로가 된다(빌 2:12-13). "나는 그리스도 안에 있는 사람이다"라는 출발점에서 "그러니 오늘 이렇게 산다"로 나아가는 것이 순서다.`},
+{id:'c3',b:0,t:'더 나은 습관을 만드는 4단계',one:'모든 습관은 신호-열망-반응-보상의 고리를 돈다. 여기서 행동 변화의 네 법칙이 나온다.',
+body:`<p>1898년 심리학자 <b>에드워드 손다이크</b>는 고양이를 "퍼즐 상자"에 넣었다. 상자 안의 지렛대를 누르거나 끈을 당기면 문이 열려 밖의 먹이로 갈 수 있었다. 처음에 고양이들은 이리저리 헤매다 우연히 지렛대를 눌렀다. 하지만 시도가 반복될수록 지렛대와 탈출을 연결해 배웠고, 20~30번 뒤에는 몇 초 만에 빠져나왔다. 한 고양이는 처음 세 번 평균 1분 30초가 걸렸지만 마지막 세 번은 평균 6초 남짓이었다. 손다이크의 결론은 단순하다. 만족스러운 결과가 따르는 행동은 반복되고, 불쾌한 결과가 따르는 행동은 덜 반복된다.</p>
+<p><b>습관이란 충분히 반복되어 자동이 된 행동</b>이다. 새로운 상황에서 뇌는 시행착오를 거치며 활발히 움직인다. 그러다 우연히 보상(불안할 때 달리기를 했더니 마음이 가라앉음)을 만나면 뇌는 직전에 무엇을 했는지 기록한다. 시도하고, 실패하고, 배우고, 다르게 시도한다. 반복할수록 쓸모없는 동작은 사라지고 쓸모 있는 행동은 강화된다. 결국 뇌는 "이러면 저렇게"라는 규칙을 만들고 생각 없이 따른다. 습관은 반복되는 문제에 대한 <b>믿을 만한 해결책</b>이자 경험에서 배운 지름길이다.</p>
+<p>의식은 한 번에 한 가지밖에 처리하지 못하는 뇌의 병목이다. 그래서 뇌는 할 수 있는 일을 무의식에 넘기려 한다. 습관은 인지 부담을 덜어 정신의 여유를 만든다. "습관이 많으면 삶이 지루해지지 않을까?"라는 걱정은 틀렸다. 습관은 자유를 빼앗지 않고 <b>만들어 준다</b>. 기본 습관이 없는 사람이 오히려 늘 돈에 쫓기고, 피곤하고, 뒤처진 느낌 속에 산다. 기본이 해결되어야 새로운 도전에 마음을 쓸 수 있다.</p>
+<p>습관은 네 단계로 나뉜다. <b>① 신호</b>는 보상을 예고하는 정보로, 행동을 시작하게 한다. <b>② 열망</b>은 모든 습관의 동기다. 우리가 원하는 것은 습관 자체가 아니라 그것이 주는 <b>상태의 변화</b>다. 양치가 아니라 개운한 입안을, TV가 아니라 즐거움을 원한다. 같은 신호라도 사람마다 해석이 달라 열망이 달라진다. <b>③ 반응</b>은 실제 행동(생각이나 동작)이며, 동기와 마찰, 능력에 따라 일어날지 결정된다. <b>④ 보상</b>은 모든 습관의 종착점으로, 열망을 <b>채워 주고</b> 어떤 행동이 기억할 가치가 있는지 <b>가르쳐 준다</b>.</p>
+<p>네 단계 중 하나라도 부족하면 습관이 되지 않는다. 신호를 없애면 시작되지 않고, 열망을 줄이면 동기가 없고, 어렵게 하면 할 수 없고, 보상이 만족스럽지 않으면 다시 할 이유가 없다. 앞의 세 단계가 없으면 행동이 일어나지 않고, 네 단계가 다 없으면 반복되지 않는다. 이 고리는 살아 있는 매 순간 쉬지 않고 돈다.</p>
+<p>네 단계는 다시 <b>문제 단계</b>(신호, 열망)와 <b>해결 단계</b>(반응, 보상)로 나뉜다. 예를 들어 폰이 진동한다(신호) → 내용이 궁금하다(열망) → 폰을 집어 확인한다(반응) → 궁금증이 풀린다(보상). 문제가 막혀 답답하다 → 해소하고 싶다 → SNS를 연다 → 잠시 후련하다. 모든 행동은 결국 문제를 풀려는 시도다.</p>
+<p>여기서 <b>행동 변화의 네 법칙</b>이 나온다. 좋은 습관을 만들려면 ① <b>분명하게</b>(신호) ② <b>매력적으로</b>(열망) ③ <b>쉽게</b>(반응) ④ <b>만족스럽게</b>(보상) 하라. 나쁜 습관을 끊으려면 이를 뒤집어 ① <b>보이지 않게</b> ② <b>매력 없게</b> ③ <b>어렵게</b> ④ <b>불만족스럽게</b> 하라. 각 법칙은 행동을 움직이는 지렛대다. "왜 나는 하겠다고 한 걸 안 하지?"라는 질문의 답은 이 네 법칙 어딘가에 있다. 인간 본성을 거스르는 목표는 실패한다.</p>`,
+pics:['손다이크의 퍼즐 상자 · 1분 넘게 헤매던 고양이가 몇 초 만에 탈출하게 되었다','습관 고리 · 신호 → 열망 → 반응 → 보상, 그리고 다시 신호로','진동하는 폰 · 궁금함이 손을 움직이고, 확인이 그 행동을 강화한다','네 개의 지렛대 · 분명하게, 매력적으로, 쉽게, 만족스럽게 (뒤집으면 끊는 법)'],
+q:['내가 가장 고치고 싶은 습관 하나를 신호-열망-반응-보상으로 쪼개면 어떻게 될까?','그 습관이 실제로 채워 주는 "상태의 변화"는 무엇인가? (지루함 해소, 불안 진정, 인정받음 등)'],
+act:'고치고 싶은 습관 하나를 골라 오늘 그 습관이 일어난 순간의 신호·열망·반응·보상을 한 줄씩 적어 본다.',
+ref:[]},
+/* 1법칙 */
+{id:'c4',b:1,t:'"어딘가 이상해 보이는" 남자 — 알아차림부터',one:'행동 변화는 언제나 알아차림에서 시작한다. 지적하고 말하기와 습관 점수표로 무의식을 의식으로 끌어올려라.',
+body:`<p>심리학자 게리 클라인이 들려준 이야기다. 오랫동안 구급대원으로 일한 여성이 가족 모임에서 시아버지 얼굴을 보자마자 "지금 당장 병원에 가셔야 해요"라고 했다. 본인은 멀쩡하다고 했지만 검사해 보니 주요 동맥이 막혀 심장마비 직전이었다. 그녀는 심장 질환자의 얼굴에 나타나는 미묘한 혈색 변화를 수없이 보면서, 설명은 못 하지만 알아보는 능력을 갖게 된 것이다. 레이더 화면에서 아군기와 똑같아 보이는 미사일을 알아본 장교, 진품과 위작을 직감으로 가려내는 큐레이터도 마찬가지다.</p>
+<p>뇌는 <b>예측 기계</b>다. 반복해서 경험하면 중요한 신호를 골라 저장하고, 나중에는 생각하지 않아도 그 신호를 알아챈다. 배고픔을 느낄 때 굳이 쿠키를 보지 않아도 되는 것처럼, <b>습관이 시작되는 데 신호를 의식할 필요가 없다</b>. 이것이 습관을 유용하게도, 위험하게도 만든다. 웃을 때 입을 가리는 버릇, 질문 전에 사과하는 버릇처럼 누가 말해 주기 전에는 모른다.</p>
+<p>자동 조종의 예는 우습고도 섬뜩하다. 잔액을 다 쓴 상품권을 가위로 자르던 점원이 다음 손님의 진짜 신용카드까지 잘라 버렸다. 유치원 교사였다가 회사원이 된 사람은 동료 어른들에게 화장실 다녀와서 손을 씻었느냐고 묻곤 했다. 오래된 신호는 너무 익숙해져서 거의 보이지 않는다. 식탁 위 과자, 소파 옆 리모컨, 주머니 속 폰. 그래서 변화는 <b>알아차림</b>에서 시작해야 한다. 무의식을 의식으로 만들지 않으면 그것이 삶을 이끌고 우리는 그걸 운명이라 부르게 된다.</p>
+<p>일본 철도 기관사들은 신호등을 손가락으로 가리키며 "신호 초록!"이라고 외치고, 속도계와 시간표도 가리키며 소리 내어 말한다. 승강장 직원도 선로를 가리키며 이상 없음을 외친다. 이 <b>지적하고 말하기</b>는 실수를 최대 85%, 사고를 30% 줄인다. 뉴욕 지하철은 가리키기만 도입했는데도 정차 위치 오류가 2년 만에 57% 줄었다. 눈, 손, 입, 귀를 다 쓰게 해서 자동 행동을 의식의 수준으로 끌어올리기 때문이다. 저자의 아내도 여행 전 "열쇠 챙겼고, 지갑 챙겼고, 안경 챙겼고, 남편 챙겼고" 하며 소리 내어 확인한다.</p>
+<p>개인의 삶에 쓰는 지적하고 말하기가 <b>습관 점수표</b>다. 아침에 일어나서부터 하는 일을 순서대로 적는다. 일어나기, 알람 끄기, 폰 확인, 세수, 양치… 그리고 각각 좋은 습관이면 <b>+</b>, 나쁜 습관이면 <b>−</b>, 중립이면 <b>=</b>를 붙인다. 같은 행동도 목표에 따라 점수가 다르다. 사실 좋은 습관과 나쁜 습관은 따로 없고 <b>효과적인 습관</b>만 있다. 모든 습관은 어떤 식으로든 나에게 도움이 되기 때문에 반복된다. 장기적으로 순이익이 남는지가 기준이다.</p>
+<p>헷갈리면 이렇게 묻는다. "이 행동은 내가 되고 싶은 사람에게 찬성표인가 반대표인가?" 점수표를 쓸 때는 아무것도 바꾸려 하지 말고 <b>판단 없이 관찰</b>만 한다. 남의 일을 구경하듯 "오, 이 사람은 아침마다 초콜릿을 먹네" 하고 알아차리면 된다. 자책도 칭찬도 하지 않는다.</p>
+<p>더 도움이 필요하면 하려는 행동과 그 결과를 소리 내어 말한다. "지금 이 과자를 먹으려 한다. 필요 없고, 먹으면 몸에 안 좋다." 소리로 들으면 결과가 더 실감 나고, 습관에 무게가 생긴다. "내일 점심 먹고 우체국에 가야 해"라고 말하기만 해도 실제로 할 확률이 올라간다.</p>`,
+pics:['시아버지의 얼굴을 읽은 구급대원 · 수없는 경험이 설명할 수 없는 직감이 되었다','신용카드를 자른 점원 · 자동 조종 상태의 무서움','도쿄 기관사의 손가락 · 지적하고 말하기로 실수 85% 감소','"남편 챙겼고" · 저자 아내의 소리 내어 짐 확인','+ − = 점수표 · 판단 없이 하루 습관을 적어 보기'],
+q:['내가 누가 말해 줘야만 알아채는 버릇은 무엇일까? (가족에게 물어보자)','오늘 하루 습관을 점수표로 적으면 −가 가장 많이 몰린 시간대는 언제일까?'],
+act:'내일 아침 일어나서 공부를 시작할 때까지의 행동을 순서대로 적고 + − = 를 붙여 습관 점수표를 만든다.',
+ref:[]},
+{id:'c5',b:1,t:'새 습관을 시작하는 가장 좋은 방법',one:'동기가 부족한 게 아니라 명확함이 부족하다. 언제, 어디서 할지 정하고(실행 의도), 이미 하는 습관에 새 습관을 쌓아라.',
+body:`<p>2001년 영국 연구자들은 248명을 세 그룹으로 나눠 2주간 운동 습관을 연구했다. 첫 그룹은 운동 횟수만 기록했다. 둘째 그룹은 기록과 함께 운동의 이점(심장 건강 등)에 관한 동기 부여 자료를 읽었다. 셋째 그룹은 같은 자료를 읽은 뒤 "다음 주 [요일] [시간]에 [장소]에서 20분 이상 운동하겠다"는 문장을 채웠다. 결과는 놀라웠다. 첫째·둘째 그룹은 35~38%만 주 1회 이상 운동했다(동기 자료는 효과가 거의 없었다). 셋째 그룹은 <b>91%</b>였다.</p>
+<p>이 문장을 <b>실행 의도</b>라고 한다. 언제, 어디서 행동할지 미리 세운 계획이다. 습관의 신호는 진동, 냄새, 소리 등 다양하지만 가장 흔한 두 가지는 <b>시간과 장소</b>다. 실행 의도는 이 둘을 모두 활용한다. 독감 예방 접종, 건강 검진 예약, 투표, 세금 납부까지 수백 건의 연구에서 효과가 확인되었다. 투표장에 어떤 길로, 몇 시에, 어떤 버스로 갈지 묻기만 해도 투표율이 올라갔다.</p>
+<p>많은 사람이 동기가 없다고 생각하지만 실은 <b>명확함</b>이 없다. "운동 더 해야지", "공부 열심히 해야지"는 언제 어디서 할지 말해 주지 않는다. 실행 의도를 정하면 영감이 올 때까지 기다릴 필요가 없다. 그 순간이 오면 결정하지 말고 계획대로 하면 된다. 공식은 이렇다. <b>"나는 [행동]을 [시간]에 [장소]에서 하겠다."</b> 예: "나는 영어 단어를 저녁 8시에 내 책상에서 20분 외우겠다." 언제 시작할지 모르겠으면 한 주, 한 달, 한 해의 첫날이 좋다. 새 출발은 희망을 키운다. 또 목표가 구체적이면 방해되는 사소한 부탁과 예외에 "아니"라고 말하기 쉬워진다.</p>
+<p>프랑스 철학자 <b>드니 디드로</b>는 평생 가난했다. 딸의 결혼 비용을 마련하지 못하던 1765년, 그의 백과사전을 좋아한 러시아의 예카테리나 여제가 그의 서재를 큰돈에 사 주었다. 여유가 생긴 디드로는 멋진 진홍색 가운을 샀다. 그런데 가운이 너무 아름다워 나머지 살림이 초라해 보였다. 그는 양탄자, 조각상, 거울, 식탁, 가죽 의자까지 줄줄이 바꿨다. 이렇게 새 물건 하나가 연쇄 소비를 부르는 현상을 <b>디드로 효과</b>라 한다. 신발을 사면 옷이, 소파를 사면 거실 배치가 신경 쓰인다.</p>
+<p>행동도 이렇게 이어진다. 하나의 행동이 다음 행동의 신호가 된다. 이를 좋은 쪽으로 쓰는 것이 <b>습관 쌓기</b>다(BJ 포그의 작은 습관 방법에서 왔다). 시간·장소 대신 <b>이미 하는 습관</b>에 새 습관을 짝짓는다. 공식: <b>"[현재 습관]을 한 뒤에 [새 습관]을 하겠다."</b> 예: 아침에 물을 따른 뒤 1분 호흡한다. 집에 와서 신발을 벗으면 바로 운동복으로 갈아입는다. 저녁 식탁에 앉으면 감사한 일 하나를 말한다. 익숙해지면 여러 개를 사슬처럼 이을 수 있다. 물 → 1분 호흡 → 오늘 할 일 쓰기 → 첫 과제 시작. 기존 루틴 중간에 끼워 넣을 수도 있다. 아침에 침대를 정리할 때 베개 위에 책을 올려 두면 밤에 누울 때 책이 기다린다.</p>
+<p>상황 규칙으로도 쓸 수 있다. "계단을 보면 엘리베이터 대신 계단으로 간다." "비싼 물건을 사고 싶으면 24시간 기다린다." "새 물건을 하나 사면 하나를 비운다." "공공장소를 떠날 때 자리를 한번 둘러본다."</p>
+<p>성공의 열쇠는 <b>알맞은 신호</b>다. 바쁘고 정신없는 시간에 새 습관을 넣으면 실패한다. 신호의 빈도는 새 습관과 같아야 한다. 매일 할 습관을 월요일에만 하는 일에 붙이면 안 된다. 매일 반드시 하는 일 목록(일어나기, 양치, 식사, 불 끄기)과 매일 반드시 일어나는 일 목록(해 뜨기, 문자 오기, 노래 끝나기)을 만들어 그 사이에 끼울 자리를 찾자. 또 신호는 <b>구체적이고 즉시 행동 가능</b>해야 한다. 저자는 "점심시간에 팔굽혀펴기 10개"로 시작했다가 먹기 전인지 후인지, 어디서인지 애매해서 실패했다. "점심 먹으러 노트북을 덮으면 책상 옆에서 팔굽혀펴기 10개"로 바꾸자 애매함이 사라졌다.</p>`,
+pics:['91% vs 38% · 동기 자료보다 "언제 어디서" 한 문장이 운동을 두 배 이상 늘렸다','디드로의 진홍색 가운 · 새 가운 하나가 양탄자, 의자, 거울까지 줄줄이 바꾸게 했다','습관 사슬 · 물 따르기 → 1분 호흡 → 할 일 쓰기 → 첫 과제','베개 위의 책 · 아침 루틴에 끼워 둔 신호가 밤 독서를 부른다','노트북을 덮는 순간 · 모호한 "점심시간"보다 구체적인 신호'],
+q:['내가 "해야지"라고만 말하고 시간과 장소를 정하지 않은 습관은 무엇인가?','매일 빠짐없이 하는 일 중 새 습관을 붙이기 가장 좋은 자리는 어디인가?'],
+act:'"나는 [행동]을 [시간]에 [장소]에서 하겠다" 한 문장과 "[현재 습관] 뒤에 [새 습관]" 한 문장을 써서 책상에 붙인다.',
+ref:[]},
+{id:'c6',b:1,t:'동기는 과대평가되었다 — 환경이 더 중요하다',one:'사람은 물건이 무엇이냐보다 어디에 있느냐에 따라 고른다. 좋은 습관의 신호는 크게, 한 공간에는 한 용도만.',
+body:`<p>보스턴의 한 병원 의사 앤 손다이크는 사람들의 의지나 동기를 전혀 건드리지 않고, 말 한마디 하지 않고도 수천 명의 식습관을 바꿀 수 있다고 믿었다. 그녀의 팀은 병원 구내식당의 <b>선택 구조</b>만 바꿨다. 계산대 옆 냉장고에는 원래 탄산음료만 있었는데 모든 냉장고에 생수를 넣고, 음식 코너 곳곳에 생수 바구니를 놓았다. 석 달 뒤 탄산음료 판매는 11.4% 줄고 생수 판매는 25.8% 늘었다.</p>
+<p>사람들은 물건이 <b>무엇인지보다 어디에 있는지</b> 때문에 고른다. 식탁 위 쿠키 접시를 보면 배고프지 않아도 집어 먹는다. 환경은 행동을 빚는 보이지 않는 손이다. 예배당에서는 다들 속삭이고, 어두운 길에서는 경계한다. 심리학자 쿠르트 레빈은 이것을 <b>행동 = 사람 × 환경의 함수</b>, 곧 B = f(P, E)로 나타냈다. 마트에서는 눈높이 상품과 통로 끝 진열대가 가장 많이 팔린다. 한 콜라 회사 매출의 45%가 통로 끝 진열대에서 나올 정도다. 우리는 스스로 골랐다고 믿지만, 많은 행동은 그저 <b>가장 눈에 띄는 선택지</b>를 따른 결과다.</p>
+<p>인간의 감각 중 가장 강력한 것은 <b>시각</b>이다. 몸의 감각 수용체 약 1,100만 개 중 1,000만 개가 시각에 쓰인다. 그러니 보이는 것이 조금만 바뀌어도 하는 일이 크게 바뀐다. 1970년대 암스테르담 근교의 비슷한 집들 중 전기 계량기가 지하실이 아니라 현관 복도에 있는 집은 전기를 30% 덜 썼다. 사용량이 잘 보이자 행동이 바뀐 것이다. 스히폴 공항은 남자 소변기 가운데에 작은 파리 스티커를 붙였는데, 사람들이 그걸 조준하면서 청소비가 해마다 8% 줄었다.</p>
+<p>저자는 사과를 사면 냉장고 아래 칸에 넣었다가 잊어버려 늘 썩혔다. 식탁 한가운데 큰 그릇에 담아 두자 하루에 몇 개씩 먹게 되었다. 신호가 숨어 있으면 무시하기 쉽다. 기타가 옷장 안에 있으면 연습을 안 하고, 영양제가 찬장 깊숙이 있으면 안 먹는다. 약을 잊지 않으려면 세면대 옆에, 기타 연습을 하려면 거실 한가운데에, 물을 더 마시려면 아침에 물병을 채워 집 곳곳에 두자. 오래가는 습관일수록 <b>신호가 여러 개</b>다. 좋은 습관의 신호도 주변 곳곳에 뿌려 두자. 대부분은 남이 만든 환경에 그냥 산다. <b>내 세계의 소비자가 아니라 설계자</b>가 되자.</p>
+<p>시간이 지나면 습관은 하나의 신호가 아니라 그 행동을 둘러싼 <b>맥락 전체</b>와 연결된다. 혼자서는 안 마시는데 친구들과 모이면 많이 마시는 것처럼. 우리는 습관을 장소에 배정한다. 그래서 환경을 <b>물건들의 모음이 아니라 관계들의 모음</b>으로 보라고 저자는 말한다. 같은 소파가 누군가에게는 매일 밤 한 시간 책 읽는 자리이고, 누군가에게는 아이스크림을 먹으며 TV 보는 자리다.</p>
+<p>이 원리를 거꾸로 쓸 수 있다. 불면증 환자들에게 졸릴 때만 침대에 눕고, 잠이 안 오면 다른 방에 가 있으라고 했다. 그러자 침대는 오직 잠과 연결되었고 눕자마자 잠들기 쉬워졌다. 또 <b>새 환경에서는 습관을 바꾸기 쉽다</b>. 옛 신호와 싸울 필요가 없기 때문이다. 늘 게임하던 거실보다 낯선 카페, 공원 벤치, 방의 안 쓰던 구석에서 새 루틴을 시작하자.</p>
+<p>새 공간이 없으면 지금 공간을 나누자. 저자의 주문은 <b>"한 공간, 한 용도"</b>다. 그는 소파와 식탁에서 일하던 시절엔 일과 쉼의 경계가 없었지만, 작업실이 따로 생기자 일을 끄기 쉬워졌다. 맥락을 섞으면 습관도 섞이고, 대개 쉬운 쪽이 이긴다. 그래서 폰은 강력하면서도 약점이다. 공부하려고 열었는데 SNS, 메신저, 게임의 신호가 한데 뒤섞여 있다. 방이 좁다면 활동 구역을 나누자. 읽는 의자, 쓰는 책상, 먹는 식탁. 디지털 공간도 같다. 컴퓨터는 글쓰기만, 태블릿은 읽기만, 폰은 연락만 하는 작가도 있다. <b>모든 습관에는 집이 필요하다</b>. 안정적이고 예측 가능한 행동을 원하면 안정적이고 예측 가능한 환경이 필요하다.</p>`,
+pics:['병원 구내식당의 생수 바구니 · 아무 말 없이 탄산 11% 감소, 생수 26% 증가','현관 복도의 전기 계량기 · 잘 보이자 전기를 30% 덜 썼다','소변기 속 파리 스티커 · 작은 시각 신호가 청소비 8% 절감','식탁 위 사과 그릇 · 냉장고 서랍 속에선 썩던 사과를 매일 먹게 되었다','한 공간, 한 용도 · 침대는 잠만, 책상은 공부만'],
+q:['내 책상과 방에서 가장 눈에 띄는 물건은 무엇이고, 그 물건은 어떤 습관을 부르고 있나?','공부, 쉼, 잠이 한 공간에서 뒤섞이고 있지는 않은가? 어떻게 구역을 나눌 수 있을까?'],
+act:'책상 위에서 공부와 상관없는 물건을 모두 치우고, 오늘 공부할 교재 한 권만 펼쳐 둔다. 물병 하나를 채워 책상 위에 놓는다.',
+ref:[]},
+{id:'c7',b:1,t:'자기 통제의 비밀',one:'유혹은 이기는 것보다 피하는 것이 쉽다. 나쁜 습관의 신호를 환경에서 없애라.',
+body:`<p>1971년 베트남 전쟁 중, 미국 의원들은 현지 미군의 15% 이상이 헤로인 중독이라는 사실을 알고 충격을 받았다. 추가 조사에서는 35%가 헤로인을 해 봤고 20%까지 중독 상태였다. 연구 책임자 <b>리 로빈스</b>는 귀국한 병사들을 추적했다. 놀랍게도 1년 안에 다시 중독된 사람은 5%, 3년 안에도 12%뿐이었다. 열 명 중 아홉이 거의 하룻밤 사이에 중독에서 벗어난 것이다.</p>
+<p>당시 상식은 헤로인 중독은 영구적이라는 것이었다. 그러나 로빈스는 <b>환경이 급격히 바뀌면 중독도 저절로 풀릴 수 있다</b>는 것을 보여 주었다. 베트남에서는 마약을 쉽게 구했고, 전쟁의 스트레스가 계속됐고, 함께 쓰는 동료가 있었고, 집에서 수천 km 떨어져 있었다. 고향에는 이런 신호가 없었다. 보통의 중독자는 반대다. 집이나 친구들 사이에서 중독되고, 신호 없는 치료 시설에서 끊었다가, 신호 가득한 옛 동네로 돌아간다. 그래서 일반적으로 재활 후 90%가 다시 중독된다.</p>
+<p>우리는 나쁜 습관을 의지력이 약하거나 나쁜 사람이라서 생긴다고 배웠다. 하지만 연구를 보면 자제력이 강해 보이는 사람들도 힘겨워하는 사람들과 별로 다르지 않다. 다른 점은 그들이 <b>영웅적인 의지력이 필요 없도록 삶을 짜 두었다</b>는 것이다. 곧 유혹적인 상황에 덜 머문다. 자제력이 가장 좋은 사람은 자제력을 가장 덜 쓰는 사람이다. 끈기와 의지는 중요하지만, 그것을 키우는 길은 더 절제된 사람이 되기를 바라는 게 아니라 <b>더 절제된 환경</b>을 만드는 것이다.</p>
+<p>습관은 한번 새겨지면 신호가 다시 나타날 때 언제든 튀어나온다. 말을 타며 담배를 피우던 한 상담사는 담배와 승마를 모두 끊었다가, 수십 년 만에 다시 말에 오르자 오랜만에 담배 생각이 났다. 그래서 행동 변화 기법이 역효과를 내기도 한다. 비만인 사람을 부끄럽게 만들면 스트레스로 더 먹고, 흡연자에게 시커먼 폐 사진을 보여 주면 불안해서 담배를 찾는다. 나쁜 습관은 <b>스스로 불을 붙이는 고리</b>다. 기분이 나빠서 정크푸드를 먹고, 먹어서 기분이 나빠진다. 연구자들은 이것을 <b>신호 유발 욕구</b>라 부른다. 코카인 사진을 33밀리초, 의식으로는 알아챌 수도 없는 시간 동안 보여 주기만 해도 중독자의 보상 회로가 켜졌다.</p>
+<p>핵심은 이것이다. <b>습관은 끊을 수는 있어도 잊기는 어렵다</b>. 한번 새겨진 뇌의 길은 오래 안 써도 거의 지워지지 않는다. 그러니 그냥 유혹을 참는 것은 비효율적인 전략이다. 짧게는 참을 수 있어도 길게 보면 우리는 결국 사는 환경의 산물이 된다. 저자는 부정적인 환경에서 좋은 습관을 꾸준히 지키는 사람을 본 적이 없다고 말한다.</p>
+<p>더 믿을 만한 방법은 나쁜 습관을 근원에서 끊는 것, 곧 <b>신호에 대한 노출을 줄이는 것</b>이다. 1법칙의 뒤집기, <b>보이지 않게 하라</b>다.</p>
+<ul><li>일이 안 되면 몇 시간 동안 폰을 다른 방에 둔다.</li><li>늘 부족하다고 느낀다면 질투를 부르는 SNS 계정을 언팔로우한다.</li><li>TV를 너무 많이 보면 침실에서 TV를 뺀다.</li><li>전자 기기에 돈을 너무 쓰면 신제품 리뷰를 그만 본다.</li><li>게임을 너무 하면 쓰고 나서 기기 선을 뽑아 옷장에 넣는다.</li></ul>
+<p>신호 하나만 없애도 습관 전체가 사라지는 경우가 많다. 자기 통제는 <b>단기 전략</b>이지 장기 전략이 아니다. 매번 의지력을 끌어모으는 대신 그 에너지로 환경을 다듬자. 좋은 습관의 신호는 분명하게, 나쁜 습관의 신호는 보이지 않게. 이것이 자기 통제의 비밀이다.</p>`,
+pics:['베트남에서 돌아온 병사들 · 환경이 바뀌자 열에 아홉이 중독에서 벗어났다','재활 후 옛 동네 · 신호가 그대로인 곳으로 돌아가면 90%가 다시 중독','수십 년 만의 승마 · 끊은 지 오래된 담배 욕구가 말 위에서 되살아났다','33밀리초의 사진 · 의식도 못 한 신호가 욕구를 켠다','다른 방의 폰 · 신호 하나를 치우면 습관 전체가 사라지기도 한다'],
+q:['나는 나쁜 습관을 "의지가 약해서"라고 탓해 왔나, 아니면 환경을 살펴봤나?','내 하루에서 유혹의 신호(알림, 앱 아이콘, 간식, 침대 옆 충전기)에 가장 많이 노출되는 순간은 언제인가?'],
+act:'가장 끊고 싶은 습관의 신호 하나를 오늘 물리적으로 치운다. (예: 폰 충전기를 침실 밖으로, 쇼핑앱 알림 끄기, 과자를 안 보이는 곳에)',
+ref:[],
+note:`성경은 유혹 앞에서 버티라고만 하지 않고 <b>피하라</b>고 거듭 말한다. "청년의 정욕을 피하고"(딤후 2:22), 요셉은 유혹의 자리에서 옷을 버려두고 도망쳤다(창 39:12). 주기도문도 "시험에 들게 하지 마옵시고"라고 구한다(마 6:13). 이 장의 통찰과 잘 맞는다. 다만 환경 설계를 성화의 전부로 여길 수는 없다. 마음을 새롭게 하시는 분은 성령이시고(롬 12:2), 우리는 환경을 정리하는 지혜와 함께 은혜를 구하는 기도를 놓지 않는다.`},
+/* 2법칙 */
+{id:'c8',b:2,t:'습관을 거부할 수 없게 만드는 법',one:'행동을 움직이는 것은 보상 자체가 아니라 보상에 대한 기대(도파민)다. 하고 싶은 일과 해야 할 일을 묶어라.',
+body:`<p>1940년대 네덜란드 과학자 <b>니코 틴베르현</b>은 재갈매기를 연구했다. 어미 부리의 작은 빨간 점을 새끼가 쪼면 먹이를 받는다. 그가 가짜 판지 부리를 내밀자 새끼들은 그것도 쪼았다. 점이 클수록 더 빨리 쪼았고, 빨간 점 세 개를 그린 부리에는 열광했다. 회색기러기는 둥지 밖으로 굴러 나간 알을 부리로 끌어오는데, 당구공이나 전구 같은 둥근 물건도 끌어왔고 클수록 더 애썼다. 배구공을 굴려 와 그 위에 앉으려 한 기러기도 있었다. 이렇게 본능의 규칙을 과장한 신호를 <b>초정상 자극</b>이라 한다.</p>
+<p>사람도 과장된 현실에 넘어간다. 먹을 것이 귀하던 수십만 년 동안 뇌는 소금·설탕·지방을 높이 치도록 진화했다. 지금은 먹을 것이 넘치는데 뇌는 여전히 귀한 것처럼 갈망한다. 식품 과학은 이 본능을 끝까지 늘린다. 감자칩의 바삭함, 탄산의 톡 쏘는 정도, 입안 촉감까지 최적화하고, 바삭하면서 부드러운 <b>대비</b>로 질리지 않게 하고, 소금·설탕·지방의 <b>최적 조합점</b>을 찾는다. SNS는 몇 분 만에 직장이나 집에서 받을 수 없는 양의 "좋아요"를 주고, 광고 사진은 조명과 보정으로 실제보다 완벽하다. 앞으로의 유혹은 더 농축되고 더 강해질 것이다. 우리는 조상의 뇌로 조상은 겪어 보지 못한 유혹과 마주한다.</p>
+<p>과학자들은 <b>도파민</b>으로 열망이 일어나는 순간을 잴 수 있다. 1954년 올즈와 밀너는 쥐의 도파민 분비를 막았다. 쥐들은 먹지도, 짝짓지도 않았고, 아무것도 원하지 않다가 며칠 만에 목말라 죽었다. 후속 연구에서 도파민이 막힌 쥐의 입에 설탕물을 떨어뜨리자 여전히 좋아하는 표정을 지었다. <b>좋아하는 능력은 남았지만 원하는 마음이 사라졌고</b>, 원하지 않으니 행동도 멈췄다. 반대로 도파민을 넘치게 하자, 상자에 코를 넣을 때마다 도파민을 받은 생쥐는 한 시간에 800번씩 코를 들이밀었다. 슬롯머신 이용자도 한 시간에 600번쯤 레버를 돌린다.</p>
+<p>중요한 사실은 도파민이 즐거움을 <b>경험할 때만이 아니라 기대할 때</b>도 나온다는 것이다. 도박 중독자는 이겼을 때가 아니라 돈을 걸기 직전에 도파민이 치솟는다. 보상을 예측하면 도파민이 오르고, 도파민이 오르면 행동하려는 동기도 오른다. 처음엔 보상을 받을 때 도파민이 나오지만, 습관이 되면 신호를 보는 순간 나온다. 기대한 보상이 안 오면 실망으로 떨어진다. 크리스마스 아침을 기다리는 게 선물을 뜯는 것보다 더 좋은 이유, 여행을 상상하는 게 실제 여행보다 즐거운 이유다. 이를 <b>원함과 좋아함</b>의 차이라 한다. 뇌에서 원함을 담당하는 영역은 넓고, 좋아함을 담당하는 영역은 작은 섬처럼 흩어져 있다. <b>열망이 행동의 엔진</b>이다.</p>
+<p>그래서 습관을 매력적으로 만들어야 한다. 그 방법이 <b>유혹 묶기</b>다. 아일랜드 더블린의 공대생 <b>로넌 번</b>은 넷플릭스는 좋아했지만 운동은 부족했다. 그는 실내 자전거를 노트북과 TV에 연결하고, 일정 속도 이상으로 페달을 밟을 때만 넷플릭스가 재생되도록 프로그램을 짰다. 속도를 늦추면 화면이 멈췄다. <b>하고 싶은 일</b>(넷플릭스)과 <b>해야 할 일</b>(운동)을 묶은 것이다. 방송사 ABC도 목요일 밤 드라마를 팝콘, 와인, 휴식과 묶어 "목요일 밤 = 즐거움"으로 연결했다.</p>
+<p>유혹 묶기는 <b>프리맥 원리</b>를 응용한 것이다. 더 하고 싶은 행동이 덜 하고 싶은 행동을 강화한다. 습관 쌓기와 합치면 이런 공식이 된다. <b>"[현재 습관] 뒤에 [해야 할 습관]을 하고, [해야 할 습관] 뒤에 [하고 싶은 습관]을 한다."</b> 예: 아침 식사 후 어제 감사한 일 하나를 말하고(해야 할 것), 그 뒤에 뉴스를 본다(하고 싶은 것). 폰을 꺼내면 버피 10개를 하고, 그 뒤에 SNS를 본다. 언젠가는 하고 싶은 것을 할 수 있어서 해야 할 것을 기대하게 된다. 진짜 초정상 자극을 만들기는 어렵지만, 이 방법으로 거의 모든 습관을 원래보다 매력적으로 만들 수 있다.</p>`,
+pics:['빨간 점 세 개의 판지 부리 · 진짜보다 과장된 신호에 새끼 갈매기가 열광했다','배구공을 품으려는 기러기 · 클수록 더 끌리는 본능의 규칙','도파민이 막힌 쥐 · 설탕은 여전히 좋아했지만 더는 원하지 않았다','한 시간에 800번 · 도파민을 받으려 상자에 코를 들이민 생쥐','페달을 밟아야 나오는 넷플릭스 · 로넌 번의 유혹 묶기 자전거'],
+q:['내가 끊기 어려운 습관(쇼츠, 웹툰, 쇼핑앱) 중 초정상 자극처럼 "과장된 보상"을 주는 것은 무엇인가?','내가 좋아하는 것 중 해야 할 일 뒤에 "상"으로 묶을 수 있는 것은 무엇인가?'],
+act:'유혹 묶기 규칙 하나를 정한다. 예: "수학 문제 10개를 푼 뒤에만 좋아하는 채널 영상 하나를 본다."',
+ref:[]},
+{id:'c9',b:2,t:'가족과 친구가 습관을 만드는 방식',one:'우리는 속하고 싶은 집단의 습관을 따라 한다. 원하는 행동이 당연한 문화에 들어가라.',
+body:`<p>1965년 헝가리의 <b>라슬로 폴가르</b>는 클라라라는 여성에게 이상한 편지들을 보냈다. 그는 타고난 재능을 믿지 않았다. 의도적 연습과 좋은 습관만 있으면 어떤 아이든 어느 분야에서든 천재가 될 수 있다고 믿었고, 자기 아이들로 그것을 시험하려 했다. 교사였던 클라라도 바른 교육의 힘을 믿었다. 두 사람은 결혼해 세 딸 수전, 소피아, 유디트를 낳았고, 체스를 선택했다. 아이들은 홈스쿨링을 했고, 집은 체스 책과 유명 체스 선수 사진으로 채워졌고, 자매끼리 늘 대국하고 대회에 나갔으며, 상대 선수들의 기록을 꼼꼼히 정리했다.</p>
+<p>맏딸 수전은 네 살에 체스를 시작해 반년 만에 어른을 이겼다. 둘째 소피아는 열네 살에 세계 챔피언이 되었고 그랜드마스터가 되었다. 막내 유디트는 다섯 살에 아버지를 이겼고, 열다섯 살 넉 달에 역대 최연소 그랜드마스터가 되었으며, 27년 동안 여자 세계 1위였다. 그런데 자매들은 어린 시절이 고되기보다 즐거웠다고 말한다. 한밤중 화장실에서 체스를 두던 소피아에게 아버지가 그만 자라고 하자, 소피아는 말들이 자기를 놔주지 않는다고 대답했다. 체스를 가장 귀하게 여기고 칭찬하는 문화 속에서 체스는 <b>당연하고 매력적인</b> 일이었다.</p>
+<p>인간은 무리 짓는 동물이다. 진화 역사 대부분 동안 부족에서 떨어지는 것은 죽음이었다. 그래서 <b>속하고 싶은 욕구</b>는 가장 깊은 욕구 중 하나다. 우리는 처음 습관을 고르지 않고 <b>따라 한다</b>. 가족, 친구, 교회, 학교, 사회의 각본을 따른다. 사회적 규범은 매일의 행동을 이끄는 보이지 않는 규칙이다. 행동은 <b>무리에 어울리게 해 줄 때</b> 매력적이다. 우리는 특히 세 집단을 따라 한다. <b>가까운 사람들, 많은 사람들, 힘 있는 사람들</b>이다.</p>
+<p><b>① 가까운 사람들</b> — 가까울수록 습관을 닮는다. 1만 2천 명을 32년간 추적한 연구에서 친구가 비만이 되면 내가 비만이 될 확률이 57% 높아졌다. 반대로 한 사람이 살을 빼면 배우자도 세 번 중 한 번은 함께 빠졌다. 우주비행사 마이크 마시미노가 MIT 대학원에서 들은 10명짜리 로봇 수업에서는 4명이 우주비행사가 되었다. 11~12세 때 가장 친한 친구의 지능이 높을수록 15세 때 내 지능도 높았다. 그래서 습관을 바꾸는 가장 효과적인 방법 중 하나는 <b>원하는 행동이 평범한 행동인 문화에 들어가는 것</b>이다. 한 걸음 더 나아가 <b>나와 이미 공통점이 있는 집단</b>이면 더 좋다. 게임과 영화를 좋아하는 "괴짜"들을 위한 운동 모임이 효과적인 이유다. 함께하면 "나는 독자다"가 "우리는 독자다"가 되고, 공동의 정체성이 개인의 정체성을 붙잡아 준다. 목표를 이룬 뒤에도 그 집단에 남는 것이 습관 유지에 중요하다.</p>
+<p><b>② 많은 사람들</b> — 1950년대 솔로몬 애시는 피험자에게 선의 길이를 비교하게 했는데, 방 안의 나머지는 모두 일부러 틀린 답을 말하는 연기자였다. 연기자가 한두 명일 때는 영향이 거의 없었지만 수가 늘수록 피험자는 자기 눈을 의심했고, 실험이 끝날 때쯤 약 75%가 적어도 한 번은 틀린 집단의 답을 따랐다. 침팬지도 더 좋은 견과 깨기 방법을 알면서 새 무리의 덜 좋은 방법을 따른다. 우리는 혼자 옳기보다 <b>무리와 함께 틀리기</b>를 택하곤 한다. 습관 변화가 무리에 맞서는 일이면 매력이 없고, 무리에 어울리는 일이면 매우 매력적이다.</p>
+<p><b>③ 힘 있는 사람들</b> — 사람은 지위와 존경을 원한다. 그래서 성공한 사람, 존경하는 사람의 습관을 따라 한다. 존경, 인정, 칭찬을 얻게 해 주는 행동은 매력적이고, 지위를 떨어뜨리는 행동은 피한다. 엄마가 오기 전에 집을 치우는 것도 이 때문이다. 폴가르 자매가 수십 년 연습을 이어 간 데에는 부모의 칭찬과 그랜드마스터라는 지위의 표지도 한몫했다.</p>`,
+pics:['폴가르 가족의 체스 집 · 재능보다 문화와 습관으로 키운 세 명의 체스 천재','한밤중 화장실의 체스판 · "말들이 나를 놔주지 않아요"','10명 중 4명이 우주비행사 · 어떤 방에 있느냐가 기대치를 정한다','애시의 선 길이 실험 · 많은 사람이 틀리게 말하면 내 눈을 의심한다','가까운 사람, 많은 사람, 힘 있는 사람 · 우리가 습관을 따라 하는 세 집단'],
+q:['내 가장 가까운 다섯 사람에게 "당연한" 습관은 무엇이고, 나는 그중 무엇을 닮아 가고 있나?','내가 원하는 행동(꾸준한 공부, 운동, 경건)이 평범한 공동체는 어디에 있을까?'],
+act:'이번 주에 내가 원하는 습관이 "평범한" 사람이나 모임(스터디, 운동 친구, 교회 소그룹) 한 곳에 연락하거나 함께한다.',
+ref:[],
+note:`교회는 하나님이 주신 가장 좋은 "문화"다. 성경은 "모이기를 폐하는 어떤 사람들의 습관과 같이 하지 말고" 서로 돌아보아 사랑과 선행을 격려하라고 한다(히 10:24-25). 말씀과 기도가 당연한 공동체 안에 있으면 경건의 습관도 훨씬 자연스러워진다. "지혜로운 자와 동행하면 지혜를 얻고"(잠 13:20)라는 말씀도 이 장의 "가까운 사람" 원리와 통한다. 다만 공동체의 목적은 남의 시선이나 지위가 아니라 그리스도를 함께 닮아 가는 데 있다.`},
+{id:'c10',b:2,t:'나쁜 습관의 원인을 찾아 고치는 법',one:'습관은 오래된 욕구에 대한 현대의 해결책이다. 생각의 틀을 바꿔 좋은 습관은 매력 있게, 나쁜 습관은 매력 없게 만들어라.',
+body:`<p>2012년 저자는 터키 이스탄불에서 현지에 사는 미국인 마이크와 그의 친구들과 저녁을 먹었다. 일곱 명 중 저자만 빼고 모두 한때 하루 한 갑 이상 피운 흡연자였다. 시작은 늘 친구였다. 흥미롭게도 절반은 담배를 끊었는데, 마이크는 앨런 카의 금연 책 덕분이라고 했다. 그 책은 흡연의 신호마다 새 의미를 붙인다. "너는 무언가를 포기하는 게 아니다. 담배는 너에게 해 주는 게 없다." "어울리려면 담배가 필요하다고 생각하지만 아니다." "스트레스를 풀어 준다고 생각하지만 오히려 신경을 망가뜨린다." 끝까지 읽으면 흡연이 세상에서 가장 우스운 일처럼 보인다. 이득을 기대하지 않으면 할 이유도 없다. 2법칙의 뒤집기, <b>매력 없게 하라</b>다.</p>
+<p>모든 행동에는 겉의 열망과 그 아래 <b>근본 동기</b>가 있다. 타코가 먹고 싶은 건 겉의 열망이고, 그 아래엔 살기 위해 먹어야 한다는 동기가 있다. 근본 동기의 예: 에너지 아끼기, 먹고 마시기, 사랑과 번식, 관계 맺기, 사회적 인정, 불확실성 줄이기, 지위와 명성. 뇌가 담배나 인스타그램을 원하도록 진화한 게 아니다. 불안을 줄이고, 인정받고, 지위를 얻고 싶을 뿐이다. 습관을 만드는 제품은 새 동기를 만드는 게 아니라 이 오래된 동기에 올라탄다. 관계 맺기 = SNS 둘러보기, 인정받기 = 사진 올리기, 불확실성 줄이기 = 검색, 지위 = 게임. <b>습관은 오래된 욕구에 대한 현대의 해결책</b>이다.</p>
+<p>중요한 점은 <b>같은 동기를 채우는 방법이 여러 가지</b>라는 것이다. 누구는 담배로, 누구는 달리기로 스트레스를 푼다. 지금 습관은 최선의 해결책이 아니라 그냥 배운 방법일 뿐이다. 우리 행동은 신호를 보고 뇌가 내리는 <b>예측</b>에 달려 있다. 같은 담배를 보고 누구는 피우고 싶고 누구는 냄새에 질색한다. 습관의 원인은 사실 그 앞의 예측이다. 예측은 감정을 낳고, 그 감정이 열망이다. 열망은 지금 상태와 원하는 상태 사이의 <b>틈</b>, 무언가 빠져 있다는 느낌이다. 과자나 좋아요를 원하는 게 아니라 <b>다르게 느끼고 싶은</b> 것이다. 감정 영역이 손상된 사람은 결정을 못 내린다. 무엇을 좇고 피할지 알려 주는 신호가 없기 때문이다.</p>
+<p>그렇다면 어려운 습관을 긍정적 경험과 연결하면 매력적으로 만들 수 있다. 가장 간단한 방법은 <b>한 단어 바꾸기</b>다. "해야 한다"를 "할 수 있다"로. 일찍 일어나야 한다 → 일찍 일어날 수 있다. 두 가지 다 사실이고, 우리는 고르는 마음가짐의 증거를 찾게 된다. 휠체어를 쓰는 한 사람은 휠체어에 갇힌 게 아니라 휠체어 덕분에 자유롭다고 말했다. 휠체어가 없으면 침대를 못 벗어날 테니까.</p>
+<ul><li><b>운동</b> — 기운 빠지는 일이 아니라 지구력과 속도를 키우는 시간.</li><li><b>저축</b> — 희생이 아니라 미래의 자유. 지금 아끼면 다음 달 살 수 있는 힘이 커진다.</li><li><b>명상</b> — 잡념이 끼어들 때마다 호흡으로 돌아오는 연습을 할 기회. 잡념이 있어야 연습도 된다.</li><li><b>발표·경기 전 긴장</b> — "떨린다"를 "흥분된다, 집중을 돕는 아드레날린이 나온다"로.</li></ul>
+<p>한 걸음 더 나아가면 <b>동기 부여 의식</b>을 만들 수 있다. 즐거운 일과 습관을 반복해 연결하면, 나중엔 그 신호만으로 의욕이 생긴다. 권투 선수이자 작가 에드 라티모어는 헤드폰을 쓰면 음악을 안 틀어도 집중력이 오른다는 걸 알았다. 음악을 들으며 집중해서 일하기를 여러 번 반복하는 동안 헤드폰 자체가 집중의 신호가 된 것이다. 저자도 야구 경기 전 10분짜리 스트레칭·던지기 루틴을 늘 같은 방식으로 해서, 의욕이 없다가도 루틴이 끝나면 "경기 모드"가 되었다. 행복해지고 싶다면 진짜 행복한 일(강아지 쓰다듬기) 직전에 "숨 세 번 깊게, 그리고 미소"를 반복하자. 나중엔 스트레스받을 때 숨 세 번과 미소만으로 기분을 바꿀 수 있다.</p>
+<p>나쁜 습관의 원인을 찾고 고치는 열쇠는 그 습관에 붙은 <b>연상을 다시 짜는 것</b>이다. 쉽지 않지만, 예측을 바꾸면 어려운 습관도 매력적인 습관이 될 수 있다.</p>`,
+pics:['이스탄불의 저녁 식탁 · 흡연을 시작한 이유는 친구, 끊은 비결은 생각의 틀 바꾸기','타코와 생존 · 겉의 열망 아래에는 오래된 근본 동기가 있다','"해야 한다"를 "할 수 있다"로 · 한 단어가 부담을 기회로 바꾼다','헤드폰을 쓰면 집중 모드 · 반복된 연결이 동기 부여 의식이 되었다','숨 세 번, 미소, 강아지 · 행복한 일과 짝지은 작은 루틴'],
+q:['내 나쁜 습관(예: 쇼핑앱 스크롤)이 실제로 채워 주는 근본 동기는 무엇이고, 그것을 채울 더 나은 방법은 무엇일까?','오늘 "해야 한다"고 말하는 일 중 "할 수 있다"로 바꿔 말할 수 있는 것은 무엇인가?'],
+act:'공부 시작 전 1분짜리 동기 부여 의식(같은 음악 한 곡, 숨 세 번, 짧은 기도 등)을 정해 오늘부터 매번 똑같이 한다.',
+ref:[],
+note:`"해야 한다"를 "할 수 있다"로 바꾸는 것은 그리스도인에게 단순한 기법이 아니라 감사의 고백일 수 있다. 공부할 수 있는 건강, 예배할 수 있는 자유, 섬길 수 있는 자리는 모두 받은 선물이다. "범사에 감사하라"(살전 5:18)는 말씀은 상황을 다르게 보게 한다. 또 같은 시간, 같은 자리에서 드리는 짧은 기도나 찬양은 마음을 하나님께로 돌리는 좋은 경건 의식이 될 수 있다. 다만 기도는 집중력을 위한 도구가 아니라 하나님과의 교제 자체라는 점을 기억하자.`},
+/* 3법칙 */
+{id:'c11',b:3,t:'천천히 걷되, 뒤로 가지는 마라',one:'완벽이 아니라 반복으로 시작하라. 습관은 시간이 아니라 횟수로 만들어진다.',
+body:`<p>플로리다 대학교의 <b>제리 율스만</b> 교수는 첫 수업에서 사진반 학생들을 둘로 나눴다. 왼쪽은 "양" 그룹으로, 제출한 사진의 개수로만 평가했다. 100장이면 A, 90장이면 B. 오른쪽은 "질" 그룹으로, 한 학기 동안 단 한 장만 내되 거의 완벽해야 A였다. 학기가 끝나자 최고의 사진은 모두 <b>양 그룹</b>에서 나왔다. 그들은 계속 찍고, 구도와 빛을 실험하고, 암실에서 여러 방법을 시도하고, 실수에서 배웠다. 질 그룹은 완벽함을 두고 생각만 하다가 검증 안 된 이론과 평범한 사진 한 장만 남겼다.</p>
+<p>최고의 계획을 찾느라 행동을 미루기 쉽다. 저자는 이것을 <b>움직임(motion)과 행동(action)</b>의 차이로 설명한다. 움직임은 계획하고, 전략을 짜고, 배우는 것이다. 좋은 일이지만 결과를 만들지 않는다. 행동은 결과를 만드는 일이다. 글 아이디어 20개를 정리하는 건 움직임, 실제로 글 한 편을 쓰는 건 행동이다. 더 좋은 식단을 검색하는 건 움직임, 건강한 한 끼를 먹는 건 행동이다.</p>
+<p>왜 움직임에 머물까? 정말 준비가 필요할 때도 있지만, 대개는 <b>실패의 위험 없이 진전하는 기분</b>을 느끼고 싶어서다. 비판받고 실패하는 건 싫으니까 실패를 미룬다. 준비가 미루기의 한 형태가 되면 무언가를 바꿔야 한다. 계획만 하지 말고 연습하자. 3법칙의 첫 교훈은 <b>일단 반복 횟수를 채우는 것</b>이다.</p>
+<p>습관 형성은 반복을 통해 행동이 점점 자동이 되는 과정이다. 반복할수록 뇌 구조가 그 활동에 효율적으로 바뀐다. 신경과학자들은 이것을 <b>장기 강화</b>라 부르고, 흔히 "함께 발화하는 뉴런은 함께 연결된다"는 헵의 법칙으로 요약한다. 음악가는 움직임을 담당하는 소뇌가 더 크고, 수학자는 계산에 관여하는 영역의 회색질이 더 많으며 경력이 길수록 더 크다. 런던 택시 기사들은 공간 기억을 맡는 해마가 더 컸고, 은퇴하면 다시 줄었다. 근육처럼 뇌도 쓰면 커지고 안 쓰면 줄어든다. 반복 자체가 변화다.</p>
+<p>모든 습관은 힘든 연습에서 자동 행동으로 가는 비슷한 길을 밟는다. 이것을 <b>자동성</b>이라 한다. 처음에는 많은 노력과 집중이 필요하고, 몇 번 반복하면 쉬워지지만 여전히 의식이 필요하며, 충분히 연습하면 의식보다 자동에 가까워진다. 그 경계를 <b>습관선</b>이라 부른다. 아침 식사 후 10분 걷기 같은 실제 습관을 추적해 보면, 반복이 늘수록 자동성이 오르다가 일정 수준에서 평평해지는 학습 곡선이 나온다.</p>
+<p>그래서 "습관이 되려면 얼마나 걸려요?"보다 <b>"몇 번 해야 하나요?"</b>가 맞는 질문이다. 21일이든 30일이든 300일이든 시간이 흐르는 것 자체에는 마법이 없다. 30일 동안 두 번 할 수도, 200번 할 수도 있다. 중요한 것은 <b>빈도</b>다. 지금의 습관은 수백, 수천 번의 반복으로 몸에 밴 것이고, 새 습관도 같은 수준의 반복이 필요하다. 사실 언제 완전히 자동이 되느냐보다 진전에 필요한 행동을 하느냐가 더 중요하다. 그리고 연습이 일어나게 하는 가장 효과적인 방법이 3법칙, <b>쉽게 하라</b>다.</p>`,
+pics:['양 그룹 vs 질 그룹 · 최고의 사진은 100장을 찍은 쪽에서 나왔다','아이디어 20개 vs 글 한 편 · 움직임은 진전처럼 느껴질 뿐 결과가 아니다','런던 택시 기사의 해마 · 쓰면 커지고, 은퇴하면 줄어든 뇌','습관선 · 의식적 노력이 자동 행동으로 넘어가는 경계','"며칠?"이 아니라 "몇 번?" · 습관은 시간이 아니라 반복 횟수로 만들어진다'],
+q:['나는 지금 공부 계획 세우기, 인강 고르기, 문제집 비교처럼 "움직임"에 머물러 있지는 않은가?','이번 주 내 핵심 습관의 반복 횟수는 몇 번이었나? 그 숫자를 늘리려면?'],
+act:'계획 수정은 내일로 미루고, 오늘은 지금 가진 교재로 문제 한 세트를 실제로 풀어 "행동" 1회를 채운다.',
+ref:[]},
+{id:'c12',b:3,t:'최소 노력의 법칙',one:'사람은 가장 적은 노력이 드는 쪽으로 흐른다. 좋은 습관의 마찰은 줄이고, 나쁜 습관의 마찰은 늘려라.',
+body:`<p>재레드 다이아몬드는 『총, 균, 쇠』에서 대륙의 모양이 역사를 바꿨다고 말한다. 아메리카와 아프리카는 남북으로 길고, 유럽·아시아는 동서로 길다. 같은 위도는 기후, 햇빛, 강수량, 계절이 비슷해서 농부들은 같은 작물을 프랑스에서 중국까지 동서로 퍼뜨리기 쉬웠다. 남북으로 가면 기후가 크게 달라져 새 작물을 길들여야 했다. 그 결과 농업은 유럽·아시아에서 두세 배 빠르게 퍼졌고, 작은 차이가 인구, 군대, 기술의 큰 차이로 쌓였다. 환경의 <b>마찰</b>이 수백, 수천 년의 행동을 제한한 것이다.</p>
+<p>흔히 동기가 습관의 열쇠라고 하지만, 우리의 진짜 동기는 <b>게으르고 편한 것</b>이다. 그리고 이것은 어리석은 게 아니라 에너지를 아끼려는 똑똑한 전략이다. <b>최소 노력의 법칙</b>에 따르면 비슷한 두 선택지가 있을 때 사람은 자연스럽게 일이 덜 드는 쪽을 고른다. 에너지가 많이 드는 행동일수록 덜 일어난다. 하루 팔굽혀펴기 100개는 처음 며칠은 해도 곧 지친다. 하루 1개는 거의 에너지가 안 든다. 폰 스크롤, 메신저 확인, TV 시청이 삶을 많이 차지하는 건 거의 노력 없이 할 수 있기 때문이다.</p>
+<p>어떤 의미에서 모든 습관은 진짜 원하는 것 앞의 <b>장애물</b>이다. 식단 조절은 건강 앞의, 명상은 평온 앞의, 일기는 맑은 생각 앞의 장애물이다. 장애물이 클수록 마찰도 크다. 그래서 하기 싫은 날에도 할 만큼 습관을 쉽게 만들어야 한다. 물론 사람은 아이를 키우고 에베레스트에 오르는 어려운 일도 해낸다. 문제는 어떤 날은 힘든 일을 하고 싶고 어떤 날은 포기하고 싶다는 것이다. 힘든 날일수록 마찰이 적어야 강한 내가 나올 수 있다. "쉽게 하라"는 쉬운 일만 하라는 게 아니라, <b>길게 보아 이로운 일을 지금 이 순간 최대한 쉽게</b> 하라는 뜻이다.</p>
+<p>꺾인 정원 호스를 떠올려 보자. 물을 더 흘리려면 밸브를 세게 틀 수도 있고, 꺾인 부분을 펴 줄 수도 있다. 의욕을 짜내는 건 밸브를 트는 것, 습관을 쉽게 만드는 건 호스를 펴는 것이다. 가장 좋은 방법은 환경 설계다. 새 습관은 <b>이미 다니는 동선 위</b>에 두자. 등굣길에 있는 운동 시설은 몇 블록만 벗어나 있어도 "일부러 찾아가는" 곳이 된다. 1970년대 일본 전자 회사들은 작업자가 공구를 집으려 몸을 비트는 낭비까지 없애도록 작업장을 다시 짰다. 그 결과 미국산 TV의 고장 수리 요청이 일본산의 다섯 배나 되었다. 저자는 이것을 <b>빼기로 더하기</b>라 부른다. 마찰을 빼면 성과가 더해진다. 방을 정리하면 기분이 좋은 이유도 환경이 주는 인지 부담이 줄기 때문이다.</p>
+<p>습관을 만드는 제품들은 삶의 작은 마찰을 잘 없앤다. 배달 앱, 메신저, 호출 택시, 음성 스피커. 입력 칸을 줄이고 클릭 수를 줄인다. 영국 정부는 세금 서류를 내려받는 웹페이지 대신 서류로 바로 가는 링크를 보냈을 뿐인데 응답률이 19.2%에서 23.4%로 올랐다. 핵심은 <b>옳은 일을 하기가 가장 쉬운 환경</b>을 만드는 것이다.</p>
+<p><b>미래를 위해 환경을 준비하자</b>. 오즈월드 너콜스는 "방 리셋"을 한다. TV를 다 보면 리모컨을 제자리에 두고 쿠션을 정리하고 담요를 갠다. 차에서 내릴 때 쓰레기를 버린다. 샤워 물이 데워지는 동안 변기를 닦는다. 목적은 방금 한 일을 치우는 게 아니라 <b>다음 행동을 준비</b>하는 것이다. 그는 스스로를 "미리 게으른 사람"이라 부른다. 저자의 아내는 생일, 결혼, 졸업 등 상황별로 카드를 미리 분류해 두어서 카드 보내기를 잊지 않는다. 건강한 아침을 원하면 전날 밤 프라이팬과 그릇을 꺼내 두고, 그림을 그리고 싶으면 도구를 책상 위에, 운동하려면 운동복과 물병을 미리 챙겨 두자.</p>
+<p>거꾸로 나쁜 습관에는 <b>마찰을 더하자</b>. TV를 너무 보면 볼 때마다 플러그를 뽑고, 다시 꽂을 땐 볼 프로그램 이름을 소리 내어 말해야 한다는 규칙을 둔다. 더 나아가 리모컨 건전지를 빼거나 TV를 옷장에 넣는다. 저자는 점심 전까지 폰을 다른 방에 둔다. 옆에 있으면 이유 없이 계속 확인하지만, 다른 방에 있으면 거의 생각나지 않고 가지러 가는 마찰이 커서 매일 아침 서너 시간을 방해 없이 일한다. SNS 앱을 지우면 다시 깔기까지 몇 주가 걸린다. 진짜 중독을 고치진 못해도, 대부분의 사람에게는 이 작은 마찰이 좋은 습관과 나쁜 습관을 가르는 차이가 된다. 언제나 물어야 할 질문은 같다. <b>"옳은 일을 하기 쉬운 세상을 어떻게 설계할까?"</b></p>`,
+pics:['동서로 긴 대륙 · 비슷한 기후 덕에 농업이 두세 배 빨리 퍼졌다','꺾인 정원 호스 · 밸브를 세게 틀기보다 꺾인 곳을 펴라','공구를 집는 작업자의 몸 비틀기까지 · 일본 공장의 "빼기로 더하기"','방 리셋 · 지난 행동을 치우는 게 아니라 다음 행동을 준비한다','다른 방의 폰 · 가지러 가는 수고가 아침 서너 시간의 집중을 지켜 준다'],
+q:['내가 원하는 좋은 습관과 나 사이에는 몇 단계의 마찰이 있나? 그중 하나를 없앨 수 있을까?','나쁜 습관에 단계 하나만 더하려면(로그아웃, 앱 삭제, 다른 방에 두기) 무엇을 할 수 있을까?'],
+act:'오늘 밤 자기 전 "방 리셋"을 한다. 내일 아침 첫 공부 교재를 펼쳐 두고, 필기구와 물병을 책상 위에 준비한다.',
+ref:[]},
+{id:'c13',b:3,t:'2분 규칙으로 미루기를 멈추는 법',one:'새 습관은 2분 안에 할 수 있어야 한다. 시작을 쉽게 만들면 나머지는 따라온다. 최적화 전에 표준화하라.',
+body:`<p>세계적인 무용가이자 안무가 <b>트와일라 타프</b>는 매일 아침 5시 30분에 일어나 운동복을 입고 집 밖에서 택시를 잡아 체육관으로 가서 두 시간 운동한다. 그녀는 자신의 의식이 체육관에서의 운동이 아니라 <b>택시</b>라고 말한다. 기사에게 목적지를 말하는 순간 의식은 끝난다. 이 작은 행동을 매일 똑같이 하니 반복하기 쉽고 건너뛸 가능성이 줄었다.</p>
+<p>하루 행동의 40~50%는 습관으로 이루어진다고 추정된다. 그런데 실제 영향은 더 크다. 습관은 몇 초면 끝나지만 그 뒤 몇 분, 몇 시간의 행동을 정한다. 습관은 고속도로 진입로와 같다. 들어서면 어느새 다음 행동으로 달려간다. 지루한 영화를 끝까지 보고, 배불러도 과자를 계속 먹고, "잠깐만" 연 폰을 20분 들여다본다. 저자 부부는 매일 저녁 5시 15분쯤, 아내가 퇴근해 들어오는 순간 운동복으로 갈아입고 체육관에 가거나, 소파에 쓰러져 배달 음식을 시키고 드라마를 본다. 운동복으로 갈아입으면 운동은 이미 일어난 것이나 다름없다.</p>
+<p>이렇게 하루에는 큰 영향을 주는 몇 개의 순간이 있다. 저자는 이것을 <b>결정적 순간</b>이라 부른다. 배달을 시킬지 요리할지, 차를 탈지 자전거를 탈지, 숙제를 시작할지 게임기를 잡을지. 갈림길이다. 결정적 순간은 미래의 나에게 남는 선택지를 정한다. 고깃집에 들어가면 메뉴판 안에서만 고를 수 있듯이, 첫 선택이 다음 선택의 범위를 정한다. 좋은 하루와 나쁜 하루의 차이는 이런 몇 번의 선택이다. <b>습관은 종착점이 아니라 입구다. 체육관이 아니라 택시다.</b></p>
+<p>작게 시작해야 한다는 걸 알아도 우리는 들뜬 마음에 너무 크게 시작한다. 이를 막는 가장 효과적인 방법이 <b>2분 규칙</b>이다. 새 습관을 시작할 때는 2분 안에 끝낼 수 있어야 한다. "매일 밤 책 읽기"는 "한 쪽 읽기"로, "요가 30분"은 "요가 매트 꺼내기"로, "시험공부"는 "노트 펴기"로, "빨래 개기"는 "양말 한 켤레 개기"로, "5km 달리기"는 "운동화 끈 묶기"로. 목표를 아주 쉬움부터 아주 어려움까지 늘어놓아 보면 출발점이 보인다. 노트 펴기(아주 쉬움) → 10분 공부(쉬움) → 3시간 공부(보통) → 전 과목 A(어려움) → 박사 학위(아주 어려움). 목표가 끝에 있어도 <b>입구 습관</b>은 처음에 있다.</p>
+<p>한 쪽 읽기에 의미가 있냐고? 요점은 한 가지를 하는 게 아니라 <b>나타나는 습관을 익히는 것</b>이다. 습관은 개선되기 전에 먼저 존재해야 한다. 나타나는 기본기를 못 익히면 세부를 다듬을 희망도 없다. <b>최적화하기 전에 표준화하라.</b> 처음 2분이 큰 루틴의 시작 의식이 되면, 깊은 집중 상태로 들어가기도 쉬워진다. 운동 전 같은 준비 동작, 창작 전 같은 의식, 매일 같은 잠자리 정리 습관처럼 전체를 자동화할 수는 없어도 <b>첫 동작은 생각 없이</b> 할 수 있게 만들 수 있다.</p>
+<p>속임수 같다면 진짜로 <b>2분만 하고 멈추자</b>. 시작 전략이 아니라 그게 전부다. 한 독자는 체육관에 매일 가되 5분 넘게 있으면 안 된다는 규칙을 세웠다. 몇 주 뒤 "어차피 매일 오는데 좀 더 있어 볼까?" 싶어졌고, 몇 년 뒤 45kg 넘게 감량했다. 그렉 매키언은 일기가 귀찮게 느껴지기 전에 항상 멈추는 방식으로 매일 일기 습관을 들였고, 헤밍웨이도 잘 써질 때 멈추라고 조언했다. 이 방법은 정체성도 강화한다. 2분이라도 5일 연속 체육관에 가면 "운동을 거르지 않는 사람"에게 표를 던지는 것이다. 팔굽혀펴기 1개가 0개보다 낫고, 기대보다 적게 하는 것이 아무것도 안 하는 것보다 낫다.</p>
+<p>습관이 자리 잡으면 <b>습관 다듬기</b>로 단계를 올린다. 각 단계의 처음 2분을 익힌 뒤 다음 단계로 간다. 예를 들어 일찍 일어나는 사람이 되려면: 1단계 밤 10시까지 집에 오기 → 2단계 10시까지 모든 기기 끄기 → 3단계 10시까지 침대에 눕기 → 4단계 10시에 불 끄기 → 5단계 아침 6시 기상. 운동 시작도 운동복 입기 → 문밖에 나가기 → 체육관에서 5분 → 주 1회 15분 → 주 3회처럼 올린다. 거의 모든 인생 목표는 2분짜리 행동으로 줄일 수 있다.</p>`,
+pics:['트와일라 타프의 택시 · 의식은 운동이 아니라 택시에 타는 순간 끝난다','저녁 5시 15분의 갈림길 · 운동복으로 갈아입느냐, 소파에 쓰러지느냐','고깃집 메뉴판 · 첫 선택이 다음 선택의 범위를 정한다','노트 펴기 → 박사 학위 · 아주 쉬움부터 아주 어려움까지의 사다리','5분만 있다 나오는 체육관 · 나타나는 습관이 결국 큰 변화를 만들었다'],
+q:['내 하루의 결정적 순간(하교 직후, 저녁 식사 후, 잠자리에 눕는 순간)은 언제이고, 그때 나는 보통 어느 길을 고르나?','내가 미루는 일의 "2분 버전"은 무엇인가?'],
+act:'오늘 미뤄 온 일 하나를 2분 버전(교재 펴고 첫 문제 읽기, 운동화 신기 등)으로 바꿔 지금 바로 한다.',
+ref:[]},
+{id:'c14',b:3,t:'좋은 습관은 피할 수 없게, 나쁜 습관은 불가능하게',one:'약속 장치와 한 번의 선택, 기술을 이용해 미래의 행동을 미리 묶어 두어라.',
+body:`<p>1830년 여름, 빅토르 위고는 마감에 쫓기고 있었다. 1년 전 출판사에 새 책을 약속했지만 손님을 맞고 다른 일을 하느라 한 줄도 쓰지 않았다. 출판사는 6개월도 안 남은 마감을 정했다. 위고는 기묘한 방법을 썼다. 조수에게 자기 옷을 전부 큰 상자에 넣어 잠그게 하고, 큰 숄 하나만 남겼다. 밖에 나갈 옷이 없으니 서재에 머물며 가을과 겨울 내내 미친 듯이 썼다. 『노트르담 드 파리』는 마감보다 2주 일찍 나왔다.</p>
+<p>성공은 때로 좋은 습관을 쉽게 만드는 것보다 나쁜 습관을 <b>어렵게</b> 만드는 데 달려 있다. 3법칙의 뒤집기다. 위고가 옷을 잠근 것처럼, 현재의 선택으로 미래의 행동을 통제하는 것을 <b>약속 장치</b>라 한다. 세이렌의 노래를 듣되 배를 몰고 가지 않으려고 자기 몸을 돛대에 묶게 한 오디세우스의 방법과 같다. 과자를 대용량 대신 소포장으로 사기, 도박장 출입 금지 명단에 스스로 이름 올리기, 계체량 전 주에 지갑을 집에 두고 다니는 선수들. 저자의 친구 니르 이얄은 공유기 전원에 타이머를 달아 밤 10시면 인터넷이 꺼지게 했다. 인터넷이 끊기면 모두 잘 시간이다. 저자는 칼로리를 줄일 때 음식이 나오기 <b>전에</b> 절반을 포장해 달라고 한다. 나온 뒤 "반만 먹어야지"는 절대 안 된다.</p>
+<p>약속 장치는 유혹에 넘어가기 전, 좋은 의도가 있을 때 그 의도를 활용하게 해 준다. 핵심은 좋은 습관에서 빠져나오는 것이 시작하는 것보다 더 많은 노력이 들게 바꾸는 것이다. 운동하고 싶을 때 수업을 미리 예약하고 돈을 내 두면, 빠지려면 취소하는 수고와 돈이 든다.</p>
+<p>한 걸음 더 나아가면 좋은 습관을 <b>피할 수 없게</b>, 나쁜 습관을 <b>불가능하게</b> 만들 수 있다. 1800년대 존 헨리 패터슨은 광부들을 상대로 작은 가게를 열었는데 손님은 꾸준해도 돈이 안 벌렸다. 직원들이 돈을 훔치고 있었다. 당시 영수증은 열린 서랍에 있어 쉽게 고치거나 버릴 수 있었다. 그때 그는 거래 후 현금과 영수증을 자동으로 잠그는 최초의 금전 등록기 광고를 보고 두 대를 샀다. 도둑질은 하룻밤 새 사라졌고, 6개월 만에 적자에서 큰 흑자로 돌아섰다. 그는 아예 업종을 바꿔 금전 등록기 회사를 세웠고 크게 성공했다. 금전 등록기는 직원을 바꾸려 하지 않고, 도둑질을 사실상 불가능하게 만들어 <b>정직한 행동을 자동화</b>했다.</p>
+<p>어떤 행동은 처음에 조금만 애쓰면 두고두고 돌려받는다. 이런 <b>한 번의 선택</b>을 독자들에게 물었더니 이런 답이 나왔다. 좋은 매트리스와 암막 커튼 사기, 침실에서 TV 빼기, 이메일 구독 해지, 알림 끄고 단톡방 음소거, 폰 무음, 게임·SNS 앱 지우기, 작은 그릇 쓰기, 정수기 들이기, 좋은 신발과 의자 사기, 자동 저축과 자동 이체 설정. 저자는 평범한 사람이 이 중 절반만 해도 1년 뒤 더 나은 삶을 살 것이라고 장담한다.</p>
+<p><b>기술</b>은 어렵고 귀찮은 행동을 쉽고 단순하게 바꾸는 가장 믿을 만한 방법이다. 특히 한 달이나 1년에 한 번 하는 일처럼 너무 드물어 습관이 될 수 없는 일에 좋다. 처방약 자동 재조제, 급여 자동 저축, 식재료 배송, 웹사이트 차단기. 철학자 화이트헤드의 말처럼 문명은 생각 없이 할 수 있는 일이 늘어나며 발전한다.</p>
+<p>하지만 기술은 우리를 거스를 수도 있다. 다음 회차가 <b>자동 재생</b>되니 보는 것보다 멈추는 데 더 큰 노력이 든다. 배고픈 기색만 보여도 음식이 오고, 조금만 심심해도 SNS에 빠진다. 욕구를 실행하는 노력이 0이 되면 그 순간의 충동에 끌려간다. 평균적인 사람은 하루 두 시간 넘게 SNS를 한다. 1년이면 600시간이 넘는다. 저자는 책을 쓰는 동안 매주 월요일 조수에게 모든 SNS 비밀번호를 바꿔 달라고 하고, 금요일에 새 비밀번호를 받아 주말에만 썼다. 놀랍게도 일주일 만에 적응했다. SNS가 필요해서가 아니라 너무 쉬워서 기본값이 되었던 것이다. 나쁜 습관이 불가능해지자 더 의미 있는 일을 할 동기가 실제로 있었다는 걸 알게 되었다. 약속 장치, 한 번의 선택, 기술을 쓰면 좋은 습관이 그저 바라는 결과가 아니라 <b>거의 보장된 결과</b>인 환경을 만들 수 있다.</p>`,
+pics:['옷이 잠긴 빅토르 위고 · 숄 하나만 남기자 책이 마감보다 2주 일찍 나왔다','돛대에 묶인 오디세우스 · 좋은 의도가 있을 때 미래의 나를 미리 묶는다','밤 10시에 꺼지는 공유기 · 인터넷이 끊기면 잘 시간','최초의 금전 등록기 · 사람을 바꾸지 않고 도둑질을 불가능하게','월요일에 바뀌는 비밀번호 · SNS는 필요해서가 아니라 쉬워서 기본값이었다'],
+q:['내가 시험 기간에 꼭 막아야 할 나쁜 습관에 쓸 수 있는 약속 장치는 무엇인가?','한 번만 해 두면 두고두고 도움이 될 "한 번의 선택"은 무엇일까? (알림 끄기, 앱 삭제, 암막 커튼 등)'],
+act:'오늘 "한 번의 선택" 하나를 실행한다. 예: 모든 앱 알림 끄기, 게임·SNS 앱 삭제, 스크린타임 암호를 가족에게 맡기기.',
+ref:[]},
+/* 4법칙 */
+{id:'c15',b:4,t:'행동 변화의 기본 규칙',one:'즉시 보상받는 행동은 반복되고, 즉시 처벌받는 행동은 피하게 된다. 좋은 습관 끝에 작은 즉각 보상을 붙여라.',
+body:`<p>1990년대 말 보건 연구자 <b>스티븐 루비</b>는 파키스탄 카라치로 갔다. 주민의 60% 이상이 쓰레기 처리도, 전기도, 깨끗한 물도 없는 판자촌에 살았고, 설사와 감염병이 퍼져 있었다. 손 씻기가 큰 차이를 만들 수 있었는데, 주민들은 손 씻기가 중요하다는 걸 이미 알고 있었다. 다만 대충 물만 묻히거나, 한 손만 씻거나, 음식 만들기 전에 잊었다. 문제는 지식이 아니라 <b>꾸준함</b>이었다.</p>
+<p>루비 팀은 한 생활용품 회사와 손잡고 거품이 잘 나고 향이 좋은 고급 비누를 나눠 주었다. 손 씻기가 갑자기 조금 더 즐거운 일이 되었다. 몇 달 만에 아이들의 설사는 52%, 폐렴은 48%, 피부 감염은 35% 줄었다. 6년 뒤 다시 찾아갔을 때, 5년 넘게 비누를 주지 않았는데도 95% 이상의 가정에 비누와 물이 있는 손 씻기 자리가 있었다. 루비는 민트 맛 치약처럼 <b>즐거운 감각 신호</b>가 있는 습관은 치실처럼 즐거움이 없는 습관보다 훨씬 받아들이기 쉽다고 말한다.</p>
+<p>즐거움은 뇌에 "기분 좋다, 다음에 또 해"라고 알려 준다. 껌은 1800년대에도 팔렸지만 밋밋한 맛이었다. 리글리가 스피어민트 같은 맛을 넣고 입안이 상쾌해진다고 광고하자 세계적인 습관이 되었다. 치약에 넣는 민트와 계피 향도 세척 효과는 없지만 개운한 느낌을 주어 양치를 즐겁게 만든다. 반대로 즐겁지 않으면 반복할 이유가 없다. 자기 자랑만 하는 친척을 피하고 싶던 한 여성은 그가 올 때마다 일부러 아주 지루하게 굴었고, 몇 번 만에 그가 그녀를 피했다.</p>
+<p>이것이 <b>행동 변화의 기본 규칙</b>이다. 보상받는 행동은 반복되고, 처벌받는 행동은 피하게 된다. 앞의 세 법칙(분명하게, 매력적으로, 쉽게)은 <b>이번에</b> 행동할 확률을 높이고, 네 번째 법칙(만족스럽게)은 <b>다음에도</b> 반복할 확률을 높여 습관 고리를 닫는다. 그런데 비결은 그냥 만족이 아니라 <b>즉각적인 만족</b>이다.</p>
+<p>초원의 동물들은 <b>즉시 보상 환경</b>에 산다. 무엇을 먹을지, 어디서 잘지, 포식자를 어떻게 피할지, 행동의 결과가 곧바로 나온다. 현대인은 <b>지연 보상 환경</b>에 산다. 오늘 열심히 일하면 몇 주 뒤 월급이, 오늘 운동하면 내년의 건강이, 오늘 공부하면 몇 달 뒤 성적이 나온다. 하지만 뇌는 약 20만 년 전과 거의 같은 하드웨어이고, 사회가 지연 보상 위주로 바뀐 것은 최근 몇백 년의 일이다. 그래서 뇌는 먼 미래보다 지금을 더 높이 친다. 행동경제학은 이를 <b>시간 비일관성</b>이라 부른다.</p>
+<p>그래서 나쁜 습관은 보상이 즉시 오고 대가가 나중에 오며, 좋은 습관은 대가가 즉시 오고 보상이 나중에 온다. 담배는 10년 뒤 병을 부르지만 지금 스트레스를 풀어 준다. 경제학자 바스티아도 첫 열매가 달수록 나중 열매는 쓰다고 했다. 계획을 세울 때 우리는 미래의 나를 위해 고르지만, 결정의 순간이 오면 배부르고 편하고 즐겁고 싶은 <b>현재의 나</b>가 고른다. 그러니 기본 규칙을 고쳐 쓰자. <b>즉시 보상받는 행동은 반복되고, 즉시 처벌받는 행동은 피하게 된다.</b> 즉각적인 즐거움이 클수록 그것이 장기 목표와 맞는지 더 의심해야 한다. 보상을 기다릴 줄 아는 사람이 적으니, 그 길은 경쟁이 적다. 실제로 만족을 미룰 줄 아는 사람은 시험 점수가 높고, 비만과 약물 남용이 적고, 스트레스에 강했다.</p>
+<p>인간 본성을 거스르지 말고 이용하자. 장기적으로 이로운 습관에는 <b>작은 즉각적 즐거움</b>을, 그렇지 않은 습관에는 작은 즉각적 고통을 더한다. 습관이 오래가려면 작게라도 <b>성공한 느낌</b>이 필요하다. 처음 몇 주 운동해도 몸은 그대로다. 그래서 장기 보상이 쌓이는 동안 버티게 해 줄 즉각 보상이 필요하다. 경험의 <b>마지막</b>이 가장 오래 기억되므로 습관의 끝을 만족스럽게 만들자. 습관 쌓기가 시작을 분명하게 한다면, <b>강화</b>는 끝을 만족스럽게 한다.</p>
+<p>특히 "하지 않기" 습관은 아무 일도 일어나지 않아서 만족스럽기 어렵다. 그럴 땐 <b>하지 않음을 눈에 보이게</b> 만든다. 갖고 싶은 것(예: 가죽 재킷) 이름을 붙인 저축 계좌를 만들고, 커피를 참을 때마다 그 값을 옮긴다. 외식을 줄이려던 한 부부는 "유럽 여행" 계좌를 만들어 외식을 건너뛸 때마다 돈을 넣었고, 연말에 그 돈으로 여행을 갔다. 다만 보상은 <b>정체성과 맞아야</b> 한다. 운동한 상으로 아이스크림을 먹으면 서로 다른 정체성에 표를 던지는 셈이다. 마사지처럼 몸을 돌보는 보상이 낫다. 나중에 기분이 좋아지고 에너지가 생기는 내적 보상이 생기면, 외적 보상은 덜 필요해진다. <b>보상은 습관을 시작하게 하고, 정체성은 습관을 지속시킨다.</b></p>`,
+pics:['카라치의 향기로운 비누 · 즐거운 손 씻기가 6년 뒤에도 남았다','스피어민트 껌과 민트 치약 · 효과가 아니라 즐거운 느낌이 습관을 만들었다','초원의 사자와 월급날의 직장인 · 즉시 보상 환경과 지연 보상 환경','"유럽 여행" 저축 계좌 · 외식을 참을 때마다 쌓이는 눈에 보이는 보상','운동 뒤 아이스크림? · 보상도 되고 싶은 정체성과 맞아야 한다'],
+q:['내가 지키려는 좋은 습관의 끝에는 지금 어떤 즉각 보상이 있나? 없다면 무엇을 붙일 수 있을까?','"하지 않기" 습관(군것질, 쇼핑, 폰) 중 참은 것을 눈에 보이게 만들 방법은?'],
+act:'오늘 공부를 마칠 때 붙일 작은 즉각 보상 하나를 정한다(체크 표시, 좋아하는 차 한 잔, 짧은 산책). 정체성과 어긋나지 않는 것으로.',
+ref:[]},
+{id:'c16',b:4,t:'좋은 습관을 매일 지키는 법',one:'진전을 눈에 보이게 하라. 습관 추적표로 사슬을 끊지 말고, 놓치더라도 두 번 연속은 놓치지 마라.',
+body:`<p>1993년 캐나다의 작은 도시 은행에 스물세 살 신입 증권 중개인 <b>트렌트 다이어스미드</b>가 들어왔다. 아무도 기대하지 않았지만 그는 단순한 습관으로 빠르게 성장했다. 매일 아침 책상에 병 두 개를 놓았다. 하나에는 클립 120개, 하나는 비어 있었다. 영업 전화를 한 통 걸 때마다 클립 하나를 빈 병으로 옮겼고, 120개를 다 옮길 때까지 전화를 걸었다. 18개월 만에 그는 회사에 500만 달러를 벌어다 주었고, 곧 훨씬 좋은 자리로 옮겼다.</p>
+<p>저자는 이것을 <b>클립 전략</b>이라 부른다. 책 한 쪽을 쓸 때마다 머리핀을 옮긴 사람, 팔굽혀펴기 한 세트마다 구슬을 옮긴 사람도 있다. 진전은 만족스럽고, 눈에 보이는 측정은 진전의 분명한 증거가 된다. 그 대표가 <b>습관 추적표</b>다. 달력에 습관을 지킨 날마다 X를 치는 것이다. 벤저민 프랭클린은 스무 살부터 수첩에 13가지 덕목을 적고 매일 밤 기록했다. 코미디언 제리 사인펠드는 매일 농담을 쓰며 <b>"사슬을 끊지 마라"</b>를 되뇌었다. 농담이 좋은지 나쁜지보다 매일 나타나 사슬을 잇는 데 집중한 것이다.</p>
+<p>습관 추적은 여러 법칙을 한꺼번에 쓴다. <b>① 분명하다</b> — 지난 기록이 다음 행동의 신호가 된다. 1,600명 넘는 사람을 조사한 연구에서 매일 식단 일기를 쓴 사람은 그렇지 않은 사람보다 두 배 많이 감량했다. 측정은 정직하게도 만든다. 우리는 자기 행동을 실제보다 낫다고 착각하는데, 병 속 클립을 보면 거짓말할 수 없다. <b>② 매력적이다</b> — 가장 효과적인 동기는 진전이다. 기분이 가라앉은 날에도 지금까지 쌓은 기록이 보이고, 비어 있는 칸은 연속 기록을 잃기 싫어 시작하게 만든다. <b>③ 만족스럽다</b> — 가장 중요한 이점이다. X를 치는 것 자체가 보상이다. 그리고 결과가 아니라 과정, 곧 "운동을 거르지 않는 사람"이 되는 데 집중하게 해 준다. 추적표는 되고 싶은 사람에게 던진 표의 눈에 보이는 증거다.</p>
+<p>그런데 많은 사람이 추적을 귀찮아한다. 습관 하나에 기록하는 습관까지 더해지기 때문이다. 쉽게 하는 방법은 세 가지다. 첫째, 가능하면 <b>자동으로</b> 측정한다. 카드 내역, 걸음 수 앱, 스크린타임처럼 이미 기록되는 것을 주나 달 단위로 확인한다. 둘째, 손으로 하는 기록은 <b>가장 중요한 습관에만</b> 한다. 열 개를 들쭉날쭉 기록하기보다 하나를 꾸준히 기록하는 게 낫다. 셋째, 습관을 마친 <b>직후에 바로</b> 기록한다. "[현재 습관]을 한 뒤 [기록]한다." 전화를 끊으면 클립을 옮기고, 세트를 마치면 운동 일지에 적는다.</p>
+<p>아무리 꾸준해도 언젠가 연속 기록은 끊긴다. 아프거나, 여행하거나, 가족 일이 생긴다. 그때의 규칙은 <b>두 번 연속 놓치지 않기</b>다. 한 번 놓친 건 사고지만, 두 번 놓치면 새 습관의 시작이다. 무너뜨리는 건 첫 실수가 아니라 이어지는 실수의 소용돌이다. 성공하는 사람도 실패한다. 다만 빨리 돌아온다. 흔한 함정은 <b>전부 아니면 전무</b>다. 완벽하게 못 할 바엔 안 하겠다는 생각이 문제다. 100에서 50% 오르면 150이 되지만 33%만 잃어도 100으로 돌아간다. 잃은 날이 좋은 날보다 더 아프다. 그래서 컨디션 나쁜 날의 "형편없는" 운동이 가장 중요할 수 있다. 스쿼트 10개, 팔굽혀펴기 1개라도 하자. 0을 기록하지 마라. 5분의 운동은 실력을 늘리진 못해도 정체성을 확인시켜 준다.</p>
+<p>또 하나의 함정은 <b>엉뚱한 것을 재는 것</b>이다. 식당 매출만 보면 음식이 나빠져도 할인으로 메울 수 있다. 차라리 음식을 다 먹은 손님 비율이나 팁을 넉넉히 준 비율이 낫다. 숫자가 목표가 되면 사람은 그 숫자를 이기는 데 몰두한다. 오래 일한 시간, 만 보 걷기, 시험을 위한 수업처럼. 이를 <b>굿하트의 법칙</b>이라 한다. 측정값이 목표가 되면 더는 좋은 측정값이 아니다. 잴 수 있다고 가장 중요한 건 아니고, 잴 수 없다고 중요하지 않은 것도 아니다. 체중계 숫자가 꿈쩍 않으면 피부, 기상 시간, 기분 같은 다른 진전의 신호를 보자. 측정은 나를 안내할 때만 쓸모 있다.</p>`,
+pics:['클립 120개와 빈 병 · 전화 한 통마다 하나씩 옮긴 신입 중개인','프랭클린의 13가지 덕목 수첩 · 매일 밤 진전을 기록하다','"사슬을 끊지 마라" · 달력에 이어지는 X 표시','두 번은 놓치지 않기 · 한 번은 사고, 두 번은 새 습관의 시작','식당 매출의 함정 · 숫자가 목표가 되면 엉뚱한 것을 최적화한다'],
+q:['나는 계획이 한 번 어긋나면 "오늘은 망했다"며 전부 놓아 버리는 편인가?','내가 지금 재고 있는 숫자(공부 시간, 페이지 수)는 진짜 원하는 것(실력)을 잘 보여 주는가?'],
+act:'달력이나 앱에 가장 중요한 습관 하나의 추적표를 만들고, 오늘 그 습관을 마치자마자 첫 X를 친다.',
+ref:[]},
+{id:'c17',b:4,t:'책임 파트너가 모든 것을 바꾼다',one:'나쁜 습관에는 즉각적인 대가를 붙여라. 누군가 지켜보고 있다는 사실과 습관 계약이 강력한 동기가 된다.',
+body:`<p>협상 전문가 <b>로저 피셔</b>는 핵전쟁 위협이 커지던 시절 이상한 제안을 했다. 대통령은 수백만 명을 죽일 수 있는 발사 코드를 가지고 있지만, 실제로 누군가 죽는 것을 볼 일은 없다. 그러니 코드를 작은 캡슐에 넣어 자원자의 심장 옆에 심고, 대통령이 핵을 쏘려면 먼저 자기 손으로 그 한 사람을 해쳐야 하게 하자는 것이었다. 국방부 사람들은 끔찍하다며, 그러면 대통령이 버튼을 못 누를지도 모른다고 했다. 바로 그게 핵심이었다. 4법칙의 뒤집기, <b>즉시 불만족스럽게 하라</b>다.</p>
+<p>끝이 만족스러우면 반복하듯, 끝이 고통스러우면 피한다. <b>고통은 좋은 선생</b>이다. 실패가 아프면 고쳐지고, 아프지 않으면 무시된다. 나쁜 후기가 배관공을 성실하게 만들고, 손님이 다시 안 올 수 있다는 위험이 식당 음식을 맛있게 만든다. 결과가 즉각적이고 클수록 빨리 배운다. 연체료가 붙으면 요금을 제때 내고, 출석이 성적에 들어가면 학생이 수업에 온다. 우리는 작은 즉각적 고통을 피하려고 많은 수고를 감수한다.</p>
+<p>물론 한계가 있다. 벌의 크기는 고치려는 행동의 힘에 맞먹어야 한다. 미루기의 대가가 행동의 대가보다 커야 생산적이 된다. 또 결과가 <b>가깝고, 구체적이고, 즉각적일수록</b> 개인의 행동을 바꾸고, 멀고 막연하고 늦을수록 영향력이 없다.</p>
+<p>사회도 이렇게 습관을 바꾼다. 1984년 뉴욕에서 처음 안전띠 법이 생겼을 때 안전띠를 매는 미국인은 14%였다. 5년 만에 절반 이상의 주가 법을 만들었고, 2016년에는 88% 넘게 안전띠를 맸다. 법은 모두가 규칙에 합의하고 어기면 벌을 받는 <b>사회 계약</b>이다. 개인도 <b>습관 계약</b>을 만들 수 있다. 지킬 습관과 어겼을 때의 벌을 말이나 글로 정하고, 한두 명의 <b>책임 파트너</b>에게 함께 서명받는 것이다.</p>
+<p>내슈빌의 사업가 <b>브라이언 해리스</b>는 아들이 태어난 뒤 살을 빼기로 하고 자신, 아내, 개인 트레이너가 서명하는 계약서를 썼다. 분기별 목표(엄격한 식단 → 영양소 추적 → 유지)와 매일 할 일(먹은 음식 모두 기록, 매일 체중 재기), 그리고 벌칙을 적었다. 어기면 그 분기 내내 청바지·티셔츠·후드 없이 정장 차림으로 출근하고, 음식 기록을 하루 빠뜨리면 트레이너에게 200달러를 준다. 다음 분기에는 목표와 벌칙이 올라갔다. 단거리 달리기를 빼먹으면 응원하는 팀의 라이벌 팀 모자까지 써야 했다. 그는 서명을 빼면 곧바로 느슨해진다며 서명이 진지함의 표시라고 했다. 결국 그는 목표를 이뤘다.</p>
+<p>정식 계약이 아니어도 <b>책임 파트너</b>만 있어도 효과가 크다. 코미디언 마거릿 조는 친구와 함께 "하루 한 곡" 도전을 하며 서로 책임을 졌다. 누군가 보고 있으면 미루거나 포기하기 어렵다. 못 지키면 나와의 약속뿐 아니라 남과의 약속도 어기는 것이고, 게으르거나 믿을 수 없는 사람으로 보일 수 있기 때문이다. 자동화도 가능하다. 토머스 프랭크는 아침 5시 55분에 일어나지 못하면 "게을러서 못 일어났다, 답글 달면 5달러 준다"는 글이 자동으로 올라가게 예약해 두었다. 우리는 남에게 좋게 보이고 싶어 머리를 빗고 옷을 고른다. 그래서 책임 파트너와 습관 계약이 잘 통한다.</p>`,
+pics:['심장 옆의 발사 코드 · 결과를 눈앞에 가져오면 행동이 달라진다','14%에서 88%로 · 안전띠 법이라는 사회 계약이 수백만 명의 습관을 바꿨다','세 사람이 서명한 습관 계약서 · 어기면 정장 출근과 벌금','라이벌 팀 모자 · 브라이언 해리스의 아픈 벌칙','"게을러서 못 일어났다" 예약 글 · 자동화된 책임 장치'],
+q:['나 혼자서는 자꾸 어기는 약속이 있다면, 누구에게 책임 파트너가 되어 달라고 부탁할 수 있을까?','내 나쁜 습관에 붙일 수 있는 "가깝고 구체적이고 즉각적인" 대가는 무엇일까?'],
+act:'친구나 가족 한 명과 이번 주 지킬 습관 하나, 확인 방법, 어겼을 때의 가벼운 벌칙을 적은 한 줄 습관 계약을 만들고 서로 서명한다.',
+ref:[],
+note:`성경은 신앙을 홀로 걷는 길로 그리지 않는다. "너희가 짐을 서로 지라"(갈 6:2), 두 사람이 한 사람보다 나은 것은 넘어질 때 일으켜 줄 수 있기 때문이라고 한다(전 4:9-10). 믿음의 친구나 소그룹 리더에게 말씀 읽기·기도 습관을 나누고 서로 물어봐 주는 것은 아름다운 책임 관계가 된다. 다만 벌칙과 체면이 동기의 중심이 되면 율법주의로 흐를 수 있다. 서로 정죄하기보다 넘어진 사람을 온유한 심령으로 바로잡는(갈 6:1) 은혜의 관계를 목표로 하자.`},
+/* 고급 전술 */
+{id:'c18',b:5,t:'재능의 진실 — 유전자가 중요할 때와 아닐 때',one:'유전자는 운명을 정하지 않고 기회의 영역을 정한다. 나에게 유리한 게임을 고르고, 없으면 만들어라.',
+body:`<p>마이클 펠프스는 역사상 가장 많은 올림픽 메달을 딴 선수다. 모로코의 히샴 엘 게루주는 올림픽 금메달 두 개와 1마일·1,500m·2,000m 세계 기록을 가졌던 위대한 중거리 선수다. 펠프스는 약 193cm, 엘 게루주는 약 175cm로 18cm 가까이 차이 나는데, 두 사람은 <b>바지 안쪽 길이가 같다</b>. 펠프스는 키에 비해 다리가 짧고 상체가 길어 수영에 딱 맞고, 엘 게루주는 다리가 길고 상체가 짧아 달리기에 딱 맞다. 둘이 종목을 바꾼다면? 펠프스는 엘 게루주보다 40%나 무거워 장거리 달리기에선 처음부터 불리하고, 엘 게루주는 키 큰 선수들이 휩쓰는 수영에서 물에 들어가기도 전에 불리하다.</p>
+<p>성공 확률을 높이는 비밀은 <b>알맞은 경쟁 분야를 고르는 것</b>이다. 습관도 타고난 성향과 능력에 맞을 때 하기 쉽고 만족스럽다. 사람은 서로 다른 능력을 가지고 태어난다는 사실을 받아들여야 한다. 유전자의 힘은 동시에 약점이다. 쉽게 바뀌지 않으니 유리한 환경에선 큰 장점, 불리한 환경에선 큰 단점이 된다. 키 210cm는 농구 덩크에는 좋지만 체조에는 짐이다. 정신적 능력도 같다. 저자는 습관에 대해서는 똑똑하지만 뜨개질이나 로켓 추진에선 아니다. <b>능력은 맥락에 달려 있다</b>. 한 의사의 말처럼 유전자는 경향을 줄 뿐 운명을 미리 정하지 않는다. 유전자가 유리한 영역은 습관이 만족스러울 가능성이 큰 영역이다.</p>
+<p>유전자는 <b>성격</b>을 통해 습관에 영향을 준다. 한 행동유전학자는 유전의 영향을 받지 않는 특성을 하나도 찾지 못했다고 말할 정도다. 가장 검증된 성격 분석인 <b>빅 파이브</b>는 다섯 축으로 본다. ① 개방성(호기심·창의 ↔ 신중·일관) ② 성실성(체계적·효율 ↔ 느긋·즉흥) ③ 외향성(활달 ↔ 조용) ④ 친화성(다정 ↔ 도전적·냉정) ⑤ 신경성(불안·예민 ↔ 침착·안정). 큰 소리에 고개를 돌린 아기는 외향적인 어른으로 자랄 가능성이 높았고, 친화성이 높은 사람은 유대감 호르몬인 옥시토신 수치가 높은 경향이 있으며, 신경성은 위협을 감지하는 편도체의 예민함과 관련된다.</p>
+<p>이런 차이에 사과하거나 죄책감을 느낄 필요는 없지만 <b>그에 맞춰</b> 일해야 한다. 성실성이 낮은 사람은 환경 설계에 더 기대야 한다. 근육을 키우는 방법이 꼭 보디빌딩일 필요는 없다. 암벽 등반이나 자전거가 좋다면 그쪽으로. 책을 더 읽고 싶으면 좋아하는 장르부터. 남들이 하라는 습관이 아니라 <b>나에게 맞는 습관</b>을 고르자. 모든 습관에는 나를 즐겁게 할 버전이 있다.</p>
+<p>나에게 맞는 게임은 어떻게 찾을까? 처음에는 <b>탐색</b>, 나중에는 <b>활용</b>이다. 넓게 시도해 본 뒤 가장 좋은 방법에 집중하되 가끔 실험을 계속한다. 이기고 있으면 활용하고, 지고 있으면 계속 탐색한다. 대략 80~90%는 가장 좋은 전략에, 10~20%는 탐색에 쓰는 것이 좋다. 시간이 많은 젊은 시기엔 탐색이, 마감이 가까우면 지금까지의 최선을 실행하는 것이 맞다. 탐색하며 물어볼 질문들이 있다.</p>
+<ul><li><b>남에게는 일인데 나에게는 놀이인 것은?</b> 좋아하느냐보다 그 일의 고통을 남보다 잘 견디느냐가 기준이다.</li><li><b>시간 가는 줄 모르게 하는 것은?</b> 몰입 상태에서 하는 일은 만족스러울 수밖에 없다.</li><li><b>남보다 더 큰 성과를 얻는 곳은?</b></li><li><b>나에게 자연스러운 것은?</b> 남의 기대를 잠시 내려놓고, 언제 살아 있다고, 진짜 나답다고 느꼈는지 묻는다.</li></ul>
+<p>어느 정도는 운이다. 하지만 유리한 게임이 없으면 <b>만들 수 있다</b>. 만화가 스콧 애덤스는 그림도 유머도 최고는 아니었지만, 둘을 함께 잘하는 사람은 드물었고 거기에 회사 생활 경험까지 더해 독보적인 영역을 만들었다. 더 잘해서 이길 수 없으면 <b>달라서</b> 이길 수 있다. 저자도 물리나 생물 최상위권과 겨룰 자신이 없어 물리·화학·생물·해부학을 합친 생체역학을 스스로 전공으로 설계했다. 좋아하는 과목만 들으니 공부가 덜 고되었고 남과 비교할 일도 없었다. <b>좁은 분야에 특화</b>하는 것도 방법이다. 거대한 보디빌더도 팔씨름 챔피언에게는 질 수 있다. 끓는 물은 감자는 부드럽게, 달걀은 단단하게 만든다. 내가 감자인지 달걀인지는 못 고르지만, 어떤 게임을 할지는 고를 수 있다.</p>
+<p>유전자는 노력의 필요를 없애지 않는다. <b>무엇에 노력할지 분명히 해 줄 뿐</b>이다. 한계가 있다는 사실에 매달려 정작 한계 근처까지 노력하지 않는 사람이 많다. 존경하는 사람만큼 노력해 보기 전에는 그들의 성공을 운 탓으로 돌리지 말자. 요약하면, <b>쉽게 되는 일에 열심히 하라</b>.</p>`,
+pics:['같은 바지 길이의 두 챔피언 · 펠프스의 긴 상체와 엘 게루주의 긴 다리','키 210cm의 장단점 · 농구에선 축복, 체조에선 짐','빅 파이브 성격 · 개방성, 성실성, 외향성, 친화성, 신경성','그림 + 유머 + 회사 경험 · 상위 25% 능력을 조합해 새 게임을 만든 만화가','끓는 물 속 감자와 달걀 · 같은 환경이 누구에겐 유리하고 누구에겐 불리하다'],
+q:['남들은 힘들어하는데 나는 비교적 즐겁게 하는 공부나 활동은 무엇인가?','내 성격(빅 파이브)에 비춰 볼 때, 나에게 더 잘 맞는 공부·운동 방식은 무엇일까?'],
+act:'"남에게는 일, 나에게는 놀이", "시간 가는 줄 모르는 것", "남보다 성과가 큰 것", "자연스러운 것" 네 질문에 각각 한 줄씩 답을 적는다.',
+ref:[]},
+{id:'c19',b:5,t:'골디락스 법칙 — 삶과 일에서 동기를 유지하는 법',one:'딱 감당할 만한 난이도에서 동기가 가장 높다. 성공의 가장 큰 적은 실패가 아니라 지루함이다.',
+body:`<p>1955년, 막 문을 연 디즈니랜드에 열 살 소년이 찾아와 일자리를 얻었다. 안내 책자를 팔던 그는 1년 뒤 마술 가게로 옮겨 선배들에게 마술을 배우고 손님 앞에서 농담과 짧은 공연을 시험했다. 그러다 자신이 좋아하는 게 마술이 아니라 <b>공연 자체</b>라는 걸 깨닫고 코미디언을 꿈꾸게 된다. 10대부터 작은 클럽에서 공연했는데 관객은 적고 무대는 5분도 안 됐다. 아무도 없는 클럽에서 공연한 밤도 있었다. 처음엔 1~2분, 고등학교 때 5분, 몇 년 뒤 10분, 열아홉 살엔 20분. 분량을 채우려고 시를 낭독할 정도였지만 실력은 꾸준히 늘었다. 방송 작가를 거쳐 1970년대 중반 유명 토크쇼의 단골이 되었고, 거의 15년 만에 정상에 올랐다. 그가 <b>스티브 마틴</b>이다. 그는 자기 경력을 배우는 데 10년, 다듬는 데 4년, 크게 성공한 4년으로 요약했다.</p>
+<p>무대 위에서 아무도 웃지 않는 공포를 18년 동안 매주 마주하게 한 힘은 무엇일까? 가장 일관된 연구 결과는 <b>딱 감당할 만한 난이도</b>의 과제가 동기를 최고로 유지한다는 것이다. 네 살 아이와 테니스를 치면 너무 쉬워 지루하고, 세계 최정상 선수와 치면 너무 어려워 의욕을 잃는다. 비슷한 실력의 상대와 치면 몇 점 따고 몇 점 잃으며, 진짜 애써야 이길 수 있어 완전히 몰입한다. 이것이 <b>골디락스 법칙</b>이다. 너무 어렵지도 쉽지도 않은, 지금 능력의 가장자리에 있는 과제에서 동기가 정점에 이른다. 심리학의 여키스-도슨 법칙도 지루함과 불안의 중간을 최적 각성 상태로 본다.</p>
+<p>스티브 마틴은 해마다 공연을 1~2분씩만 늘렸다. 새 소재를 넣으면서도 확실히 웃기는 농담 몇 개는 남겼다. 동기를 유지할 만큼의 승리와 계속 노력할 만큼의 실수가 있었다. 새 습관을 시작할 땐 3법칙대로 최대한 쉽게 해야 하지만, 습관이 자리 잡은 뒤에는 <b>조금씩 계속 올려야</b> 한다. 작은 개선과 새 도전이 흥미를 유지한다. 딱 맞으면 <b>몰입 상태</b>에 들어간다. 연구자들은 과제가 현재 능력보다 약 4% 높을 때 몰입이 일어난다고 보았다. 정확히 재긴 어렵지만, 능력의 가장자리에서 도전하는 것이 핵심이다.</p>
+<p>저자가 야구를 그만두고 역도 팀에 들어갔을 때, 올림픽 선수들을 지도한 코치에게 최고의 선수와 나머지의 차이를 물었다. 유전, 운, 재능을 말하던 코치는 뜻밖의 답을 했다. 결국은 <b>매일 같은 동작을 반복하는 지루함을 누가 견디느냐</b>라는 것이다. 우리는 성공한 사람에게 끝없는 열정이 있다고 생각해서, 의욕이 떨어지면 낙심한다. 하지만 정말 성공한 사람도 똑같이 의욕이 떨어진다. 차이는 그래도 <b>나타난다</b>는 것이다.</p>
+<p>숙달하려면 연습해야 하고, 연습할수록 지루해진다. 초반의 성장이 끝나고 무엇을 기대할지 알게 되면 흥미가 식는다. 그래서 잘 되고 있는데도 새로운 운동법, 새 식단, 새 사업 아이디어로 갈아탄다. 마키아벨리는 사람이 새로움을 너무 원해서 잘 나가는 사람도 못 나가는 사람만큼 변화를 바란다고 했다. <b>성공의 가장 큰 위협은 실패가 아니라 지루함</b>이다. 게임, 음란물, 정크푸드처럼 가장 중독적인 것들은 끝없이 새로움을 준다. 보상이 예측할 수 없게 오는 <b>가변 보상</b>은 슬롯머신처럼 가장 큰 도파민 상승을 일으킨다(스키너가 먹이 알갱이가 모자라 가끔만 주었다가 우연히 발견했다). 가변 보상은 없던 욕구를 만들지는 못하지만 이미 있는 욕구를 증폭한다. 욕구의 최적점은 성공과 실패가 반반일 때다. 골디락스 난이도는 이 균형을 자연스럽게 만든다.</p>
+<p>하지만 모든 습관에 가변 보상이 있을 수도, 있어서도 안 된다. 검색 결과가 가끔만 맞으면 그 검색 엔진을 버릴 것이다. 결국 어떤 습관도 영원히 재미있지는 않다. 언젠가는 누구나 <b>지루함과 사랑에 빠져야</b> 한다. 편하고 신날 때만 하면 놀라운 결과를 낼 만큼 꾸준할 수 없다. 습관을 이어 가면 그만두고 싶은 날이 반드시 온다. 그때 나타나는 것이 <b>프로와 아마추어의 차이</b>다. 프로는 일정을 지키고, 아마추어는 삶이 끼어들게 둔다. 명상 교사 데이비드 케인은 "날씨 좋을 때만 하는 명상가"가 되지 말라고 한다. 저자는 하기 싫은 세트, 쓰기 싫은 글이 많았지만 해 놓고 후회한 적은 한 번도 없었다고 말한다. 탁월해지는 유일한 길은 같은 일을 반복하는 데 끝없이 매료되는 것이다.</p>`,
+pics:['디즈니랜드의 열 살 소년 · 5분 무대에서 시작해 1~2분씩 늘린 스티브 마틴','비슷한 실력의 테니스 상대 · 너무 쉽지도 어렵지도 않을 때 몰입한다','능력보다 4% 높은 과제 · 몰입이 일어나는 가장자리','역도 코치의 대답 · 결국 누가 지루함을 견디느냐','슬롯머신 · 예측할 수 없는 보상이 지루함을 없애고 욕구를 키운다'],
+q:['지금 내 공부 중 너무 쉬워 지루한 것과 너무 어려워 포기하고 싶은 것은 각각 무엇인가?','기분이 안 날 때도 하는 "프로"의 습관이 나에게는 무엇인가?'],
+act:'문제집 난이도를 점검해 "10문제 중 5~7개쯤 맞힐" 수준의 문제를 골라 오늘 공부에 넣는다.',
+ref:[]},
+{id:'c20',b:5,t:'좋은 습관을 만드는 것의 단점',one:'습관 + 의도적 연습 = 숙달. 자동이 된 습관은 성찰과 검토로 계속 점검하고, 정체성은 작고 유연하게 유지하라.',
+body:`<p>습관은 숙달의 기초다. 체스에서 말 움직임이 자동이 된 뒤에야 다음 수준을 생각할 수 있다. 기본 동작을 생각 없이 할 수 있으면 더 높은 수준에 주의를 쓸 수 있다. 하지만 대가가 있다. 습관이 자동이 되면 <b>피드백에 둔감해진다</b>. 생각 없이 반복하고, 작은 실수를 넘기고, "이 정도면 됐지" 하고 더 잘할 방법을 고민하지 않는다. 경험이 쌓이니 나아지고 있다고 착각하지만, 실은 지금의 습관을 굳히고 있을 뿐이다. 어떤 연구는 한번 숙달한 기술은 시간이 지나며 조금씩 떨어진다고 한다.</p>
+<p>양치나 신발 끈 묶기처럼 사소한 습관은 "이 정도면 됐지"로 충분하다. 사소한 선택에 에너지를 덜 쓸수록 중요한 일에 더 쓸 수 있다. 하지만 잠재력을 최대로 끌어올리고 싶다면 무작정 반복해선 안 된다. 습관은 필요하지만 충분하지 않다. <b>습관 + 의도적 연습 = 숙달</b>이다. 농구 선수는 드리블이 자동이 되어야 반대 손 레이업을 연습할 수 있고, 외과 의사는 첫 절개를 눈 감고도 할 수 있어야 수술 중의 수많은 변수에 집중할 수 있다. 숙달이란 성공의 아주 작은 요소에 집중해 몸에 익힌 뒤, 그 습관을 발판 삼아 다음 경계로 나아가는 끝없는 순환이다. 옛 과제는 쉬워지지만 전체는 쉬워지지 않는다. 에너지를 다음 도전에 쏟기 때문이다.</p>
+<p>그래서 기술이 익숙하고 편안해지는 바로 그때 안주의 덫을 조심해야 한다. 해결책은 <b>성찰과 검토의 시스템</b>이다. 1986년 LA 레이커스는 시즌 초 29승 5패로 역대 최고 팀이라는 말까지 들었지만 플레이오프에서 탈락했다. 팻 라일리 감독은 재능과 가능성 이야기에 지쳤다. 그는 <b>"커리어 최고의 노력"(CBE)</b> 프로그램을 만들었다. 선수의 고교 시절부터의 기록으로 기준선을 잡고, 시즌 동안 그 수치를 최소 1% 높이라고 요구했다. 점수뿐 아니라 루즈볼에 몸을 던지기, 리바운드에 끝까지 뛰어들기, 뚫린 동료를 돕기 같은 "숨은 영웅" 행동도 점수에 넣었다. 득점·리바운드·어시스트·스틸·숨은 영웅 행동을 더하고 실책을 빼서 출전 시간으로 나눈 값이다. 꾸준한 선수는 600점대, 정상급은 800 이상, 매직 존슨은 자주 1,000을 넘었다. 라일리는 매주 리그 최고 선수들과 비교하고, 작년 같은 달과도 나란히 놓았다. CBE를 시작한 지 8개월 만에 레이커스는 우승했고, 이듬해 20년 만의 2연패를 이뤘다.</p>
+<p>성찰과 검토는 실수를 깨닫게 하고 개선의 길을 보게 한다. 성찰이 없으면 핑계를 대고 스스로를 속인다. 마라톤 전설 엘리우드 킵초게는 훈련 후마다 노트에 개선점을 적고, 수영 금메달리스트 케이티 레데키는 컨디션을 1~10점으로 기록하고 식사와 수면을 메모하며 코치가 매주 확인한다. 코미디언 크리스 록은 작은 클럽에서 수백 개의 농담을 시험하며 무대 위에서 반응을 메모한다. 어떤 투자자들은 결정 일지에 주요 결정과 이유, 예상 결과를 적고 나중에 맞았는지 돌아본다.</p>
+<p>저자는 두 가지 검토를 한다. 매년 12월 <b>연간 리뷰</b>에서 그해 습관(쓴 글 수, 운동 횟수 등)을 세고 세 가지를 묻는다. 올해 잘된 것은? 잘 안된 것은? 무엇을 배웠나? 6개월 뒤 여름에는 <b>진실성 보고서</b>를 쓴다. 내 삶과 일을 이끄는 핵심 가치는? 지금 그 가치대로 살고 있나? 앞으로 기준을 어떻게 높일까? 1년에 몇 시간이면 되지만 서서히 미끄러지는 것을 막아 준다. 매일의 선택을 지나치게 걱정하는 건 거울을 1cm 앞에서 보는 것, 전혀 검토하지 않는 건 거울을 안 보는 것과 같다. 주기적인 성찰은 대화하는 거리에서 거울을 보는 것이다. 개별 봉우리가 아니라 산맥 전체를 보자.</p>
+<p>성찰은 <b>정체성</b>을 다시 볼 기회이기도 하다. 처음엔 새 정체성의 증거를 쌓으려 반복하지만, 그 정체성에 매달리면 약점을 부정하는 자존심이 생겨 다음 성장을 막는다. 생각이 정체성에 깊이 묶일수록 비판에 방어적이 된다. 익숙한 수업만 고집하는 교사, 자기 방식만 고집하는 관리자, 첫 앨범 이후 틀에 갇힌 밴드처럼. 해결책은 <b>정체성을 작게 유지하는 것</b>이다. 하나의 역할에 모든 걸 걸면 그 역할을 잃을 때 무너진다. 저자도 야구 선수 생활이 끝나자 자신을 잃은 듯했다. 그래서 역할이 바뀌어도 핵심은 지킬 수 있게 재정의하자. "나는 운동선수다"는 "나는 정신적으로 강하고 몸으로 도전하기를 좋아하는 사람이다"로, "나는 대표다"는 "나는 무언가를 만들고 세우는 사람이다"로. 노자가 말했듯 부드럽고 유연한 것은 살고 딱딱하고 굳은 것은 부러진다. 물처럼 장애물을 돌아 흐르는 정체성을 갖자. 모든 것은 변하니, 옛 습관과 믿음이 여전히 나를 돕는지 주기적으로 점검해야 한다. 자기 인식의 부족은 독이고, <b>성찰과 검토는 해독제</b>다.</p>`,
+pics:['29승 5패의 레이커스 · 재능만으로는 우승하지 못했다','팻 라일리의 CBE · 매년 1%씩, 숨은 영웅 행동까지 점수로','킵초게의 훈련 노트 · 세계 최고도 매번 기록하고 돌아본다','거울과의 거리 · 1cm는 너무 가깝고, 안 보면 너무 멀다','"운동선수"에서 "도전을 즐기는 사람"으로 · 정체성은 작고 유연하게'],
+q:['매일 하는데 실력이 늘지 않는 습관이 있다면, 그 안에서 의도적으로 고쳐야 할 작은 요소는 무엇인가?','나는 "수험생", "운동부", "전교 몇 등" 같은 하나의 역할에 내 전부를 걸고 있지는 않은가?'],
+act:'이번 주 공부·습관을 돌아보며 세 질문(잘된 것, 안된 것, 배운 것)에 각각 한 줄씩 답하고, 오답 하나를 깊이 분석한다.',
+ref:[],
+note:`정체성을 작게 유지하라는 조언은 그리스도인에게 특별한 위로가 된다. 수험생, 운동선수, 찬양팀원 같은 역할은 언젠가 바뀌거나 끝나지만, 그리스도 안에서 하나님의 자녀라는 정체성은 성적이나 성과로 흔들리지 않는다(갈 2:20, 요일 3:1). 그래서 오히려 실패를 정직하게 돌아볼 용기가 생긴다. 연간 리뷰와 진실성 보고서는 하나님 앞에서 자신을 살피는 자기 성찰(시 139:23-24, 고후 13:5)과도 잘 어울린다. 다만 그 목적은 자기 완벽이 아니라 회개와 감사, 그리고 은혜 안에서의 성장이다.`},
+/* 마무리 */
+{id:'end',b:6,t:'결론 — 오래가는 결과의 비밀',one:'작은 습관은 더해지는 것이 아니라 복리로 불어난다. 결승선은 없다. 네 법칙을 돌며 다음 1%를 찾아라.',
+body:`<p>고대 그리스의 <b>더미의 역설</b>(소리테스 역설)이 있다. 동전 하나가 사람을 부자로 만들 수 있을까? 동전 열 개를 가진 사람을 부자라고 하지 않는다. 하나 더, 또 하나 더 더하면? 어느 순간 부자가 되었다고 인정해야 한다면, 결국 동전 하나가 그를 부자로 만든 것이다.</p>
+<p>아주 작은 습관도 같다. 작은 변화 하나가 인생을 바꿀까? 아니라고 할 것이다. 하지만 하나 더, 또 하나 더 쌓다 보면 어느 순간 인생이 작은 변화 하나로 바뀌었다고 인정하게 된다. 습관 변화의 성배는 1% 개선 하나가 아니라 <b>천 개의 1%</b>다. 시스템의 기본 단위인 아주 작은 습관들이 쌓이는 것이다.</p>
+<p>처음에는 작은 개선이 시스템의 무게에 묻혀 의미 없어 보인다. 1분 명상이나 하루 한 쪽 독서로 눈에 띄는 차이가 나지 않는다. 하지만 계속 쌓으면 저울의 좋은 쪽에 모래알이 하나씩 올라가 천천히 기운다. 버티면 <b>임계점</b>에 닿고, 갑자기 좋은 습관을 지키기가 쉬워진다. 시스템의 무게가 나를 거스르지 않고 돕기 시작한다.</p>
+<p>이 책에 나온 올림픽 금메달리스트, 예술가, 기업가, 의사, 코미디언은 처한 상황이 모두 달랐지만 같은 방식으로 성장했다. <b>작고, 지속 가능하고, 멈추지 않는 개선</b>에 헌신한 것이다. 성공은 도달할 목표나 통과할 결승선이 아니라 개선할 시스템이고, 끝없이 다듬을 과정이다. 1장에서 습관 변화가 어렵다면 문제는 내가 아니라 시스템이라고 했다. 이제 우리에게는 더 나은 시스템을 만들 네 법칙이 있다.</p>
+<p>어떤 습관은 기억하기 어려워 <b>분명하게</b> 해야 하고, 어떤 날은 시작하기 싫어 <b>매력적으로</b> 해야 하고, 너무 어려운 습관은 <b>쉽게</b> 해야 하며, 이어 가기 싫을 땐 <b>만족스럽게</b> 해야 한다. 좋은 습관은 행동이 쉬운 쪽(분명함·매력·쉬움·만족)으로, 나쁜 습관은 행동이 어려운 쪽(보이지 않음·매력 없음·어려움·불만족)으로 밀어 두자.</p>
+<p>이것은 끝나지 않는 과정이다. 결승선도, 영원한 해결책도 없다. 개선하고 싶을 때마다 네 법칙을 차례로 돌며 <b>다음 병목</b>을 찾으면 된다. 분명하게, 매력적으로, 쉽게, 만족스럽게. 돌고 또 돌며 다음 1%를 찾자.</p>
+<p>오래가는 결과의 비밀은 <b>개선을 멈추지 않는 것</b>이다. 멈추지 않으면 공부로 쌓을 수 있는 지식, 훈련으로 만들 수 있는 몸, 저축으로 모을 수 있는 재산, 마음을 쏟아 지킬 수 있는 우정이 놀라울 만큼 커진다. 작은 습관은 더해지지 않는다. <b>복리로 불어난다</b>. 작은 변화, 놀라운 결과. 이것이 아주 작은 습관의 힘이다.</p>`,
+pics:['동전 더미의 역설 · 언젠가는 동전 하나가 부자를 만든다','저울 위의 모래알 · 작은 개선이 천천히 저울을 기울게 한다','행동이 쉬운 쪽과 어려운 쪽 · 좋은 습관은 왼쪽으로, 나쁜 습관은 오른쪽으로','네 법칙의 순환 · 분명하게 → 매력적으로 → 쉽게 → 만족스럽게 → 다시 처음'],
+q:['지금 내 핵심 습관의 가장 큰 병목은 네 법칙 중 어디인가?','1년 뒤 "작은 변화 하나가 나를 바꿨다"고 말하고 싶은 그 변화는 무엇인가?'],
+act:'가장 중요한 습관 하나를 골라 네 질문(어떻게 분명하게? 매력적으로? 쉽게? 만족스럽게?)에 한 줄씩 답하고, 가장 약한 하나를 오늘 고친다.',
+ref:[],
+note:`성경은 성화를 하룻밤의 변신이 아니라 날마다 새로워지는 과정으로 그린다. "우리의 겉사람은 후패하나 우리의 속은 날로 새롭도다"(고후 4:16). 그리고 그 과정의 주인은 우리가 아니라 하나님이시다. 우리 속에 착한 일을 시작하신 분이 그것을 이루실 것이다(빌 1:6). 작은 습관을 꾸준히 쌓는 일은 의미 있지만, 그것이 우리를 구원하거나 하나님 앞에서 공로가 되지는 않는다. 은혜로 받은 생명이 말씀과 기도와 공동체라는 은혜의 방편 안에서 조금씩 자라 가는 것, 그것이 그리스도인의 "1%"다.`},
+{id:'app',b:6,t:'부록 — 네 법칙이 주는 작은 교훈들',one:'신호-열망-반응-보상 모형은 습관뿐 아니라 행복, 욕구, 감정, 만족 같은 인간 본성의 여러 면을 설명해 준다.',
+body:`<p>저자는 책 끝에 신호-열망-반응-보상 모형으로 확인되는 작은 교훈들을 모았다. 모형을 이해하면 곳곳에서 그 예를 보게 된다.</p>
+<p><b>알아차림이 욕구보다 먼저다.</b> 열망은 신호에 의미를 붙일 때 생긴다. 기회를 알아차린 뒤에야 원할 수 있다. <b>행복은 욕구가 없는 상태다.</b> 신호를 보고도 상태를 바꾸고 싶은 마음이 없을 때 우리는 만족한다. 행복은 쾌락을 얻는 것이라기보다 다르게 느끼고 싶은 충동이 없는 상태다. 하지만 곧 새 욕구가 오니 행복은 하나의 욕구가 채워지고 다음 욕구가 생기기 전의 틈과 같고, 고통은 변화를 갈망하는 것과 얻는 것 사이의 틈이다. <b>우리가 좇는 것은 쾌락의 이미지다.</b> 행동할 때는 그것이 정말 만족스러울지 모른다. 만족은 나중에 온다. 프랭클의 말처럼 행복은 추구한다고 얻어지지 않고, 행동을 따라 생겨난다.</p>
+<p><b>관찰을 문제로 만들지 않을 때 평안이 온다.</b> 무언가를 보고도 고쳐야 할 문제로 만들지 않으면 마음이 고요하다. <b>이유가 충분히 크면 방법은 따라온다.</b> 니체의 생각처럼 살아야 할 이유가 있으면 어떤 어려움도 견딘다. 큰 열망은 마찰이 커도 큰 행동을 낳는다. <b>똑똑함보다 호기심이 낫다.</b> 지능은 혼자서 행동을 일으키지 않는다. 행동을 일으키는 것은 욕구다.</p>
+<p><b>감정이 행동을 움직인다.</b> 모든 결정은 어느 수준에서는 감정적 결정이다. 감정 영역이 손상된 사람은 이유를 늘어놓아도 행동하지 못한다. 그래서 열망이 반응보다 먼저다. 빠르고 무의식적인 <b>시스템 1</b>(느낌)이 먼저, 느리고 의식적인 <b>시스템 2</b>(분석)가 나중이다. 둘이 맞으면 좋지만 어긋나면 비논리적인 판단이 나온다. 같은 사실도 감정의 필터에 따라 다르게 반응하니, 감정적으로 한 걸음 물러서야 자료에 근거해 판단할 수 있다.</p>
+<p><b>고통이 진보를 이끈다.</b> 상태를 바꾸고 싶은 욕구는 모든 고통의 원천이면서 모든 진보의 원천이다. 열망이 있으면 불만족스럽지만 나아가고, 없으면 만족스럽지만 야망이 없다. <b>행동은 내가 얼마나 원하는지 드러낸다.</b> 중요하다면서 늘 손대지 않는다면 정말 원하는 게 아니다. 자신과 솔직하게 대화할 때다. <b>보상은 희생 너머에 있다.</b> 반응(에너지 쓰기)이 언제나 보상(자원 얻기)보다 먼저 온다. 달리기의 쾌감은 힘든 달리기 뒤에야 온다. <b>자기 통제가 어려운 이유는 만족스럽지 않기 때문이다.</b> 유혹을 참는 건 열망을 채우는 게 아니라 무시하는 것이고, 욕구가 지나가도록 내려놓는 일이다.</p>
+<p><b>기대가 만족을 정한다.</b> 10을 기대했는데 100을 받으면 기쁘고, 100을 기대했는데 10을 받으면 실망한다. 저자는 이를 <b>만족 = 좋아함 − 원함</b>으로 표현한다. 원함이 좋아함을 앞지르면 늘 불만족스럽다. 세네카도 가난이란 가진 게 적은 게 아니라 더 원하는 것이라고 했다. <b>행복은 상대적이다.</b> 저자는 구독자 1,000명을 처음 모았을 때 가족과 축하했지만, 몇 년 뒤 하루에 1,000명씩 늘 때는 아무에게도 말하지 않았다. 90배 빠른 결과에도 기쁨은 적었다. <b>실패의 아픔은 기대의 높이에 비례한다.</b> 그래서 사람들은 기대를 높이지 않으려 한다.</p>
+<p><b>감정은 행동 앞뒤에 모두 있다.</b> 행동 전의 감정(열망)이 움직이게 하고, 행동 후의 감정(보상)이 반복을 가르친다. 어떻게 느끼느냐가 어떻게 행동할지에, 어떻게 행동하느냐가 어떻게 느낄지에 영향을 준다. <b>욕구는 시작시키고, 즐거움은 지속시킨다.</b> 동기가 있어야 행동하고, 성공한 느낌이 있어야 반복한다. <b>희망은 경험과 함께 줄고 수용으로 바뀐다.</b> 처음 기회는 약속만으로 기대하지만, 두 번째엔 현실에 근거해 예측한다. 그래서 사람들은 경험이 없어 기대에 한계가 없는 새 다이어트, 새 부자 되기 방법에 끌린다. 젊음이 쉽게 속는 이유도 희망밖에 없기 때문이다. 저자는 이 밖에 사업과 자녀 교육에 네 법칙을 적용하는 보너스 장도 따로 제공한다.</p>`,
+pics:['두 욕구 사이의 틈 · 행복은 하나의 욕구가 채워지고 새 욕구가 오기 전의 공간','만족 = 좋아함 − 원함 · 원함이 앞지르면 늘 불만족','시스템 1과 시스템 2 · 느낌이 먼저, 분석은 나중','구독자 1,000명의 축하 · 같은 성과도 기대에 따라 기쁨이 달라진다','달리기 뒤의 쾌감 · 보상은 언제나 희생 너머에 있다'],
+q:['나는 지금 무엇을 "원하는" 만큼 실제로 "좋아하고" 있나? 원함이 지나치게 앞서 있지는 않은가?','중요하다고 말하면서 늘 손대지 않는 일이 있다면, 내 행동은 무엇을 말해 주고 있나?'],
+act:'오늘 하루 감사한 일(이미 "좋아하는" 것) 세 가지를 적어, 원함보다 좋아함에 마음을 둬 본다.',
+ref:[]}
+];
+
+/* ---------- 네 가지 법칙 요약표 ---------- */
+const LAWS=[
+ {k:'obvious',n:1,t:'분명하게',inv:'보이지 않게',stage:'신호',
+  build:[
+   {c:'1.1',t:'습관 점수표 쓰기',s:'하루 습관을 순서대로 적고 + − = 를 붙여 알아차린다. 예: 기상 직후 폰 확인 −, 물 한 잔 +'},
+   {c:'1.2',t:'실행 의도 세우기',s:'"나는 [행동]을 [시간]에 [장소]에서 하겠다." 예: 영단어 20분을 저녁 8시에 내 책상에서'},
+   {c:'1.3',t:'습관 쌓기',s:'"[현재 습관]을 한 뒤에 [새 습관]을 하겠다." 예: 아침 먹고 그릇을 치우면 바로 국어 지문 1개'},
+   {c:'1.4',t:'환경 설계하기',s:'좋은 습관의 신호를 크게, 잘 보이게. 예: 책상 위에 오늘 교재만 펼쳐 두고 물병 올려 두기'}
+  ],
+  brk:[
+   {c:'1.5',t:'노출 줄이기',s:'나쁜 습관의 신호를 환경에서 없앤다. 예: 공부할 땐 폰을 다른 방에, 쇼핑앱 알림 끄기'}
+  ],
+  q:'이 습관을 언제, 어디서, 무엇 다음에 할지 정했나? 신호가 눈에 보이는가?',
+  qb:'이 나쁜 습관을 부르는 신호는 무엇이고, 어떻게 눈앞에서 치울 수 있을까?'},
+ {k:'attractive',n:2,t:'매력적으로',inv:'매력 없게',stage:'열망',
+  build:[
+   {c:'2.1',t:'유혹 묶기',s:'하고 싶은 일과 해야 할 일을 짝짓는다. 예: 수학 10문제를 푼 뒤에만 좋아하는 영상 한 편'},
+   {c:'2.2',t:'문화에 들어가기',s:'원하는 행동이 평범한 집단, 나와 공통점이 있는 집단에 속한다. 예: 꾸준히 공부하는 스터디, 교회 소그룹'},
+   {c:'2.3',t:'동기 부여 의식 만들기',s:'어려운 습관 직전에 즐거운 일을 한다. 예: 공부 전 늘 같은 노래 한 곡 + 숨 세 번'}
+  ],
+  brk:[
+   {c:'2.4',t:'생각의 틀 바꾸기',s:'나쁜 습관을 피했을 때의 이득을 부각한다. 예: "쇼츠 안 보면 하루 1시간이 생긴다", "안 사면 100% 절약"'}
+  ],
+  q:'이 습관을 내가 좋아하는 것, 내가 속한 사람들과 어떻게 연결할 수 있을까?',
+  qb:'이 나쁜 습관이 실제로 채워 주는 욕구는 무엇이고, 그 습관을 피하면 무엇을 얻는가?'},
+ {k:'easy',n:3,t:'쉽게',inv:'어렵게',stage:'반응',
+  build:[
+   {c:'3.1',t:'마찰 줄이기',s:'좋은 습관까지의 단계를 줄인다. 예: 턱걸이 바를 방문에 달아 오가며 매달리기'},
+   {c:'3.2',t:'환경 준비하기',s:'다음 행동이 쉽게 미리 준비한다. 예: 자기 전 내일 첫 교재를 펴 두고 필기구 꺼내 두기'},
+   {c:'3.3',t:'결정적 순간 잡기',s:'큰 영향을 주는 작은 선택을 최적화한다. 예: 집에 오면 소파 대신 바로 책상에 앉기'},
+   {c:'3.4',t:'2분 규칙',s:'습관을 2분 이하로 줄인다. 예: "3시간 공부" 대신 "교재 펴고 첫 문제 읽기"'},
+   {c:'3.5',t:'습관 자동화',s:'기술과 한 번의 선택으로 미래 행동을 고정한다. 예: 앱 차단 시간 예약, 밤 11시 자동 방해 금지'}
+  ],
+  brk:[
+   {c:'3.6',t:'마찰 늘리기',s:'나쁜 습관까지의 단계를 늘린다. 예: 게임 앱 삭제 후 매번 로그인, 리모컨 건전지 빼 두기'},
+   {c:'3.7',t:'약속 장치 쓰기',s:'미래의 선택지를 나에게 이로운 것으로 묶는다. 예: 시험 기간 동안 SNS 비밀번호를 가족에게 맡기기'}
+  ],
+  q:'이 습관을 2분 버전으로 줄이면? 시작까지의 단계를 하나 줄일 수 있나?',
+  qb:'이 나쁜 습관을 하려면 거쳐야 할 단계를 어떻게 늘리거나 아예 막을 수 있을까?'},
+ {k:'satisfying',n:4,t:'만족스럽게',inv:'불만족스럽게',stage:'보상',
+  build:[
+   {c:'4.1',t:'강화하기',s:'습관을 마치면 즉시 작은 보상을 준다. 예: 공부 끝나면 좋아하는 차 한 잔, 체크 표시'},
+   {c:'4.2',t:'"하지 않음"을 즐겁게',s:'나쁜 습관을 피했을 때 이득이 보이게 한다. 예: 야식 참은 날마다 2천 원을 "갖고 싶은 것" 통에'},
+   {c:'4.3',t:'습관 추적표',s:'연속 기록을 남기고 사슬을 끊지 않는다. 예: 달력에 영단어 한 날마다 X 표시'},
+   {c:'4.4',t:'두 번 연속 놓치지 않기',s:'한 번 빠지면 곧바로 돌아온다. 예: 어제 못 했으면 오늘은 2분 버전이라도 꼭'}
+  ],
+  brk:[
+   {c:'4.5',t:'책임 파트너 두기',s:'누군가 내 행동을 지켜보게 한다. 예: 친구와 매일 공부 인증 사진 주고받기'},
+   {c:'4.6',t:'습관 계약 만들기',s:'나쁜 습관의 대가를 공개적이고 아프게 만든다. 예: 자정 넘어 폰 하면 동생에게 간식 사 주기, 서명까지'}
+  ],
+  q:'이 습관을 마친 직후 나에게 줄 수 있는 작은 즉각 보상과 기록 방법은?',
+  qb:'이 나쁜 습관에 바로 따라오는 대가를 만들려면 누구와 어떤 약속을 해야 할까?'}
+];
+
+/* ---------- 실천 ---------- */
+const PRACTICES=[
+ {k:'twomin',t:'2분 버전으로 시작',s:'하기 싫은 공부나 운동은 "교재 펴기", "운동화 신기"처럼 2분 버전만 먼저 한다',from:'3법칙·13장',freq:'매일'},
+ {k:'stack',t:'습관 쌓기 실행',s:'정해 둔 "[현재 습관] 뒤에 [새 습관]" 공식을 오늘 그대로 실행한다',from:'1법칙·5장',freq:'매일'},
+ {k:'vote',t:'정체성에 한 표',s:'"나는 ___ 사람이다"에 오늘 던진 한 표(작은 행동)를 하나 적는다',from:'기초·2장',freq:'매일'},
+ {k:'phoneaway',t:'폰은 다른 방에',s:'공부를 시작하기 전 폰을 거실 충전기에 두고 온다',from:'1법칙·7장',freq:'매일'},
+ {k:'resetroom',t:'방 리셋',s:'자기 전 책상을 정리하고 내일 첫 공부 교재를 펼쳐 둔다',from:'3법칙·12장',freq:'매일'},
+ {k:'trackx',t:'습관 체크 X',s:'핵심 습관을 마치자마자 추적표에 X를 친다. 어제 빠졌다면 오늘은 반드시(두 번 연속 금지)',from:'4법칙·16장',freq:'매일'},
+ {k:'pointcall',t:'소리 내어 말하기',s:'나쁜 습관에 손이 갈 때 "지금 ~하려 한다, 그러면 ~된다"를 소리 내어 말한다',from:'1법칙·4장',freq:'매일'},
+ {k:'scorecard',t:'습관 점수표',s:'하루 행동을 순서대로 적고 + − = 를 붙여 판단 없이 관찰한다',from:'1법칙·4장',freq:'매주'},
+ {k:'envaudit',t:'환경 점검',s:'방과 폰 홈 화면에서 나쁜 신호 하나를 치우고 좋은 신호 하나를 둔다',from:'1법칙·6장',freq:'매주'},
+ {k:'bundle',t:'유혹 묶기 설계',s:'이번 주 하고 싶은 것(웹툰, 영상)을 해야 할 일 뒤에만 허락하는 규칙을 정한다',from:'2법칙·8장',freq:'매주'},
+ {k:'partner',t:'책임 파트너 점검',s:'친구나 가족과 이번 주 습관 기록을 서로 보여 주고 계약을 확인한다',from:'4법칙·17장',freq:'매주'},
+ {k:'goldilocks',t:'난이도 조정',s:'너무 쉬워 지루한 습관은 조금 올리고, 버거운 습관은 줄여 "딱 감당할 만한" 수준으로 맞춘다',from:'고급 전술·19장',freq:'매주'},
+ {k:'monthreview',t:'월간 리뷰',s:'이번 달 잘된 것, 잘 안된 것, 배운 것 세 가지 질문에 답한다',from:'고급 전술·20장',freq:'매월'},
+ {k:'integrity',t:'가치와 정체성 점검',s:'내 핵심 가치는? 지금 그대로 살고 있나? 기준을 어떻게 높일까? 기도하며 돌아본다',from:'고급 전술·20장',freq:'매월'}
+];
+
+/* ---------- 상황 카드 ---------- */
+const CARDS=[
+ {q:'폰을 책상에 두면 공부하다 자꾸 손이 간다. 어떻게?',a:'신호를 보이지 않게 하라. 의지로 참기보다 폰을 아예 다른 방에 두면 생각도 덜 나고 가지러 가는 마찰까지 생긴다. 저자도 점심 전까지 폰을 다른 방에 두어 아침 몇 시간을 지킨다.',ch:'c7',law:'obvious'},
+ {q:'"이번엔 진짜 의지력으로 참는다"고 다짐하지만 매번 무너진다',a:'자기 통제는 단기 전략이다. 자제력이 좋아 보이는 사람은 의지가 특별히 강한 게 아니라 유혹적인 상황에 덜 머문다. 참는 데 쓸 에너지를 환경을 바꾸는 데 쓰자.',ch:'c7',law:'obvious'},
+ {q:'한 달째 매일 영단어를 외웠는데 모의고사 점수가 그대로다',a:'잠재력의 고원에 있다. 화씨 31도의 얼음처럼 변화가 없어 보여도 노력은 저장되고 있다. 결과는 늦게 나타나는 후행 지표이니 지금은 궤도를 믿고 반복을 이어 가자.',ch:'c1',law:'core'},
+ {q:'목표를 "수능 1등급"으로만 정해 두니 불안하고 공부가 들쭉날쭉하다',a:'모든 수험생의 목표는 같다. 차이를 만드는 건 시스템이다. 점수판만 보지 말고 매일 언제, 무엇을, 얼마나 할지 정한 시스템에 집중하면 점수는 따라온다.',ch:'c1',law:'core'},
+ {q:'"나는 원래 수학 머리가 없어"라는 말을 자주 한다',a:'오래 되풀이한 이야기는 사실처럼 굳어 변화를 막는다. 정체성은 증거에서 나온다. 매일 수학 한 문제를 푸는 것은 "수학을 하는 사람"에게 던지는 한 표이고, 표가 쌓이면 이야기도 바뀐다.',ch:'c2',law:'core'},
+ {q:'운동을 시작해도 3일이면 그만둔다',a:'결과(몸 만들기)가 아니라 정체성(운동하는 사람)에서 출발하자. "운동하는 사람이라면 오늘 무엇을 할까?"를 묻고, 2분짜리 작은 승리로 스스로에게 증명한다.',ch:'c2',law:'core'},
+ {q:'손톱 뜯는 걸 알아차리면 이미 다 뜯은 뒤다',a:'변화는 알아차림에서 시작한다. 언제 뜯는지 습관 점수표처럼 기록하고, 손이 갈 때 "지금 손톱을 뜯으려 한다"고 소리 내어 말하면 자동 행동이 의식으로 올라온다.',ch:'c4',law:'obvious'},
+ {q:'"내일부터 공부 열심히 해야지"만 반복한다',a:'부족한 건 동기가 아니라 명확함이다. "나는 [행동]을 [시간]에 [장소]에서 하겠다"로 실행 의도를 쓰자. 이 한 문장만으로 운동 실천율이 두 배 넘게 오른 연구가 있다.',ch:'c5',law:'obvious'},
+ {q:'새 습관을 하루 어디에 끼워 넣어야 할지 모르겠다',a:'매일 빠짐없이 하는 일 목록을 만들고 그 위에 쌓아라. "[현재 습관] 뒤에 [새 습관]." 신호는 새 습관과 빈도가 같고, 구체적이고 바로 행동할 수 있어야 한다.',ch:'c5',law:'obvious'},
+ {q:'새 패딩을 샀더니 신발, 가방까지 사고 싶어진다',a:'디드로 효과다. 새 물건 하나가 연쇄 소비를 부른다. 비싼 물건은 24시간 기다린 뒤 사고, 하나를 들이면 하나를 비우는 규칙을 습관 쌓기처럼 정해 두자.',ch:'c5',law:'obvious'},
+ {q:'거실에서 공부하면 자꾸 TV와 소파 생각이 난다',a:'맥락이 곧 신호다. 늘 쉬던 공간에서는 쉬는 습관이 이긴다. "한 공간, 한 용도"로 공부는 정해진 책상에서만 하거나, 옛 신호가 없는 새 장소에서 공부 루틴을 시작하자.',ch:'c6',law:'obvious'},
+ {q:'침대에 누우면 잠이 안 오고 폰만 본다',a:'침대를 잠과만 연결하라. 불면증 연구에서처럼 졸릴 때만 눕고, 잠이 안 오면 다른 곳에 있다 오면 침대가 잠의 신호가 된다. 충전기는 침실 밖으로 옮기자.',ch:'c6',law:'obvious'},
+ {q:'쇼츠나 웹툰은 왜 이렇게 끊기 어려울까?',a:'과장된 보상을 주는 초정상 자극에, 언제 재밌는 게 나올지 모르는 가변 보상까지 더해져 도파민이 기대만으로 치솟기 때문이다. 내 의지가 약해서만은 아니니 알림을 끄고 앱을 치워 노출과 마찰부터 조절하자.',ch:'c8',law:'attractive'},
+ {q:'공부는 싫고 유튜브는 보고 싶다',a:'유혹 묶기를 쓰자. 하고 싶은 일(유튜브)을 해야 할 일(공부) 뒤에만 허락한다. 페달을 밟아야만 넷플릭스가 나오게 한 로넌 번처럼, 해야 할 일이 하고 싶은 일의 입장권이 된다.',ch:'c8',law:'attractive'},
+ {q:'친구들이 다 늦게까지 게임해서 나만 일찍 자는 게 어색하다',a:'우리는 가까운 사람과 다수의 습관을 따라 한다. 원하는 행동이 평범한 집단을 찾아 들어가자. 일찍 자고 공부하는 친구, 스터디, 교회 공동체처럼 나와 공통점도 있는 곳이면 더 좋다.',ch:'c9',law:'attractive'},
+ {q:'공부가 "해야 하는 일"로만 느껴진다',a:'한 단어를 바꿔 보자. "공부해야 한다"가 아니라 "공부할 수 있다." 배울 수 있는 시간과 건강이 있다는 것도 사실이다. 같은 현실에서 기회 쪽 증거를 찾으면 습관이 매력적으로 바뀐다.',ch:'c10',law:'attractive'},
+ {q:'공부를 시작할 때마다 마음 잡는 데 한참 걸린다',a:'동기 부여 의식을 만들자. 공부 직전에 늘 같은 노래 한 곡, 숨 세 번, 짧은 기도처럼 정해진 루틴을 반복하면, 헤드폰만 써도 집중된 에드 라티모어처럼 그 루틴 자체가 집중의 신호가 된다.',ch:'c10',law:'attractive'},
+ {q:'완벽한 공부 계획을 세우느라 일주일을 썼다',a:'계획은 움직임일 뿐 행동이 아니다. 사진 100장을 찍은 그룹이 완벽한 한 장을 고민한 그룹보다 좋은 사진을 냈다. 완벽보다 반복. 오늘 문제 한 세트를 실제로 풀자.',ch:'c11',law:'easy'},
+ {q:'습관이 되려면 21일? 66일? 며칠이 필요할까?',a:'질문을 바꾸자. "며칠"이 아니라 "몇 번"이다. 습관은 시간이 아니라 반복 횟수로 자동이 된다. 30일에 두 번보다 200번이 훨씬 빨리 습관선을 넘는다.',ch:'c11',law:'easy'},
+ {q:'헬스장이 멀어서 결국 안 가게 된다',a:'최소 노력의 법칙이다. 사람은 노력이 덜 드는 쪽으로 흐른다. 이미 다니는 동선 위의 장소를 고르거나, 집에 턱걸이 바와 매트를 두어 마찰을 없애자.',ch:'c12',law:'easy'},
+ {q:'오늘따라 공부할 기분이 전혀 안 난다',a:'2분 규칙. "노트 펴기", "첫 문제 읽기"까지만 하자. 목표는 많이 하는 게 아니라 나타나는 습관을 지키는 것이다. 시작하면 이어 가기 쉽고, 2분만 하고 멈춰도 정체성에는 한 표가 된다.',ch:'c13',law:'easy'},
+ {q:'학원 끝나고 집에 와 소파에 눕는 순간 하루가 끝난다',a:'그 순간이 결정적 순간이다. 첫 선택이 이후 몇 시간의 메뉴판을 정한다. 현관에 들어서면 가방을 책상에 두고 바로 앉는 것을 "택시 타기" 같은 의식으로 만들자.',ch:'c13',law:'easy'},
+ {q:'시험 기간인데 게임을 도저히 못 끊겠다',a:'약속 장치를 쓰자. 옷을 잠가 버린 빅토르 위고처럼, 의지가 있을 때 미래의 나를 묶는다. 게임 계정 비밀번호를 가족에게 맡기거나 기기를 시험 끝날 때까지 맡겨 두자.',ch:'c14',law:'easy'},
+ {q:'공부 효과는 몇 달 뒤에나 나오니 지금은 재미가 없다',a:'뇌는 즉시 보상을 더 높게 친다. 장기 보상이 쌓이는 동안 버티도록 습관 끝에 작은 즉각 보상을 붙이자. 체크 표시, 좋아하는 차 한 잔처럼 되고 싶은 정체성과 어긋나지 않는 것으로.',ch:'c15',law:'satisfying'},
+ {q:'"군것질 안 하기"는 지켜도 티가 안 나서 금방 포기한다',a:'하지 않음을 눈에 보이게 만들자. 참을 때마다 그 돈을 "갖고 싶은 것" 저금통에 넣으면 아무 일도 없던 일이 쌓이는 보상이 된다.',ch:'c15',law:'satisfying'},
+ {q:'어제 하루 계획을 망쳤다. 이번 주는 망한 것 같다',a:'두 번 연속 놓치지 않기. 한 번은 사고, 두 번은 새 습관의 시작이다. 전부 아니면 전무를 버리고 오늘은 2분 버전이라도 해서 0을 피하자. 컨디션 나쁜 날의 작은 실천이 가장 중요하다.',ch:'c16',law:'satisfying'},
+ {q:'공부 시간을 늘리는 것만 목표로 하니 멍하니 앉아 있는 시간도 늘었다',a:'굿하트의 법칙이다. 숫자가 목표가 되면 엉뚱한 것을 최적화한다. 공부 시간 대신 푼 문제 수, 오답 정리 수처럼 진짜 실력에 가까운 지표로 바꿔 보자.',ch:'c16',law:'satisfying'},
+ {q:'혼자 하면 자꾸 약속을 어긴다',a:'책임 파트너와 습관 계약을 만들자. 지킬 습관, 확인 방법, 어겼을 때의 벌칙을 적고 함께 서명한다. 누군가 지켜본다는 사실만으로도 즉각적인 대가가 생긴다.',ch:'c17',law:'satisfying'},
+ {q:'친구는 새벽 공부가 잘 맞는다는데 나는 밤에 집중이 잘 된다',a:'남들이 좋다는 습관이 아니라 나에게 맞는 습관을 고르자. 성격과 성향에 맞을수록 습관은 쉽고 만족스럽다. 다만 탐색한 뒤엔 가장 잘 맞는 방식에 집중한다.',ch:'c18',law:'core'},
+ {q:'같은 문제집만 반복하니 지루해서 손이 안 간다',a:'지루함은 성공의 가장 큰 적이다. 난이도를 "딱 감당할 만한" 수준으로 조금 올려 골디락스 구간을 찾고, 그래도 지루한 날엔 프로처럼 기분과 상관없이 일정을 지키자.',ch:'c19',law:'core'},
+ {q:'매일 꾸준히 하는데 실력이 제자리다',a:'자동이 된 습관은 피드백에 둔감해진다. 습관에 의도적 연습을 더하고, 성찰과 검토를 하자. 틀린 문제의 원인을 분석하고, 매주 잘된 것과 안된 것을 돌아본다.',ch:'c20',law:'core'},
+ {q:'네 법칙을 다 써 봤는데도 어떤 습관이 계속 안 된다',a:'결승선은 없다. 네 법칙을 차례로 돌며 지금의 병목을 찾자. 기억이 안 나면 분명하게, 하기 싫으면 매력적으로, 버거우면 쉽게, 이어 가기 싫으면 만족스럽게.',ch:'end',law:'core'}
+];
+
+/* ---------- 오늘의 생각 ---------- */
+const THOUGHTS=[
+ ['극적인 한순간이 아니라 작은 승리의 긴 행렬이 사람을 바꾼다.','서론'],
+ ['습관은 자기 계발에 붙는 복리 이자다.','1장'],
+ ['지금의 성적보다 지금의 궤도를 보라.','1장'],
+ ['결과는 습관이 뒤늦게 보내는 성적표다.','1장'],
+ ['노력은 사라지지 않는다. 임계점을 넘을 때까지 저장될 뿐이다.','1장'],
+ ['목표는 방향을 정하고, 시스템은 나를 앞으로 밀어 준다.','1장'],
+ ['결과는 목표의 높이가 아니라 시스템의 수준을 따라간다.','1장'],
+ ['무엇을 얻을까보다 어떤 사람이 될까를 먼저 물어라.','2장'],
+ ['오늘의 작은 행동은 되고 싶은 나에게 던지는 한 표다.','2장'],
+ ['만장일치는 필요 없다. 과반수면 충분하다.','2장'],
+ ['습관은 무언가를 갖게 하기보다 누군가가 되게 한다.','2장'],
+ ['습관은 자유를 빼앗지 않는다. 오히려 자유를 만든다.','3장'],
+ ['무의식을 의식으로 끌어올리지 않으면 그것이 삶을 이끈다.','4장'],
+ ['동기가 없는 게 아니라 언제, 어디서가 없는 것이다.','5장'],
+ ['하나의 행동은 다음 행동의 신호가 된다.','5장'],
+ ['물건은 무엇이냐보다 어디에 있느냐로 선택된다.','6장'],
+ ['내 세계의 소비자가 아니라 설계자가 되자.','6장'],
+ ['모든 습관에는 머물 집이 필요하다.','6장'],
+ ['유혹은 이기는 것보다 피하는 것이 쉽다.','7장'],
+ ['자제력이 좋은 사람은 자제력을 쓸 일이 적은 사람이다.','7장'],
+ ['우리를 움직이는 건 보상 자체보다 보상에 대한 기대다.','8장'],
+ ['해야 할 일을 하고 싶은 일의 입장권으로 만들어라.','8장'],
+ ['원하는 행동이 당연한 곳에 나를 두어라.','9장'],
+ ['"해야 한다"를 "할 수 있다"로 바꾸면 짐이 기회가 된다.','10장'],
+ ['완벽을 고민하는 시간보다 한 번 더 해 보는 시간이 낫다.','11장'],
+ ['습관은 며칠이 아니라 몇 번으로 만들어진다.','11장'],
+ ['옳은 일을 가장 쉬운 일로 만들어라.','12장'],
+ ['습관은 종착점이 아니라 입구다. 체육관이 아니라 택시다.','13장'],
+ ['다듬기 전에 먼저 나타나라. 없는 습관은 개선할 수 없다.','13장'],
+ ['좋은 의도가 있을 때 미래의 나를 미리 묶어 두어라.','14장'],
+ ['즉시 보상받는 것은 반복되고, 즉시 벌받는 것은 피하게 된다.','15장'],
+ ['보상은 습관을 시작하게 하고, 정체성은 습관을 지속시킨다.','15장'],
+ ['한 번 놓친 것은 사고다. 두 번 놓치면 새 습관이 된다.','16장'],
+ ['숫자가 목표가 되는 순간 숫자는 길을 잃는다.','16장'],
+ ['누군가 지켜본다는 사실이 약속을 지키게 한다.','17장'],
+ ['유전자는 운명을 정하지 않고 노력할 곳을 알려 준다.','18장'],
+ ['너무 쉽지도 어렵지도 않은 곳에서 몰입이 시작된다.','19장'],
+ ['프로는 기분이 아니라 일정을 따른다.','19장'],
+ ['정체성은 작고 유연하게, 성찰은 꾸준하게.','20장'],
+ ['작은 습관은 더해지지 않는다. 복리로 불어난다.','결론']
+];
+
+/* ---------- 나쁜 습관 빠른 추가 ---------- */
+const PRESETS=[
+ {name:'손톱 뜯기',cue:'긴장될 때, 문제가 막힐 때, 손이 심심할 때',why:'불안과 답답함을 잠시 덜고 싶다',invisible:'손톱을 늘 짧게 다듬어 뜯을 거리를 없애고, 뜯는 순간을 기록해 신호를 알아차린다',unattractive:'손톱 관리로 깔끔해진 손을 자랑스러워하며 "뜯으면 이 손이 망가진다"고 되새긴다',difficult:'쓴맛 네일이나 밴드를 붙이고, 공부할 땐 한 손에 펜이나 스트레스볼을 쥔다',unsatisfying:'가족에게 볼 때마다 알려 달라고 부탁하고, 뜯은 날은 추적표에 빨간 표시',replace:'막히면 손을 펴고 숨 세 번, 스트레스볼 쥐기'},
+ {name:'웹툰 정주행',cue:'자기 전 침대, 공부 쉬는 시간, 새 회차 알림',why:'지루함을 피하고 다음 이야기가 궁금하다(기대가 도파민을 부른다)',invisible:'웹툰 앱 알림을 끄고 홈 화면에서 치운다',unattractive:'"한 편만"이 두 시간이 된 날을 떠올리고, 완결 후 몰아보는 게 더 재밌다고 생각을 바꾼다',difficult:'앱을 지우고 매번 웹으로 로그인, 스크린타임으로 하루 제한',unsatisfying:'친구와 "평일 0편" 약속, 어기면 간식 사 주기',replace:'주말 공부 목표를 채운 뒤 보상으로 몰아보기(유혹 묶기)'},
+ {name:'쇼핑앱 의미 없이 스크롤(당근·쿠팡·무신사)',cue:'심심할 때, 할인 푸시 알림, 공부하기 싫을 때',why:'득템과 새로움에 대한 기대, 지루함 회피',invisible:'마케팅·키워드 알림을 모두 끄고 앱을 폴더 깊숙이 넣는다',unattractive:'"싸게 사는 것"보다 "안 사면 100% 절약"이라고 생각을 바꾸고, 디드로 효과를 떠올린다',difficult:'앱에서 로그아웃하고 저장된 결제 수단을 지운다. 장바구니에 넣고 24시간 기다리기 규칙',unsatisfying:'이번 달 지출을 부모님께 보고하기로 약속한다',replace:'사고 싶은 건 메모에 적기만 하고 한 달 뒤 다시 보기'},
+ {name:'자기 전 침대에서 폰',cue:'불 끄고 누웠을 때, 침대 옆 충전기',why:'하루 끝의 보상과 휴식, 불안이나 외로움 달래기',invisible:'충전기를 거실이나 책상으로 옮겨 침대 근처에 폰이 없게 한다',unattractive:'잠이 부족해 다음 날 공부와 기분이 무너지는 대가를 떠올린다',difficult:'밤 11시 이후 앱 잠금, 스크린타임 암호는 가족에게',unsatisfying:'취침 시간을 친구와 공유하고 어기면 벌칙',replace:'침대에선 종이책 한 쪽이나 성경 한 장만'},
+ {name:'늦잠·알람 끄기',cue:'손 닿는 곳의 알람, 전날 늦은 취침',why:'조금 더 편하고 싶다, 잠이 부족하다',invisible:'알람 폰을 침대에서 안 보이고 손 안 닿는 곳에 둔다',unattractive:'"일어나야 한다"를 "남보다 먼저 하루를 시작할 수 있다"로 바꿔 말한다',difficult:'알람을 방 반대편 책상에 두어 걸어가야만 끄게 한다',unsatisfying:'기상 인증을 친구에게 보내고, 못 하면 작은 벌금',replace:'알람을 끄면 바로 물 한 잔 마시기(습관 쌓기)'},
+ {name:'야식',cue:'밤 공부 후 허기, 배달앱, 눈에 보이는 과자',why:'피로와 스트레스에 대한 보상, 지루함',invisible:'과자와 라면을 안 보이는 높은 칸에 두고 배달앱을 지운다',unattractive:'야식 다음 날 아침의 더부룩함과 졸음을 떠올린다',difficult:'간식은 소포장으로만 사고(약속 장치), 저장된 결제 수단을 지운다',unsatisfying:'야식 먹은 날은 가족에게 말하기로 약속',replace:'배고프면 물 한 컵이나 바나나, 그리고 바로 양치'},
+ {name:'공부 미루기',cue:'책상에 앉았는데 폰이 옆에 있을 때, 큰 과제 앞',why:'어려움과 실패를 피하고 싶다, 당장 보상이 없다',invisible:'폰은 다른 방에, 책상에는 오늘 교재만',unattractive:'"공부해야 한다"를 "공부할 수 있다"로, 미룬 대가는 시험 직전에 몰려온다는 것을 떠올린다',difficult:'유튜브·SNS 차단 앱을 공부 시간에 예약해 둔다',unsatisfying:'스터디 친구와 공부 인증, 못 하면 벌칙',replace:'2분 규칙: 교재 펴고 첫 문제 읽기까지만'},
+ {name:'유튜브 쇼츠 무한 스크롤',cue:'쉬는 시간, 화장실, 공부하다 막힐 때',why:'지루함 회피, 다음 영상이 재밌을지 모르는 가변 보상',invisible:'쇼츠 탭을 숨기고 앱을 홈 화면에서 지운다',unattractive:'하루 쇼츠 시간에 365를 곱해 1년에 잃는 시간을 계산해 본다',difficult:'앱 대신 브라우저로만, 로그아웃, 하루 시간 제한',unsatisfying:'주간 스크린타임을 친구 단톡에 공유',replace:'쉬는 시간엔 스트레칭이나 턱걸이 매달리기 10초'},
+ {name:'게임 "한 판만"',cue:'집에 오자마자, 친구의 게임 초대',why:'성취감과 지위, 친구와의 소속감',invisible:'기기 선을 뽑아 서랍에 넣고 게임 알림을 끈다',unattractive:'"한 판"이 몇 시간이 된 날의 후회를 떠올린다',difficult:'계정 비밀번호를 가족에게 맡기고 주말에만 받는다(약속 장치)',unsatisfying:'친구와 "평일 게임 0판" 계약, 어기면 벌칙',replace:'친구와는 주말 축구나 운동으로 만나기'},
+ {name:'공부 중 메신저 확인',cue:'진동이나 알림 소리, 문제가 막힐 때',why:'궁금함, 친구들에게서 소외되기 싫다',invisible:'공부 시간엔 방해 금지 모드, 단톡방 알림 끄기',unattractive:'한 번 확인할 때마다 집중이 다시 돌아오는 데 시간이 걸린다는 걸 떠올린다',difficult:'폰을 다른 방에 두고 공부 블록이 끝나야 확인',unsatisfying:'친구들에게 "공부 시간엔 답이 늦어"라고 미리 공개한다',replace:'50분 공부 후 쉬는 시간에만 몰아서 확인'}
+];
+
+/* ---------- 좋은 습관 빠른 추가 ---------- */
+const BUILDS=[
+ {name:'아침 성경 1장',identity:'나는 하루를 말씀으로 시작하는 사람이다',when:'매일 아침 7시, 내 책상',stack:'세수하고 물 한 잔 마신 뒤 성경을 편다',two:'성경을 펴고 한 절 읽기',reward:'읽은 장을 표에 색칠하고 마음에 남은 한 절을 메모'},
+ {name:'공부 시작 25분',identity:'나는 앉으면 바로 시작하는 수험생이다',when:'오전 9시, 공부 책상',stack:'아침 먹고 그릇을 치우면 책상에 앉아 타이머를 켠다',two:'교재 펴고 첫 문제 읽기',reward:'25분이 끝나면 클립 하나를 옮기고 5분 쉬기'},
+ {name:'턱걸이',identity:'나는 몸을 단련하는 사람이다',when:'점심 먹은 뒤, 방문 턱걸이 바',stack:'점심 먹고 방에 들어오면 바에 매달린다',two:'바에 10초 매달리기',reward:'세트 수를 기록하고 주간 합계를 확인'},
+ {name:'영단어',identity:'나는 매일 어휘를 쌓는 사람이다',when:'저녁 8시, 내 책상',stack:'저녁 먹고 책상에 앉으면 단어장을 먼저 편다',two:'단어 5개 소리 내어 읽기',reward:'달력에 X 표시, 사슬 이어 가기'},
+ {name:'명상 호흡',identity:'나는 마음을 고요히 다스리는 사람이다',when:'공부 시작 직전, 책상',stack:'타이머를 켜기 전 1분 호흡한다',two:'깊게 숨 세 번',reward:'호흡 뒤 미소 짓고 기분 점수 1~10 기록'},
+ {name:'일찍 자기',identity:'나는 잠을 지키는 사람이다',when:'밤 11시, 거실 충전기 앞',stack:'양치한 뒤 폰을 거실 충전기에 꽂는다',two:'폰을 충전기에 꽂고 방으로 가기',reward:'다음 날 기상 시간을 기록하고 7일 연속이면 스스로 칭찬'},
+ {name:'물 마시기',identity:'나는 내 몸을 돌보는 사람이다',when:'책상에 앉을 때마다',stack:'책상에 앉으면 먼저 물 한 모금',two:'물병을 채워 책상 위에 두기',reward:'물병 눈금 스티커에 체크'},
+ {name:'일기 한 줄',identity:'나는 하루를 돌아보는 사람이다',when:'자기 전, 침대 옆 일기장',stack:'잠자리 기도를 마치면 일기장에 한 줄 쓴다',two:'한 문장만 쓰기',reward:'한 줄 연속 일수를 표시'}
+];
+const CFG={key:'ajoo-jageun-seupgwan-v1',title:'아주 작은 습관',kicker:'Atomic Habits · James Clear',sub:'매일 1%씩. 목표가 아니라 시스템, 결과가 아니라 정체성.',
+ cardStat:'이해한 카드',intentPh:'예: 폰을 다른 방에 두고 공부 시작하기',readTitle:'책 읽기',readHelp:'서론부터 부록까지 23장을 풀어 썼다. 장마다 질문에 답하고, 실천 하나를 오늘 할 일로 가져간다.',
+ picsLabel:'기억할 이야기',noteLabel:'신앙 관점 노트',practiceHelp:'매일 것은 오늘, 매주 것은 이번 주 안에, 매월 것은 이번 달 안에 한 번 하면 된다.',
+ cardHead:'상황 카드',cardHelp:'상황을 읽고 어떤 법칙으로 풀지 먼저 고른 뒤 책의 답과 견준다. 맞힌 기록은 기록 탭에 쌓인다.'};
+/* ---------- 공통 도우미 ---------- */
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>{d=new Date(d);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
+const parseD=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const addD=(s,n)=>{const d=parseD(s);d.setDate(d.getDate()+n);return ymd(d);};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const today=()=>ymd(Date.now());
+const clone=o=>JSON.parse(JSON.stringify(o));
+function weekKey(d=today()){const dt=parseD(d);const day=(dt.getDay()+6)%7;dt.setDate(dt.getDate()-day);return ymd(dt);}
+let toastT;function toast(m,ms=2600){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,ms);}
+function dialog(html,bind){$('ovl').innerHTML=`<div class="overlay"><div class="dialog" role="dialog" aria-modal="true">${html}</div></div>`;const ov=$('ovl').firstChild;ov.onclick=e=>{if(e.target===ov||e.target.hasAttribute('data-close'))closeDialog();};bind&&bind(ov);}
+function closeDialog(){$('ovl').innerHTML='';}
+function armed(btn,label,fn){if(btn.dataset.arm){fn();return;}btn.dataset.arm=1;const old=btn.textContent;btn.textContent=label;setTimeout(()=>{if(btn.isConnected){delete btn.dataset.arm;btn.textContent=old;}},3000);}
+const PARTSHORT=b=>{const t=BOOKS[b].t;return t.split(' · ')[0];};
+function chNo(l){const same=L.filter(x=>x.b===l.b);return same.length>1?`${PARTSHORT(l.b)} ${same.indexOf(l)+1}`:PARTSHORT(l.b);}
+
+/* ---------- 저장 (이 기기 + 아이폰·맥 동기화, 계정별 개인 공간) ---------- */
+let DOCS={};
+try{DOCS=JSON.parse(localStorage.getItem(CFG.key)||'{}').docs||{};}catch(e){}
+function defState(){return {read:{},notes:{},days:{},cards:{},weekly:{},last:null};}
+if(!DOCS.state)DOCS.state=Object.assign(defState(),{updatedAt:0});
+DOCS.state=Object.assign(defState(),DOCS.state);
+const ST=()=>DOCS.state;
+let COL=null;const wq={},wt={};
+function saveLocal(){try{localStorage.setItem(CFG.key,JSON.stringify({docs:DOCS}));}catch(e){}}
+function touch(name='state'){const d=DOCS[name];if(!d)return;d.updatedAt=Date.now();saveLocal();push(name);}
+function push(name){if(!COL)return;clearTimeout(wt[name]);wt[name]=setTimeout(()=>{const body=DOCS[name]?clone(DOCS[name]):null;wq[name]=(wq[name]||Promise.resolve()).then(()=>body?COL.doc(name).set(body):COL.doc(name).delete()).then(()=>{$('syncTxt').textContent='아이폰·맥 동기화';}).catch(()=>{$('syncTxt').textContent='동기화 실패 · 이 기기에는 저장됨';});},600);}
+function removeDoc(name){delete DOCS[name];saveLocal();if(COL){clearTimeout(wt[name]);wq[name]=(wq[name]||Promise.resolve()).then(()=>COL.doc(name).delete()).catch(()=>{});}}
+(async()=>{try{
+  const user=await (window.claude?.use?.('user')??Promise.resolve(null));const id=user?await user.id():null;
+  const db=await (window.claude?.use?.('db')??Promise.resolve(null));if(!db||!id)return;
+  COL=db.collection('data/users/'+id);let first=true;
+  COL.onSnapshot(qs=>{let changed=false;const seen=new Set();
+    for(const d of qs.docs){seen.add(d.id);const r=d.data();if(!r)continue;const l=DOCS[d.id];if(!l||(r.updatedAt||0)>(l.updatedAt||0)){DOCS[d.id]=clone(r);changed=true;}}
+    for(const ch of qs.docChanges()){if(ch.type==='removed'&&!first&&DOCS[ch.doc.id]){delete DOCS[ch.doc.id];changed=true;}}
+    if(first){first=false;for(const k in DOCS){const r=qs.docs.find(x=>x.id===k)?.data();if(!seen.has(k)?(DOCS[k].updatedAt||0)>0:(r&&(DOCS[k].updatedAt||0)>(r.updatedAt||0)))push(k);}}
+    $('syncTxt').textContent='아이폰·맥 동기화';
+    if(changed){DOCS.state=Object.assign(defState(),DOCS.state);saveLocal();safeRender();}
+  },()=>{$('syncTxt').textContent='동기화 끊김 · 이 기기에는 저장됨';});
+}catch(e){}})();
+let pendingRender=false;
+function safeRender(){const a=document.activeElement;if(a&&['TEXTAREA','INPUT'].includes(a.tagName)){pendingRender=true;return;}render();}
+document.addEventListener('focusout',()=>setTimeout(()=>{const a=document.activeElement;if(pendingRender&&!(a&&['TEXTAREA','INPUT'].includes(a.tagName))){pendingRender=false;render();}},250));
+
+/* ---------- 계산 ---------- */
+function day(d=today()){const s=ST();if(!s.days[d])s.days[d]={p:[]};return s.days[d];}
+function did(k,d=today()){return (ST().days[d]?.p||[]).includes(k);}
+function toggleP(k,d=today()){const r=day(d);const i=r.p.indexOf(k);i>=0?r.p.splice(i,1):r.p.push(k);touch();}
+function streak(){let n=0;let d=today();const has=x=>(ST().days[x]?.p||[]).length||Object.values(ST().days[x]?.h||{}).some(v=>v==='done'||v==='two'||v==='kept')||logs().some(g=>g.d===x);if(!has(d))d=addD(d,-1);while(has(d)){n++;d=addD(d,-1);}return n;}
+function weekDone(k){const t=today();for(let i=0;i<7;i++)if(did(k,addD(t,-i)))return true;return false;}
+function monthDone(k){const m=today().slice(0,7);return Object.keys(ST().days).some(d=>d.startsWith(m)&&did(k,d));}
+function pDone(p){return p.freq==='매일'?did(p.k):p.freq==='매주'?weekDone(p.k):monthDone(p.k);}
+function logs(){let a=[];for(const k in DOCS)if(k.startsWith('g_'))a=a.concat(DOCS[k].list||[]);return a.sort((x,y)=>y.t-x.t);}
+function addLog(e){const k='g_'+e.d.slice(0,7);if(!DOCS[k])DOCS[k]={list:[],updatedAt:0};DOCS[k].list.push(e);touch(k);}
+function delLog(id){for(const k in DOCS)if(k.startsWith('g_')){const n=DOCS[k].list.length;DOCS[k].list=DOCS[k].list.filter(x=>x.id!==id);if(DOCS[k].list.length!==n)touch(k);}}
+function readCount(b){return L.filter(l=>(b===undefined||l.b===b)&&ST().read[l.id]).length;}
+function nextUnread(){return L.find(l=>!ST().read[l.id])||null;}
+function knownCards(){return Object.values(ST().cards).filter(c=>c.ok).length;}
+
+/* ---------- 화면 ---------- */
+let VIEW='home',LID=null;
+function render(){const v=$('view');v.innerHTML='';({home:rHome,read:rRead,practice:rPractice,qa:rQA,log:rLog})[VIEW]?.(v);document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===VIEW));}
+function go(v,lid){VIEW=v;LID=lid??null;render();window.scrollTo(0,0);}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+
+function bar(p){return `<span class="pbar"><i style="width:${Math.round(p*100)}%"></i></span>`;}
+function rHome(v){const s=ST(),t=today(),rec=s.days[t]||{p:[]};const di=Math.floor(Date.now()/864e5);const th=THOUGHTS[di%THOUGHTS.length];const nx=nextUnread();
+  const dailies=PRACTICES.filter(p=>p.freq==='매일');const doneN=dailies.filter(p=>did(p.k)).length;
+  v.innerHTML=`<div class="page"><div class="col">
+  <section class="hall" aria-label="진도">
+    <div class="kicker">${CFG.kicker}</div><h1>${CFG.title}</h1><div class="sub">${CFG.sub}</div>
+    <div class="parts">${BOOKS.map(B=>{const tot=L.filter(l=>l.b===B.n).length;if(!tot)return '';const r=readCount(B.n);return `<button class="part" data-b="${B.n}"><span>${esc(PARTSHORT(B.n))}</span>${bar(r/tot)}<small>${r}/${tot}</small></button>`;}).join('')}</div>
+    <div class="stats"><div><small>읽은 장</small><b>${readCount()}/${L.length}</b></div><div><small>실천 연속</small><b>${streak()}일</b></div><div><small>${CFG.cardStat}</small><b>${knownCards()}/${CARDS.length}</b></div></div>
+  </section>
+  ${SPECIAL.homeTop?SPECIAL.homeTop():''}
+  <section class="card"><div class="lbl"><span>오늘 할 한 가지</span>${rec.intentDone?'<span class="tag ok">해냈다</span>':''}</div>
+    <input class="txt" id="intentIn" maxlength="120" placeholder="${CFG.intentPh}" value="${esc(rec.intent||'')}">
+    <p class="help" style="margin-top:6px">읽기에서 각 장의 실천을 누르면 여기로 들어온다.</p>
+    ${rec.intent?`<div class="row" style="margin-top:8px"><button class="btn sm ${rec.intentDone?'acc2':''}" id="intentDone">${rec.intentDone?'해냈다 ✓':'해냈으면 누른다'}</button></div>`:''}
+  </section>
+  <section class="card"><div class="lbl"><span>오늘의 실천</span><span>${doneN}/${dailies.length}</span></div>
+    ${dailies.map(p=>`<div class="ptk"><button class="chk ${did(p.k)?'on':''}" data-p="${p.k}" aria-pressed="${did(p.k)}" aria-label="${esc(p.t)}">${did(p.k)?'✓':''}</button><div class="tx"><b>${esc(p.t)}</b><small>${esc(p.s)}</small></div><span class="src">${esc(p.from)}</span></div>`).join('')}
+  </section>
+  </div><div class="col">
+  ${SPECIAL.homeCards()}
+  <section class="card"><div class="lbl"><span>오늘의 생각</span></div><p class="quote">${esc(th[0])}<cite>${esc(th[1])}</cite></p></section>
+  ${nx?`<button class="btn wide" id="nextRead">이어 읽기 · ${esc(chNo(nx))} ${esc(nx.t)}</button>`:'<section class="card"><p class="help"><b>책을 다 읽었다.</b> 이제 카드로 꼭꼭 씹고 실천을 이어 간다.</p></section>'}
+  </div></div>`;
+  v.querySelectorAll('.part').forEach(b=>b.onclick=()=>{VIEW='read';LID=null;render();setTimeout(()=>$('bk'+b.dataset.b)?.scrollIntoView({behavior:'smooth'}),30);});
+  let iT;$('intentIn').oninput=e=>{clearTimeout(iT);iT=setTimeout(()=>{day().intent=e.target.value.trim();touch();},600);};
+  $('intentIn').onchange=()=>render();
+  $('intentDone')&&($('intentDone').onclick=()=>{const r=day();r.intentDone=!r.intentDone;touch();render();if(r.intentDone)toast('해냈다');});
+  v.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{toggleP(b.dataset.p);render();});
+  SPECIAL.bindHome(v);
+  $('nextRead')&&($('nextRead').onclick=()=>go('read',nx.id));
+}
+
+/* ---------- 읽기 ---------- */
+function rRead(v){if(LID){rLesson(v,LID);return;}
+  v.innerHTML=`<div style="max-width:760px;margin:0 auto">
+  <section class="card"><h2>${CFG.readTitle}</h2><p class="help">${CFG.readHelp}</p>
+   <div style="margin-top:12px">${bar(readCount()/L.length)}</div><p class="help" style="margin-top:6px">${readCount()} / ${L.length}장 읽음</p></section>
+  ${BOOKS.map(B=>{const ls=L.filter(l=>l.b===B.n);if(!ls.length)return '';return `<div class="bookttl" id="bk${B.n}">${esc(B.t)}</div><p class="booksub">${esc(B.s)}</p>${ls.map((l,i)=>`<button class="lsn" data-l="${l.id}"><span class="no">${ls.length>1?i+1:'·'}</span><span class="tt">${esc(l.t)}<small>${esc(l.one)}</small></span>${ST().read[l.id]?'<span class="rd">읽음</span>':''}</button>`).join('')}`;}).join('')}
+  </div>`;
+  v.querySelectorAll('.lsn').forEach(b=>b.onclick=()=>go('read',b.dataset.l));}
+function rLesson(v,id){const l=L.find(x=>x.id===id);const i=L.indexOf(l);const s=ST();const nt=s.notes[id]||{};const prev=L[i-1],next=L[i+1];
+  v.innerHTML=`<article class="reader">
+   <div class="head"><button class="btn ghost sm" id="back">← 목차</button><div class="crumb" style="margin-top:10px">${esc(BOOKS[l.b].t)}</div><h1>${esc(l.t)}</h1><p class="one">${esc(l.one)}</p></div>
+   <section class="card body">${l.body}</section>
+   ${(l.pics||[]).length?`<section class="card"><div class="lbl"><span>${CFG.picsLabel}</span></div>${l.pics.map(p=>{const [a,...b]=p.split(' · ');return `<div class="pic"><span class="ic">✦</span><div><b>${esc(a)}</b>${b.length?` · ${esc(b.join(' · '))}`:''}</div></div>`;}).join('')}</section>`:''}
+   ${l.note?`<section class="card note"><div class="lbl"><span>${CFG.noteLabel}</span></div><p>${esc(l.note)}</p></section>`:''}
+   <section class="card"><div class="lbl"><span>꼭꼭 씹기 · 질문</span><span class="help" id="saved"></span></div>
+    ${l.q.map((q,qi)=>`<div class="qa"><b>${esc(q)}</b><textarea class="txt" data-q="q${qi}" rows="2" placeholder="내 생각을 적는다">${esc(nt['q'+qi]||'')}</textarea></div>`).join('')}
+    <div class="qa"><b>이 장에서 남은 한 줄</b><textarea class="txt" data-q="my" rows="2" placeholder="내 말로 다시 쓴 핵심">${esc(nt.my||'')}</textarea></div></section>
+   <section class="card actcard"><div class="lbl"><span>이 장의 실천</span></div><p style="margin:0 0 10px">${esc(l.act)}</p><button class="btn acc2 sm" id="toIntent">오늘 할 한 가지로 정하기</button></section>
+   <button class="btn ${s.read[id]?'':'pri'} wide" id="readBtn">${s.read[id]?'읽음으로 표시됨 · 취소':'다 읽었다'}</button>
+   <div class="navrow">${prev?`<button class="btn sm" data-go="${prev.id}">← 이전 장</button>`:'<span></span>'}${next?`<button class="btn sm" data-go="${next.id}">다음 장 →</button>`:'<span></span>'}</div>
+  </article>`;
+  $('back').onclick=()=>go('read');
+  let qT;v.querySelectorAll('textarea[data-q]').forEach(ta=>ta.oninput=()=>{clearTimeout(qT);qT=setTimeout(()=>{s.notes[id]=Object.assign({},s.notes[id],{[ta.dataset.q]:ta.value,t:Date.now()});touch();$('saved').textContent='저장됨';},700);});
+  $('readBtn').onclick=()=>{if(s.read[id])delete s.read[id];else s.read[id]=Date.now();touch();if(s.read[id]&&next){toast('읽었다. 다음 장으로');go('read',next.id);}else render();};
+  $('toIntent').onclick=()=>{day().intent=l.act;day().intentDone=false;touch();toast('오늘 탭에 담았다');};
+  v.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go('read',b.dataset.go));
+}
+
+/* ---------- 실천 ---------- */
+function rPractice(v){
+  v.innerHTML=`<div class="page"><div class="col">
+  ${SPECIAL.practiceTop?SPECIAL.practiceTop():''}
+  <section class="card"><h2>책에서 나온 실천 ${PRACTICES.length}가지</h2><p class="help" style="margin-bottom:6px">${CFG.practiceHelp}</p>
+   ${PRACTICES.map(p=>{const dn=pDone(p);return `<div class="ptk"><button class="chk ${dn?'on':''}" data-p="${p.k}" aria-pressed="${dn}" aria-label="${esc(p.t)}">${dn?'✓':''}</button><div class="tx"><b>${esc(p.t)}</b> <span class="tag no">${p.freq}</span><small>${esc(p.s)}</small></div><span class="src">${esc(p.from)}</span></div>`;}).join('')}</section>
+  </div><div class="col">${SPECIAL.practiceCards()}</div></div>`;
+  v.querySelectorAll('.ptk [data-p]').forEach(b=>b.onclick=()=>{const p=PRACTICES.find(x=>x.k===b.dataset.p);if(p.freq==='매일'||did(p.k)||!pDone(p))toggleP(p.k);else toast(p.freq==='매주'?'이번 주에 이미 했다':'이번 달에 이미 했다');render();});
+  SPECIAL.bindPractice(v);
+}
+
+/* ---------- 카드 ---------- */
+let QI=null,QSHOW=false,QF='all',QPICK=null;
+function rQA(v){const s=ST();const list=CARDS.map((c,i)=>Object.assign({i},c)).filter(c=>QF==='all'||(QF==='ok'?s.cards[c.i]?.ok:!s.cards[c.i]?.ok));
+  if(QI===null||!CARDS[QI])QI=list.length?list[0].i:0;const c=CARDS[QI];const cs=s.cards[QI]||{};const ch=L.find(l=>l.id===c.ch);
+  v.innerHTML=`<div class="page"><div class="col">
+  <section class="card"><div class="lbl"><span>${CFG.cardHead}</span><span class="tag ${cs.ok?'ok':'no'}">${cs.ok?'이해했다':'아직'}</span></div>
+   <div class="flash"><div class="qq">${esc(c.q)}</div>
+    ${SPECIAL.cardGuess?SPECIAL.cardGuess(c,cs):`<div class="qa"><b style="font-size:13px;color:var(--mute)">먼저 내 생각을 써 본다</b><textarea class="txt" id="mine" rows="3" placeholder="책의 답을 보기 전에 써 본다">${esc(cs.mine||'')}</textarea></div>`}
+    ${QSHOW?`<div class="aa">${esc(c.a)}</div>${ch?`<button class="btn ghost sm" id="toCh" style="align-self:flex-start">관련 장 · ${esc(ch.t)} →</button>`:''}`:`<button class="btn" id="showA">책의 답 보기</button>`}
+   </div>
+   <div class="row" style="margin-top:12px"><button class="btn ${cs.ok?'acc2':''}" id="okBtn">${cs.ok?'이해했다 ✓':'이제 이해했다'}</button><button class="btn" id="nextQ">다음 카드</button><button class="btn ghost" id="randQ">무작위</button></div>
+  </section>
+  <p class="help" style="padding:0 4px">${CFG.cardHelp}</p>
+  </div><div class="col">
+  <section class="card"><div class="lbl"><span>카드 ${CARDS.length}장</span><span>${knownCards()} 이해</span></div>
+   <div class="row" style="margin-bottom:8px">${[['all','전체'],['no','아직'],['ok','이해함']].map(([k,t])=>`<button class="chip ${QF===k?'on':''}" data-f="${k}">${t}</button>`).join('')}</div>
+   <div class="cardlist">${list.map(x=>`<button data-i="${x.i}" style="${x.i===QI?'font-weight:700':''}"><span class="t">${esc(x.q)}</span>${s.cards[x.i]?.ok?'<span class="tag ok">✓</span>':''}</button>`).join('')||'<p class="help">해당하는 카드가 없다.</p>'}</div></section>
+  </div></div>`;
+  let mT;$('mine')&&($('mine').oninput=e=>{clearTimeout(mT);mT=setTimeout(()=>{s.cards[QI]=Object.assign({},s.cards[QI],{mine:e.target.value});touch();},700);});
+  $('showA')&&($('showA').onclick=()=>{QSHOW=true;render();});
+  $('toCh')&&($('toCh').onclick=()=>go('read',ch.id));
+  $('okBtn').onclick=()=>{s.cards[QI]=Object.assign({},s.cards[QI],{ok:!cs.ok,t:Date.now()});touch();render();};
+  const moveTo=i=>{QI=i;QSHOW=false;QPICK=null;render();};
+  $('nextQ').onclick=()=>{const idx=list.findIndex(x=>x.i===QI);const nx=list[(idx+1)%Math.max(1,list.length)];moveTo(nx?nx.i:0);};
+  $('randQ').onclick=()=>{const pool=CARDS.map((_,i)=>i).filter(i=>!s.cards[i]?.ok);const arr=pool.length?pool:CARDS.map((_,i)=>i);moveTo(arr[Math.floor(Math.random()*arr.length)]);};
+  v.querySelectorAll('.cardlist [data-i]').forEach(b=>b.onclick=()=>moveTo(+b.dataset.i));
+  v.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{QF=b.dataset.f;QI=null;QSHOW=false;QPICK=null;render();});
+  SPECIAL.bindCard&&SPECIAL.bindCard(v,c,cs);
+}
+
+/* ---------- 기록 ---------- */
+let CALM=null;
+function rLog(v){const s=ST(),t=today();if(!CALM)CALM=t.slice(0,7);const [Y,M]=CALM.split('-').map(Number);const off=new Date(Y,M-1,1).getDay(),dim=new Date(Y,M,0).getDate();
+  let cal='';['일','월','화','수','목','금','토'].forEach(h=>cal+=`<div class="h">${h}</div>`);for(let i=0;i<off;i++)cal+='<div></div>';
+  const G=logs();
+  for(let d=1;d<=dim;d++){const k=`${CALM}-${pad(d)}`;const n=(s.days[k]?.p||[]).length+Object.values(s.days[k]?.h||{}).filter(v=>v==='done'||v==='two'||v==='kept').length+G.filter(g=>g.d===k).length;cal+=`<div class="d ${n>=5?'l3':n>=3?'l2':n>=1?'l1':''} ${k===t?'today':''}" title="${k} ${n}">${d}</div>`;}
+  const notes=Object.entries(s.notes).filter(([id,n])=>n.my||n.q0||n.q1).sort((a,b)=>(b[1].t||0)-(a[1].t||0));
+  v.innerHTML=`<div class="page"><div class="col">
+  <section class="card"><div class="lbl"><button class="btn ghost sm" id="cP" aria-label="이전 달">‹</button><span style="color:var(--ink);font-size:14px">${Y}년 ${M}월</span><button class="btn ghost sm" id="cN" aria-label="다음 달">›</button></div><div class="cal">${cal}</div>
+   <p class="help" style="margin-top:8px">진할수록 그날 실천과 기록이 많다. 연속 ${streak()}일.</p></section>
+  ${SPECIAL.logCards()}
+  <section class="card"><div class="lbl"><span>백업</span></div><p class="help" style="margin-bottom:8px">이 판은 기록을 이 기기에만 저장한다. 다른 기기로 옮길 때는 백업 복사 → 그 기기에서 복원.</p>
+   <div class="row"><button class="btn sm" id="bkC">백업 복사</button><button class="btn sm" id="bkR">복원</button></div><textarea class="txt" id="bkT" rows="3" hidden placeholder="백업 글자를 붙여넣고 복원을 다시 누른다" style="margin-top:8px"></textarea></section>
+  </div><div class="col">
+  ${SPECIAL.logList()}
+  <section class="card"><div class="lbl"><span>내가 꼭꼭 씹은 장</span><span>${notes.length}</span></div>${notes.length?notes.map(([id,n])=>{const l=L.find(x=>x.id===id);return l?`<div class="entry"><div class="meta"><span>${esc(l.t)}</span><button class="x" data-open="${id}">열기</button></div><div class="tx">${esc(n.my||n.q0||n.q1)}</div></div>`:'';}).join(''):'<p class="help">읽기에서 질문에 답하면 여기 모인다.</p>'}</section>
+  </div></div>`;
+  $('cP').onclick=()=>{CALM=ymd(new Date(Y,M-2,1)).slice(0,7);render();};$('cN').onclick=()=>{CALM=ymd(new Date(Y,M,1)).slice(0,7);render();};
+  v.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>go('read',b.dataset.open));
+  v.querySelectorAll('[data-gdel]').forEach(b=>b.onclick=()=>armed(b,'정말?',()=>{delLog(b.dataset.gdel);render();}));
+  $('bkC').onclick=async()=>{const tx=JSON.stringify(DOCS);try{await navigator.clipboard.writeText(tx);toast('백업을 복사했다');}catch(e){const ta=$('bkT');ta.hidden=false;ta.value=tx;ta.select();toast('선택된 글자를 직접 복사한다');}};
+  $('bkR').onclick=()=>{const ta=$('bkT');if(ta.hidden||!ta.value.trim()){ta.hidden=false;ta.value='';ta.focus();return;}try{const r=JSON.parse(ta.value);if(!r.state)throw 0;for(const k in r){DOCS[k]=r[k];touch(k);}DOCS.state=Object.assign(defState(),DOCS.state);render();toast('복원했다');}catch(e){toast('백업 글자를 읽지 못했다');}};
+  SPECIAL.bindLog&&SPECIAL.bindLog(v);
+}
+document.addEventListener('dblclick',e=>{if(!['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))e.preventDefault();},{passive:false});
+/* ---------- 아주 작은 습관 · 습관 공방, 충동 버튼, 점수표, 계약서 ---------- */
+const HS=()=>{const s=ST();if(!Array.isArray(s.habits))s.habits=[];return s.habits;};
+const active=()=>HS().filter(h=>!h.arch);
+const hget=id=>HS().find(h=>h.id===id);
+const hv=(id,d=today())=>ST().days[d]?.h?.[id]||'';
+function setH(id,v,d=today()){const r=day(d);if(!r.h)r.h={};if(r.h[id]===v)delete r.h[id];else r.h[id]=v;touch();}
+const okv=v=>v==='done'||v==='two'||v==='kept';
+function hStreak(h){let n=0,d=today();if(!okv(hv(h.id,d)))d=addD(d,-1);while(d>=h.created&&okv(hv(h.id,d))){n++;d=addD(d,-1);}return n;}
+function votes(h){let n=0;for(const d in ST().days)if(okv(ST().days[d]?.h?.[h.id]))n++;return n;}
+function missed(h,d){if(d<h.created||d>=today())return false;const v=hv(h.id,d);return h.kind==='break'?v==='slip':!okv(v);}
+function hWarn(h){const y=addD(today(),-1),y2=addD(today(),-2);if(okv(hv(h.id)))return '';
+  if(missed(h,y)&&missed(h,y2))return '두 번 연속 놓쳤다. 오늘은 2분짜리라도 한다';
+  if(missed(h,y))return h.kind==='break'?'어제 넘어졌다. 두 번 연속은 안 된다':'어제 놓쳤다. 두 번 연속은 안 된다';return '';}
+const LAWN={obvious:'분명하게',attractive:'매력적으로',easy:'쉽게',satisfying:'만족스럽게',core:'기초·정체성'};
+
+/* 습관 편집 */
+const BF=[['name','습관 이름','예: 영단어 30개'],['identity','되고 싶은 나','나는 ___ 사람이다'],['when','실행 의도','나는 [시간]에 [장소]에서 한다'],['stack','습관 쌓기','[지금 하는 습관]을 한 뒤에'],['two','2분 버전','하기 싫은 날 최소한 이것만'],['env','환경 설계','눈에 보이게, 손 닿게 둘 것'],['bundle','유혹 묶기','좋아하는 것과 함께 묶기'],['reward','즉각 보상','끝나면 바로 주는 작은 보상']];
+const XF=[['name','끊을 습관','예: 손톱 뜯기'],['cue','신호','언제·어디서·무슨 기분일 때 시작되나'],['why','진짜 원하는 것','이 습관으로 채우려는 마음(지루함, 불안, 쉼…)'],['invisible','보이지 않게','신호를 치운다 (1법칙 뒤집기)'],['unattractive','매력 없게','끊으면 얻는 것, 다시 보기 (2법칙 뒤집기)'],['difficult','어렵게','마찰을 늘리고 미리 막는다 (3법칙 뒤집기)'],['unsatisfying','불만족스럽게','책임 파트너·계약 (4법칙 뒤집기)'],['replace','대신 할 것','같은 마음을 채우는 좋은 행동']];
+function editHabit(kind,id,preset){const h=id?hget(id):Object.assign({kind},preset||{});const F=kind==='break'?XF:BF;
+  dialog(`<h3>${id?'습관 고치기':kind==='break'?'나쁜 습관 끊기':'좋은 습관 만들기'}</h3>
+   <p class="help" style="margin-bottom:12px">${kind==='break'?'네 법칙을 뒤집는다. 보이지 않게, 매력 없게, 어렵게, 불만족스럽게.':'네 법칙을 적용한다. 분명하게, 매력적으로, 쉽게, 만족스럽게.'} 다 안 채워도 된다.</p>
+   ${F.map(([k,l,ph])=>`<div class="fld"><label for="f_${k}">${l}</label>${k==='name'?`<input class="txt" id="f_${k}" maxlength="40" placeholder="${esc(ph)}" value="${esc(h[k]||'')}">`:`<textarea class="txt" id="f_${k}" rows="2" style="min-height:52px" placeholder="${esc(ph)}">${esc(h[k]||'')}</textarea>`}</div>`).join('')}
+   <div class="acts2">${id?`<button class="btn ghost" id="hArch">${h.arch?'다시 쓰기':'보관(마스터함)'}</button><button class="btn ghost" id="hDel">지우기</button>`:''}<button class="btn ghost" data-close>취소</button><button class="btn pri" id="hSave">저장</button></div>`,ov=>{
+   $('hSave').onclick=()=>{const o={};F.forEach(([k])=>o[k]=$('f_'+k).value.trim());if(!o.name){toast('이름을 적는다');return;}
+     if(id)Object.assign(h,o);else HS().push(Object.assign({id:uid(),kind,created:today()},o));touch();closeDialog();render();toast(id?'고쳤다':kind==='break'?'끊기 계획을 세웠다':'새 습관을 세웠다');};
+   $('hArch')&&($('hArch').onclick=()=>{h.arch=!h.arch;touch();closeDialog();render();});
+   $('hDel')&&($('hDel').onclick=e=>armed(e.target,'정말 지운다',()=>{const i=HS().indexOf(h);HS().splice(i,1);touch();closeDialog();render();}));});}
+
+/* 충동이 왔을 때 */
+let UT=null;
+function urgeEnd(){URGE_ON=false;clearInterval(UT);applyWake();}
+function urge(id){const h=hget(id);clearInterval(UT);let left=120;URGE_ON=true;applyWake();
+  const plan=[['진짜 원하는 것',h.why],['대신 할 것',h.replace],['보이지 않게',h.invisible],['매력 없게',h.unattractive],['어렵게',h.difficult],['불만족스럽게',h.unsatisfying]].filter(x=>x[1]);
+  dialog(`<h3>${esc(h.name)} · 충동이 왔다</h3><p class="help">충동은 파도처럼 올라왔다 내려간다. 2분만 버티고 내가 세운 계획을 다시 본다.</p>${wakeMode()==='off'?'<p class="help" style="margin-top:4px">화면 켜두기가 꺼져 있다. 위쪽 버튼에서 켤 수 있다.</p>':''}
+   <div class="timer" id="uT">2:00</div>
+   <div class="plan">${plan.length?plan.map(([a,b])=>`<div><b>${a}</b>${esc(b)}</div>`).join(''):'<div>아직 계획이 비어 있다. 실천 탭에서 이 습관을 눌러 채운다.</div>'}${h.cue?`<div><b>신호</b>${esc(h.cue)}</div>`:''}</div>
+   <div class="acts2"><button class="btn" id="uLose">졌다</button><button class="btn acc2" id="uWin">버텼다</button></div>`,()=>{
+   UT=setInterval(()=>{left--;const e=$('uT');if(!e){urgeEnd();return;}e.textContent=`${Math.floor(Math.max(0,left)/60)}:${pad(Math.max(0,left)%60)}`;if(left<=0){clearInterval(UT);e.textContent='지나갔다';}},1000);
+   $('uWin').onclick=()=>{urgeEnd();addLog({id:uid(),d:today(),t:Date.now(),hid:id,kind:'urge',res:true});closeDialog();render();toast('버텼다. 정체성에 한 표');};
+   $('uLose').onclick=()=>{urgeEnd();addLog({id:uid(),d:today(),t:Date.now(),hid:id,kind:'urge',res:false});closeDialog();slip(id);};});}
+function slip(id){const h=hget(id);if(hv(id)!=='slip')setH(id,'slip');
+  dialog(`<h3>넘어졌다 · 괜찮다</h3><p class="help" style="margin-bottom:10px">한 번은 사고다. 두 번 연속이 새 습관의 시작이다. 무엇이 방아쇠였는지만 적고, 다음 계획을 하나 고친다.</p>
+   <div class="fld"><label for="sCue">무엇이 신호였나</label><textarea class="txt" id="sCue" rows="2" style="min-height:52px" placeholder="예: 밤 11시 침대, 단톡 알림 보고 폰을 집었다"></textarea></div>
+   <div class="fld"><label for="sFix">다음엔 무엇을 바꾸나</label><textarea class="txt" id="sFix" rows="2" style="min-height:52px" placeholder="예: 충전기를 거실로 옮긴다"></textarea></div>
+   <div class="acts2"><button class="btn ghost" data-close>건너뛰기</button><button class="btn pri" id="sSave">적는다</button></div>`,()=>{
+   $('sSave').onclick=()=>{const c=$('sCue').value.trim(),f=$('sFix').value.trim();addLog({id:uid(),d:today(),t:Date.now(),hid:id,kind:'slip',text:c,fix:f});
+     if(f&&h&&!h.difficult)h.difficult=f;touch();closeDialog();render();toast('적었다. 내일은 다시 시작');};});
+  render();}
+
+function habitRow(h,mini){const v=hv(h.id),w=hWarn(h),st=hStreak(h);
+  const sub=h.kind==='break'?(h.replace?'대신: '+h.replace:h.cue?'신호: '+h.cue:''):[h.stack?h.stack+' 뒤에':'',h.when].filter(Boolean).join(' · ');
+  return `<div class="hrow"><div class="tx"><b><span class="kind ${h.kind==='break'?'x':'b'}">${h.kind==='break'?'끊기':'만들기'}</span>${esc(h.name)}</b>
+   ${h.identity&&!mini?`<small>${esc(h.identity)}</small>`:''}${sub?`<small>${esc(sub)}</small>`:''}
+   ${w?`<span class="warn">${w}</span>`:st?`<span class="streak">${st}일 연속</span>`:''}</div>
+   <div class="hbtns">${h.kind==='break'?`<button class="hb ${v==='kept'?'on done':''}" data-hk="${h.id}" data-hval="kept">지켰다</button><button class="hb ${v==='slip'?'on slip':''}" data-hk="${h.id}" data-hval="slip">넘어짐</button>`
+    :`<button class="hb ${v==='two'?'on two':''}" data-hk="${h.id}" data-hval="two" title="2분 버전만 했다">2분</button><button class="hb ${v==='done'?'on done':''}" data-hk="${h.id}" data-hval="done">했다</button>`}</div></div>`;}
+function bindRows(v){v.querySelectorAll('[data-hk]').forEach(b=>b.onclick=()=>{const id=b.dataset.hk,val=b.dataset.hval;
+  if(val==='slip'&&hv(id)!=='slip'){slip(id);return;}setH(id,val);render();
+  if(okv(hv(id))){const h=hget(id);toast(h.kind==='break'?'지켰다. 오늘 하루 승리':val==='two'?'2분이라도 했다. 연속이 이어진다':'정체성에 한 표. 지금까지 '+votes(h)+'표');}});}
+
+/* 점수표·계약서 */
+let SCD='';
+const SPECIAL={
+  homeTop(){const A=active();const br=A.filter(h=>h.kind==='break');const done=A.filter(h=>okv(hv(h.id))).length;
+    return `<section class="card"><div class="lbl"><span>내 습관 · 오늘</span><span>${done}/${A.length}</span></div>
+     ${A.length?A.map(h=>habitRow(h,true)).join(''):`<p class="help" style="margin-bottom:10px">아직 습관이 없다. 만들 좋은 습관 하나, 끊을 나쁜 습관 하나부터 세운다.</p><div class="row"><button class="btn sm pri" data-new="build">+ 좋은 습관</button><button class="btn sm" data-new="break">+ 끊을 습관</button></div>`}
+     ${A.length?`<p class="help" style="margin-top:8px">하기 싫은 날은 2분 버전만 해도 연속이 이어진다. 놓쳐도 두 번 연속만은 피한다.</p>`:''}</section>
+     ${br.length?`<section class="card"><div class="lbl"><span>충동이 왔다</span><span>오늘 버팀 ${logs().filter(g=>g.kind==='urge'&&g.res&&g.d===today()).length}</span></div><div style="display:grid;gap:8px">${br.map(h=>`<button class="urge" data-urge="${h.id}">${esc(h.name)} · 지금 하고 싶다</button>`).join('')}</div></section>`:''}`;},
+  homeCards(){return '';},
+  bindHome(v){bindRows(v);v.querySelectorAll('[data-new]').forEach(b=>b.onclick=()=>editHabit(b.dataset.new));v.querySelectorAll('[data-urge]').forEach(b=>b.onclick=()=>urge(b.dataset.urge));},
+  practiceTop(){const A=HS();
+    return `<section class="card"><h2>습관 공방</h2><p class="help" style="margin-bottom:10px">습관을 누르면 계획을 고친다. 몸에 붙은 습관은 보관하고 다음 습관으로 넘어간다.</p>
+     <div class="row" style="margin-bottom:10px"><button class="btn sm pri" data-new="build">+ 좋은 습관 만들기</button><button class="btn sm" data-new="break">+ 나쁜 습관 끊기</button></div>
+     ${A.length?A.map(h=>`<button class="lsn" data-edit="${h.id}" style="${h.arch?'opacity:.55':''}"><span class="tt"><span class="kind ${h.kind==='break'?'x':'b'}">${h.kind==='break'?'끊기':'만들기'}</span>${esc(h.name)}<small>${h.arch?'보관됨 · ':''}${h.kind==='break'?'지킨 날':'던진 표'} ${votes(h)} · ${hStreak(h)}일 연속</small></span><span class="rd" style="color:var(--mute)">고치기</span></button>`).join(''):''}
+     <div class="sublbl">자주 끊는 습관에서 고르기</div><div class="row">${PRESETS.map((p,i)=>`<button class="chip" data-px="${i}">${esc(p.name)}</button>`).join('')}</div>
+     <div class="sublbl">만들 습관에서 고르기</div><div class="row">${BUILDS.map((p,i)=>`<button class="chip" data-pb="${i}">${esc(p.name)}</button>`).join('')}</div></section>`;},
+  practiceCards(){const s=ST();const sc=Array.isArray(s.score)?s.score:[];const ct=s.contract||{};
+    return `<section class="card"><h2>네 법칙 한눈에</h2><p class="help" style="margin-bottom:10px">좋은 습관은 법칙대로, 나쁜 습관은 뒤집어서.</p>
+     ${LAWS.map(l=>`<details class="prin"><summary><span>${l.n}법칙 · ${esc(l.t)}</span><small>${esc(l.stage)} · 뒤집으면 ${esc(l.inv)}</small></summary>
+      <div class="sublbl" style="margin-top:0">만들 때</div><ul>${l.build.map(x=>`<li><b>${x.c} ${esc(x.t)}</b> · ${esc(x.s)}</li>`).join('')}</ul>
+      <div class="sublbl">끊을 때</div><ul>${l.brk.map(x=>`<li><b>${x.c} ${esc(x.t)}</b> · ${esc(x.s)}</li>`).join('')}</ul>
+      <p class="help" style="margin-bottom:12px">${esc(l.q)}<br>${esc(l.qb)}</p></details>`).join('')}</section>
+     <section class="card"><h2>습관 점수표</h2><p class="help" style="margin-bottom:8px">하루를 순서대로 적고 좋은(+)·중립(=)·나쁜(−)을 붙인다. 판단보다 알아차림이 먼저다.</p>
+      ${sc.map(x=>`<div class="hrow" style="padding:7px 0"><div class="tx" style="font-size:14px">${esc(x.t)}</div><div class="sv">${[['+','p'],['=','e'],['−','m']].map(([g,c])=>`<button class="${x.v===g?'on '+c:''}" data-sv="${x.id}" data-g="${g}" aria-label="${esc(x.t)} ${g}">${g}</button>`).join('')}<button class="x" data-sdel="${x.id}" aria-label="빼기">×</button></div></div>`).join('')}
+      <div class="row" style="margin-top:8px;flex-wrap:nowrap"><input class="txt" id="scIn" maxlength="50" placeholder="예: 일어나서 바로 폰 확인" value="${esc(SCD)}"><button class="btn sm" id="scAdd" style="white-space:nowrap;flex:none">더하기</button></div>
+      ${sc.length?`<p class="help" style="margin-top:6px">+ ${sc.filter(x=>x.v==='+').length} · = ${sc.filter(x=>x.v==='=').length} · − ${sc.filter(x=>x.v==='−').length}</p>`:''}</section>
+     <section class="card"><h2>습관 계약서</h2><p class="help" style="margin-bottom:10px">약속과 어겼을 때의 대가를 적고, 지켜볼 사람 한 명에게 알린다. 남이 보면 넘어지기 아프다.</p>
+      <div class="fld"><label for="ctA">나는 이렇게 하겠다</label><textarea class="txt" id="ctA" rows="2" style="min-height:52px" placeholder="예: 평일 밤 11시 이후 폰은 거실 충전기에 둔다">${esc(ct.a||'')}</textarea></div>
+      <div class="fld"><label for="ctB">어기면</label><input class="txt" id="ctB" maxlength="80" placeholder="예: 파트너에게 편의점 음료를 산다" value="${esc(ct.b||'')}"></div>
+      <div class="fld"><label for="ctC">책임 파트너</label><input class="txt" id="ctC" maxlength="40" placeholder="예: 형, 찬양팀 친구" value="${esc(ct.c||'')}"></div>
+      <div class="row"><button class="btn sm ${ct.signed?'acc2':'pri'}" id="ctSign">${ct.signed?'서명함 · '+ct.signed.slice(5).replace('-','/'):'서명한다'}</button>${ct.a?`<button class="btn sm" id="ctCopy">파트너에게 보낼 글 복사</button>`:''}</div></section>`;},
+  bindPractice(v){const s=ST();
+    v.querySelectorAll('[data-new]').forEach(b=>b.onclick=()=>editHabit(b.dataset.new));
+    v.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const h=hget(b.dataset.edit);editHabit(h.kind,h.id);});
+    v.querySelectorAll('[data-px]').forEach(b=>b.onclick=()=>editHabit('break',null,PRESETS[+b.dataset.px]));
+    v.querySelectorAll('[data-pb]').forEach(b=>b.onclick=()=>editHabit('build',null,BUILDS[+b.dataset.pb]));
+    const keep=()=>{const y=window.scrollY;render();window.scrollTo(0,y);};
+    if(!Array.isArray(s.score))s.score=[];
+    $('scIn').oninput=e=>SCD=e.target.value;
+    const add=()=>{const t=SCD.trim();if(!t)return;s.score.push({id:uid(),t,v:''});SCD='';touch();keep();setTimeout(()=>$('scIn')?.focus(),0);};
+    $('scAdd').onclick=add;$('scIn').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();add();}};
+    v.querySelectorAll('[data-sv]').forEach(b=>b.onclick=()=>{const x=s.score.find(y=>y.id===b.dataset.sv);x.v=x.v===b.dataset.g?'':b.dataset.g;touch();keep();});
+    v.querySelectorAll('[data-sdel]').forEach(b=>b.onclick=()=>{s.score=s.score.filter(y=>y.id!==b.dataset.sdel);touch();keep();});
+    let cT;['ctA','ctB','ctC'].forEach((id,i)=>$(id).oninput=e=>{clearTimeout(cT);cT=setTimeout(()=>{s.contract=Object.assign({},s.contract,{['abc'[i]]:e.target.value.trim()});touch();},600);});
+    $('ctSign').onclick=()=>{const c=Object.assign({},s.contract,{a:$('ctA').value.trim(),b:$('ctB').value.trim(),c:$('ctC').value.trim()});if(!c.a){toast('약속부터 적는다');return;}c.signed=c.signed?null:today();s.contract=c;touch();keep();};
+    $('ctCopy')&&($('ctCopy').onclick=async()=>{const c=s.contract;const tx=`[습관 계약서]\n나는 이렇게 하겠다: ${c.a}\n어기면: ${c.b||'-'}\n지켜봐 줘. 어기면 말해 줘.`;try{await navigator.clipboard.writeText(tx);toast('복사했다. 파트너에게 보낸다');}catch(e){toast('복사가 안 됐다. 직접 옮겨 적는다');}});
+  },
+  cardGuess(c,cs){const pick=QPICK;const ks=['obvious','attractive','easy','satisfying','core'];
+    return `<div class="qa"><b style="font-size:13px;color:var(--mute)">어떤 법칙으로 풀까</b><div class="pgrid five">${ks.map(k=>{let cl='';if(pick){if(k===c.law)cl='right';else if(k===pick)cl='wrong';}
+      return `<button class="${cl}" data-g="${k}" ${pick?'disabled':''}>${LAWN[k]}</button>`;}).join('')}</div>
+      ${pick?`<p class="help" style="margin-top:4px"><b>${pick===c.law?'맞혔다.':'정답은 '+LAWN[c.law]+'.'}</b> 이 카드 ${cs.right||0}번 맞힘 · ${cs.wrong||0}번 틀림</p>`:''}</div>`;},
+  bindCard(v,c){v.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{if(QPICK)return;QPICK=b.dataset.g;const s=ST();const o=Object.assign({},s.cards[QI]);
+    if(QPICK===c.law)o.right=(o.right||0)+1;else o.wrong=(o.wrong||0)+1;o.t=Date.now();s.cards[QI]=o;touch();QSHOW=true;render();});},
+  logCards(){const A=HS().filter(h=>!h.arch);const G=logs();const ur=G.filter(g=>g.kind==='urge');const t=today();
+    return `<section class="card"><div class="lbl"><span>습관별 최근 14일</span><span>초록 했다 · 파랑 2분 · 빨강 넘어짐</span></div>
+     ${A.length?A.map(h=>{let dots='';for(let i=13;i>=0;i--){const d=addD(t,-i);const v=hv(h.id,d);dots+=`<i class="${v==='done'||v==='kept'?'ok':v==='two'?'two':v==='slip'?'fail':''}" title="${d}"></i>`;}
+      return `<div style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="h" style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:14px">${esc(h.name)}</b><span class="help">${h.kind==='break'?'지킨 날':'표'} ${votes(h)} · ${hStreak(h)}일 연속</span></div><div class="dots14">${dots}</div></div>`;}).join(''):'<p class="help">실천 탭 습관 공방에서 습관을 세우면 여기 쌓인다.</p>'}</section>
+     <section class="card"><div class="lbl"><span>충동 기록</span><span>${ur.length}번</span></div><div class="stat6"><div>버텼다<b>${ur.filter(g=>g.res).length}</b></div><div>졌다<b>${ur.filter(g=>!g.res).length}</b></div><div>버틴 비율<b>${ur.length?Math.round(ur.filter(g=>g.res).length/ur.length*100)+'%':'-'}</b></div></div></section>`;},
+  logList(){const G=logs();const nm=id=>hget(id)?.name||'지운 습관';
+    return `<section class="card"><div class="lbl"><span>충동·넘어짐 일지</span><span>${G.length}</span></div>
+    ${G.length?G.slice(0,60).map(g=>`<div class="entry"><div class="meta"><span>${g.d.slice(5).replace('-','/')} · ${esc(nm(g.hid))} · ${g.kind==='urge'?(g.res?'충동을 버텼다':'충동에 졌다'):'넘어졌다'}</span><button class="x" data-gdel="${g.id}">지우기</button></div>${g.text?`<div class="tx">신호: ${esc(g.text)}</div>`:''}${g.fix?`<div class="tx">바꿀 것: ${esc(g.fix)}</div>`:''}</div>`).join(''):'<p class="help">충동 버튼이나 넘어짐을 누르면 여기 쌓인다. 방아쇠가 보이기 시작한다.</p>'}</section>`;}
+};
+/* ---------- 화면 켜두기 (기기마다 따로) ---------- */
+const NOSLEEP_SRC='data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAXAbW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAB9AAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAll0cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAB9AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAABAAAAAQAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAAfQAAAAAAABAAAAAAHRbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAABAAAAAgABVxAAAAAAALWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABWaWRlb0hhbmRsZXIAAAABfG1pbmYAAAAUdm1oZAAAAAEAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAATxzdGJsAAAAuHN0c2QAAAAAAAAAAQAAAKhhdmMxAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAABAAEABIAAAASAAAAAAAAAABFUxhdmM2MC4zMS4xMDIgbGlieDI2NAAAAAAAAAAAAAAAGP//AAAALmF2Y0MBQsAK/+EAFmdCwArZHsBEAAADAAQAAAMACDxImSABAAVoy4PEyAAAABBwYXNwAAAAAQAAAAEAAAAUYnRydAAAAAAAAApQAAAKUAAAABhzdHRzAAAAAAAAAAEAAAACAABAAAAAABRzdHNzAAAAAAAAAAEAAAABAAAAHHN0c2MAAAAAAAAAAQAAAAEAAAABAAAAAQAAABxzdHN6AAAAAAAAAAAAAAACAAACiQAAAAsAAAAYc3RjbwAAAAAAAAACAAAGBQAACK4AAAKRdHJhawAAAFx0a2hkAAAAAwAAAAAAAAAAAAAAAgAAAAAAAAfQAAAAAAAAAAAAAAABAQAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAJGVkdHMAAAAcZWxzdAAAAAAAAAABAAAH0AAABAAAAQAAAAACCW1kaWEAAAAgbWRoZAAAAAAAAAAAAAAAAAAAH0AAAEKAVcQAAAAAAC1oZGxyAAAAAAAAAABzb3VuAAAAAAAAAAAAAAAAU291bmRIYW5kbGVyAAAAAbRtaW5mAAAAEHNtaGQAAAAAAAAAAAAAACRkaW5mAAAAHGRyZWYAAAAAAAAAAQAAAAx1cmwgAAAAAQAAAXhzdGJsAAAAfnN0c2QAAAAAAAAAAQAAAG5tcDRhAAAAAAAAAAEAAAAAAAAAAAABABAAAAAAH0AAAAAAADZlc2RzAAAAAAOAgIAlAAIABICAgBdAFQAAAAAAH0AAAAE/BYCAgAUViFblAAaAgIABAgAAABRidHJ0AAAAAAAAH0AAAAE/AAAAIHN0dHMAAAAAAAAAAgAAABAAAAQAAAAAAQAAAoAAAAAoc3RzYwAAAAAAAAACAAAAAQAAAAEAAAABAAAAAgAAAAgAAAABAAAAWHN0c3oAAAAAAAAAAAAAABEAAAAVAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAABxzdGNvAAAAAAAAAAMAAAXwAAAIjgAACLkAAAAac2dwZAEAAAByb2xsAAAAAgAAAAH//wAAABxzYmdwAAAAAHJvbGwAAAABAAAAEQAAAAEAAABidWR0YQAAAFptZXRhAAAAAAAAACFoZGxyAAAAAAAAAABtZGlyYXBwbAAAAAAAAAAAAAAAAC1pbHN0AAAAJal0b28AAAAdZGF0YQAAAAEAAAAATGF2ZjYwLjE2LjEwMAAAAAhmcmVlAAAC8W1kYXTeAgBMYXZjNjAuMzEuMTAyAAIwQA4AAAJyBgX//27cRem95tlIt5Ys2CDZI+7veDI2NCAtIGNvcmUgMTY0IHIzMTA4IDMxZTE5ZjkgLSBILjI2NC9NUEVHLTQgQVZDIGNvZGVjIC0gQ29weWxlZnQgMjAwMy0yMDIzIC0gaHR0cDovL3d3dy52aWRlb2xhbi5vcmcveDI2NC5odG1sIC0gb3B0aW9uczogY2FiYWM9MCByZWY9MyBkZWJsb2NrPTE6LTM6LTMgYW5hbHlzZT0weDE6MHgxMTEgbWU9aGV4IHN1Ym1lPTcgcHN5PTEgcHN5X3JkPTIuMDA6MC43MCBtaXhlZF9yZWY9MSBtZV9yYW5nZT0xNiBjaHJvbWFfbWU9MSB0cmVsbGlzPTEgOHg4ZGN0PTAgY3FtPTAgZGVhZHpvbmU9MjEsMTEgZmFzdF9wc2tpcD0xIGNocm9tYV9xcF9vZmZzZXQ9LTQgdGhyZWFkcz0xIGxvb2thaGVhZF90aHJlYWRzPTEgc2xpY2VkX3RocmVhZHM9MCBucj0wIGRlY2ltYXRlPTEgaW50ZXJsYWNlZD0wIGJsdXJheV9jb21wYXQ9MCBjb25zdHJhaW5lZF9pbnRyYT0wIGJmcmFtZXM9MCB3ZWlnaHRwPTAga2V5aW50PTI1MCBrZXlpbnRfbWluPTEgc2NlbmVjdXQ9NDAgaW50cmFfcmVmcmVzaD0wIHJjX2xvb2thaGVhZD00MCByYz1jcmYgbWJ0cmVlPTEgY3JmPTIzLjAgcWNvbXA9MC42MCBxcG1pbj0wIHFwbWF4PTY5IHFwc3RlcD00IGlwX3JhdGlvPTEuNDAgYXE9MToxLjIwAIAAAAAPZYiEBfOf//8PRQABV5+AARggBwEYIAcBGCAHARggBwEYIAcBGCAHARggBwEYIAcAAAAHQZo4C+c6gAEYIAcBGCAHARggBwEYIAcBGCAHARggBwEYIAcBGCAH';
+let WL=null,NSV=null;
+const WMODES=[['all','앱 쓰는 내내'],['urge','충동 타이머 동안만'],['off','끔']];
+function wakeMode(){try{return localStorage.getItem(CFG.key+':wake')||'all';}catch(e){return 'all';}}
+function setWake(m){try{localStorage.setItem(CFG.key+':wake',m);}catch(e){}applyWake();}
+let URGE_ON=false;
+function wantWake(){const m=wakeMode();return document.visibilityState==='visible'&&(m==='all'||(m==='urge'&&URGE_ON));}
+function startNoSleep(){try{if(!NSV){NSV=document.createElement('video');NSV.setAttribute('playsinline','');NSV.setAttribute('webkit-playsinline','');NSV.muted=true;NSV.loop=true;NSV.src=NOSLEEP_SRC;NSV.setAttribute('aria-hidden','true');NSV.style.cssText='position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:0;bottom:0';document.body.appendChild(NSV);}const p=NSV.play();p&&p.then(()=>{if(!wantWake())NSV.pause();}).catch(()=>{});}catch(e){}}
+function stopNoSleep(){try{NSV&&NSV.pause();}catch(e){}}
+async function applyWake(){
+  if(wantWake()){startNoSleep();
+    if('wakeLock' in navigator&&!WL){try{WL=await navigator.wakeLock.request('screen');WL.addEventListener('release',()=>{WL=null;updWakeUI();if(wantWake())setTimeout(applyWake,500);});}catch(e){WL=null;}}
+  }else{if(WL){try{await WL.release();}catch(e){}WL=null;}stopNoSleep();}
+  updWakeUI();}
+function updWakeUI(){const b=$('wakeBtn');if(!b)return;const m=wakeMode();b.textContent=m==='off'?'화면 자동 꺼짐':m==='urge'?'화면 켜둠 · 타이머':'화면 켜둠';b.setAttribute('aria-pressed',m!=='off');b.classList.toggle('on',m!=='off');}
+$('wakeBtn').onclick=()=>{const m=wakeMode();dialog(`<h3>화면 켜두기</h3><p class="help" style="margin-bottom:12px">아이폰·맥이 저절로 꺼지지 않게 한다. 이 기기에만 적용된다.</p>
+  <div class="wakeseg">${WMODES.map(([k,l])=>`<button class="chip ${m===k?'on':''}" data-wm="${k}">${l}</button>`).join('')}</div>
+  <p class="help" style="margin-top:12px">앱 쓰는 내내: 이 화면이 열려 있는 동안 계속 켜 둔다. 다른 앱으로 가면 저절로 풀린다.</p>
+  <div class="acts2"><button class="btn pri" data-close>닫기</button></div>`,ov=>ov.querySelectorAll('[data-wm]').forEach(b=>b.onclick=()=>{setWake(b.dataset.wm);ov.querySelectorAll('[data-wm]').forEach(x=>x.classList.toggle('on',x===b));toast(b.dataset.wm==='off'?'이제 화면이 평소처럼 꺼진다':b.dataset.wm==='urge'?'충동 타이머 동안 화면을 켜 둔다':'앱을 쓰는 동안 화면을 켜 둔다');}));};
+document.addEventListener('visibilitychange',()=>applyWake());
+['pointerdown','keydown','touchend'].forEach(ev=>document.addEventListener(ev,()=>{if(wantWake()&&(!WL||!NSV||NSV.paused))applyWake();},{passive:true}));
+updWakeUI();
+
+render();
+</script>
+
+<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
+</body>
+</html>
