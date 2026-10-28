@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1F2625">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="정직한 매력">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>정직한 매력</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=Instrument+Serif:ital@1&display=swap">
+<style>
+/* Layout: 차콜 판 위에 일곱 개 진도 막대(서론~마무리). 아래 탭으로 오늘·읽기·실천·상황카드·기록. 오늘 화면의 중심은 용기 일지(결과가 아니라 행동을 센다). 맥에서는 두 단. */
+:root{
+  --bg:#F0F1EF; --card:#FCFCFB; --sunk:#E4E7E4; --line:#D3D8D4; --ink:#161D1C; --mute:#56605E; --faint:#89928F;
+  --navy:#1E5E5A; --navy-soft:#D9EAE7; --brass:#B4711C; --brass-soft:#F5E6CF; --holly:#2E7048; --holly-soft:#D9ECDF; --wine:#A23B3B; --wine-soft:#F4DEDC;
+  --on-navy:#FFFFFF; --hall:#1F2625; --on-hall:#F3F5F4; --hall-bar:#E7A649;
+  --f-head:"IBM Plex Sans KR",-apple-system,"Apple SD Gothic Neo",sans-serif;
+  --f-body:"IBM Plex Sans KR",-apple-system,"Apple SD Gothic Neo",sans-serif;
+  --f-latin:"Instrument Serif",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#101413; --card:#171D1C; --sunk:#1F2725; --line:#2B3533; --ink:#E6EBE9; --mute:#9DA8A5; --faint:#6C7774;
+  --navy:#6FC2B9; --navy-soft:#173230; --brass:#E7A649; --brass-soft:#3A2A14; --holly:#6CC892; --holly-soft:#163323; --wine:#EC8B85; --wine-soft:#3C1D1B;
+  --on-navy:#0C1211; --hall:#1A2120; --on-hall:#E6EBE9; --hall-bar:#E7A649; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#101413; --card:#171D1C; --sunk:#1F2725; --line:#2B3533; --ink:#E6EBE9; --mute:#9DA8A5; --faint:#6C7774;
+  --navy:#6FC2B9; --navy-soft:#173230; --brass:#E7A649; --brass-soft:#3A2A14; --holly:#6CC892; --holly-soft:#163323; --wine:#EC8B85; --wine-soft:#3C1D1B;
+  --on-navy:#0C1211; --hall:#1A2120; --on-hall:#E6EBE9; --hall-bar:#E7A649; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;touch-action:manipulation}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0;line-height:1.35;font-weight:800}
+.wrap{max-width:1080px;margin:0 auto;padding-block:14px calc(96px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.top .ttl{font-family:var(--f-head);font-weight:800;font-size:19px}
+.top .sync{font-size:11.5px;color:var(--faint);margin-left:auto}
+.page{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.page>.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+@media (max-width:820px){.page{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{font-size:18px;margin-bottom:6px}
+.card h3{font-size:15.5px;margin-bottom:4px}
+.lbl{font-size:12px;letter-spacing:.05em;color:var(--mute);font-weight:700;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.help{font-size:13.5px;color:var(--mute);margin:0}
+.help b{color:var(--ink)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 14px;font-weight:500}
+.btn.pri{background:var(--navy);border-color:var(--navy);color:var(--on-navy);font-weight:700}
+.btn.brass{background:var(--brass);border-color:var(--brass);color:var(--on-navy);font-weight:700}
+.btn.ghost{background:transparent}
+.btn.wide{width:100%}
+.btn.sm{padding:6px 10px;font-size:13px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;font-size:13.5px}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.txt{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;font:inherit;color:inherit}
+textarea.txt{resize:vertical;min-height:72px;line-height:1.65}
+.scale{display:flex;gap:6px}
+.scale button{flex:1;border:1px solid var(--line);background:transparent;border-radius:9px;padding:6px 0;font-size:13px}
+.scale button.on{background:var(--navy);border-color:var(--navy);color:var(--on-navy);font-weight:700}
+/* 복도와 문 */
+.hall{background:var(--hall);color:var(--on-hall);border:0;border-radius:16px;padding:18px 18px 16px;position:relative;overflow:hidden}
+.hall .kicker{font-family:var(--f-latin);font-style:italic;font-size:16px;opacity:.85}
+.hall h1{font-size:30px;margin:2px 0 4px}
+.hall .sub{font-size:13px;opacity:.85}
+.hall .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.hall .stats div{background:color-mix(in srgb,var(--on-hall) 10%,transparent);border-radius:10px;padding:8px 10px}
+.hall .stats small{display:block;font-size:11px;opacity:.75}
+.hall .stats b{font-size:18px;font-variant-numeric:tabular-nums}
+.quote{font-family:var(--f-head);font-size:16px;line-height:1.7;font-weight:700}
+.quote cite{display:block;font-family:var(--f-body);font-style:normal;font-weight:400;font-size:12.5px;color:var(--mute);margin-top:6px}
+.verse{font-family:var(--f-head);font-weight:700;font-size:15px;line-height:1.75}
+.verse cite{display:block;font-family:var(--f-body);font-weight:400;font-style:normal;font-size:12px;color:var(--mute);margin-top:4px}
+.ptk{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.ptk:last-child{border-bottom:0}
+.ptk .chk{width:26px;height:26px;border-radius:8px;border:1.5px solid var(--line);background:transparent;flex:none;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--on-navy);padding:0}
+.ptk .chk.on{background:var(--holly);border-color:var(--holly)}
+.ptk .tx{flex:1;min-width:0}
+.ptk .tx b{font-weight:700;font-size:14.5px}
+.ptk .tx small{display:block;color:var(--mute);font-size:12.5px;line-height:1.5}
+.ptk .src{font-size:11px;color:var(--faint);white-space:nowrap}
+.sixdots{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:3px;margin:8px 0}
+.sixdots i{aspect-ratio:1;border-radius:3px;background:var(--sunk);display:block}
+.sixdots i.ok{background:var(--holly)}
+.sixdots i.fail{background:var(--wine)}
+.sixdots i.today{outline:2px solid var(--brass);outline-offset:-2px}
+.timer{font-variant-numeric:tabular-nums;font-size:40px;font-weight:700;text-align:center;font-family:var(--f-body)}
+/* 읽기 */
+.bookttl{font-family:var(--f-head);font-weight:800;font-size:17px;margin:14px 2px 2px}
+.booksub{font-size:12.5px;color:var(--mute);margin:0 2px 8px}
+.lsn{width:100%;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:11px 14px;display:flex;gap:10px;align-items:center;margin-bottom:6px}
+.lsn .no{font-size:12px;color:var(--faint);width:30px;flex:none;font-variant-numeric:tabular-nums}
+.lsn .tt{flex:1;min-width:0;font-weight:700}
+.lsn .tt small{display:block;font-weight:400;color:var(--mute);font-size:12.5px;line-height:1.5}
+.lsn .rd{font-size:12px;color:var(--holly);font-weight:700}
+.reader{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.reader .head .crumb{font-size:12.5px;color:var(--mute)}
+.reader .head h1{font-size:27px;margin:4px 0 8px}
+.reader .one{font-family:var(--f-head);font-weight:700;font-size:17px;line-height:1.7;border-left:3px solid var(--brass);padding-left:12px;margin:0}
+.reader .body p{margin:0 0 12px}
+.reader .body ul{margin:0 0 12px;padding-left:20px}
+.reader .body li{margin-bottom:6px}
+.pic{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.pic:last-child{border-bottom:0}
+.pic .ic{color:var(--brass);font-family:var(--f-latin);font-style:italic;font-size:18px;line-height:1.2}
+.pres{background:var(--navy-soft);border:1px solid color-mix(in srgb,var(--navy) 30%,var(--line))}
+.pres .lbl{color:var(--navy)}
+.pres p{margin:0;font-size:14.5px}
+.qa{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.qa b{font-size:14.5px}
+.navrow{display:flex;justify-content:space-between;gap:8px}
+/* 문답 */
+.flash{min-height:180px;display:flex;flex-direction:column;gap:12px}
+.flash .qq{font-family:var(--f-head);font-weight:800;font-size:20px;line-height:1.5}
+.flash .aa{font-size:15px;background:var(--sunk);border-radius:10px;padding:12px 14px}
+.tag{display:inline-block;font-size:11.5px;border-radius:999px;padding:1px 9px;font-weight:700}
+.tag.ok{background:var(--holly-soft);color:var(--holly)}
+.tag.no{background:var(--sunk);color:var(--mute)}
+.cardlist button{width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:9px 2px;display:flex;gap:8px;align-items:center;font-size:14px}
+.cardlist button span.t{flex:1;min-width:0}
+/* 기록 */
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal .d{aspect-ratio:1;border-radius:6px;background:var(--sunk);font-size:10.5px;display:flex;align-items:flex-start;justify-content:flex-end;padding:2px 4px;color:var(--faint);max-width:100%}
+.cal .d.l1{background:color-mix(in srgb,var(--holly) 30%,var(--sunk));color:var(--ink)}
+.cal .d.l2{background:color-mix(in srgb,var(--holly) 60%,var(--sunk));color:var(--ink)}
+.cal .d.l3{background:var(--holly);color:var(--on-navy)}
+.cal .d.today{outline:2px solid var(--brass);outline-offset:-2px}
+.cal .h{font-size:11px;color:var(--faint);text-align:center}
+.entry{border-bottom:1px solid var(--line);padding:10px 0;font-size:14px}
+.entry:last-child{border-bottom:0}
+.entry .meta{font-size:12px;color:var(--faint);display:flex;justify-content:space-between;gap:8px}
+.entry .tx{white-space:pre-wrap;overflow-wrap:anywhere}
+.x{border:0;background:none;color:var(--faint);padding:0 4px;font-size:13px}
+/* tabs */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--card) 93%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px max(10px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px));display:flex;justify-content:center;gap:4px}
+nav.tabs button{flex:1;max-width:130px;border:0;background:none;border-radius:10px;padding:6px 0;font-size:12px;color:var(--mute);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav.tabs button svg{width:22px;height:22px}
+nav.tabs button.on{color:var(--navy);font-weight:700}
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(8,12,22,.5);display:flex;align-items:flex-end;justify-content:center;padding:16px}
+@media (min-width:640px){.overlay{align-items:center}}
+.dialog{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;max-width:560px;width:100%;max-height:90vh;overflow:auto}
+.dialog h3{font-size:19px;margin-bottom:6px}
+.dialog .acts2{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:14px}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:13.5px;z-index:90;max-width:calc(100% - 32px);text-align:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.parts{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px;margin-top:14px}
+.part{border:0;background:color-mix(in srgb,var(--on-hall) 10%,transparent);border-radius:10px;padding:8px 10px;color:inherit;text-align:left;display:flex;flex-direction:column;gap:5px;font-size:12px;line-height:1.3;min-width:0}
+.part span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.part small{opacity:.72;font-size:11px;font-variant-numeric:tabular-nums}
+.pbar{display:block;height:6px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--brass);border-radius:inherit}
+.hall .pbar{background:color-mix(in srgb,var(--on-hall) 18%,transparent)}
+.hall .pbar i{background:var(--hall-bar)}
+.btn.acc2{background:var(--holly);border-color:var(--holly);color:var(--on-navy);font-weight:700}
+.note{background:var(--navy-soft);border:1px solid color-mix(in srgb,var(--navy) 30%,var(--line))}
+.note .lbl{color:var(--navy)}
+.note p{margin:0;font-size:14.5px}
+.actcard{background:var(--brass-soft);border-color:color-mix(in srgb,var(--brass) 35%,var(--line))}
+.actcard .lbl{color:var(--brass)}
+.sublbl{font-size:12.5px;color:var(--mute);font-weight:700;margin:10px 0 6px}
+.big{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.trend{display:flex;align-items:flex-end;gap:6px;height:90px;margin-top:6px}
+.trend div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%;font-size:10.5px;color:var(--faint);min-width:0}
+.trend i{display:block;width:100%;max-width:34px;border-radius:6px 6px 2px 2px;background:var(--navy)}
+.trend i.now{background:var(--brass)}
+.sc{padding:10px 0;border-bottom:1px solid var(--line)}
+.sc:last-child{border-bottom:0}
+.sc .h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.sc .h b{font-size:14.5px}
+.sc small{display:block;color:var(--mute);font-size:12.5px;line-height:1.5;margin-bottom:6px}
+.delta{font-size:12px;font-weight:700;white-space:nowrap}
+.delta.up{color:var(--holly)}.delta.down{color:var(--wine)}.delta.eq{color:var(--faint)}
+.pgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.pgrid button{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 4px;font-weight:700;font-size:14px}
+.pgrid button.right{background:var(--holly-soft);border-color:var(--holly);color:var(--holly)}
+.pgrid button.wrong{background:var(--wine-soft);border-color:var(--wine);color:var(--wine)}
+.pgrid button:disabled{cursor:default}
+details.prin{border:1px solid var(--line);border-radius:12px;padding:0 14px;margin-bottom:8px;background:var(--card)}
+details.prin summary{cursor:pointer;padding:12px 0;font-weight:700;display:flex;justify-content:space-between;gap:8px;list-style:none}
+details.prin summary::-webkit-details-marker{display:none}
+details.prin summary small{font-weight:400;color:var(--mute);font-size:12.5px;text-align:right}
+details.prin ul{margin:0 0 10px;padding-left:18px;font-size:14px}
+details.prin li{margin-bottom:4px}
+details.prin p{font-size:14px;margin:0 0 10px}
+.stat6{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.stat6 div{background:var(--sunk);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--mute)}
+.stat6 b{display:block;font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <span class="ttl">정직한 매력</span>
+    <span class="sync" id="syncTxt">이 기기에만 저장</span>
+  </header>
+  <main id="view"></main>
+</div>
+<nav class="tabs" id="tabs" aria-label="화면">
+  <button data-v="home" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>오늘</button>
+  <button data-v="read"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 21V4h9l5 5v12z"/><path d="M14 4v5h5"/><path d="M12 13v6M9 16h6"/></svg>읽기</button>
+  <button data-v="practice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12l5 5L20 6"/></svg>실천</button>
+  <button data-v="qa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v11H9l-5 4z"/><path d="M10 9.5a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6.9V13M12 15.2v.3"/></svg>상황 카드</button>
+  <button data-v="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 3h14v18H5z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>기록</button>
+</nav>
+<div id="ovl"></div>
+<div class="toast" id="toast" hidden></div>
+<script>
+/* ---------- 마크 맨슨 『Models: 정직함으로 매력을 얻다』 요약·재구성 (원문 인용 없이 풀어 씀) ---------- */
+const BOOKS=[
+ {n:0,t:'서론 · 움직임',s:'롤모델 없이 자란 세대의 남자에게 필요한 새 모델'},
+ {n:1,t:'1부 · 현실',s:'매력은 덜 매달리는 데서, 덜 매달림은 취약성과 정직에서 나온다'},
+ {n:2,t:'2부 · 전략',s:'양극화, 거절의 재해석, 그리고 세 가지 기본기'},
+ {n:3,t:'3부 · 정직한 삶',s:'내가 끌어당기는 사람은 결국 나를 닮는다'},
+ {n:4,t:'4부 · 정직한 행동',s:'두려움을 없애지 말고, 두려움 속에서 움직이기'},
+ {n:5,t:'5부 · 정직한 소통',s:'말보다 의도, 기술보다 연결'},
+ {n:6,t:'마무리 · 실행 계획과 에필로그',s:'단계별 도전, 그리고 "이것이 선물이라면?"'}
+];
+const L=[
+/* 서론 */
+{id:'intro',b:0,t:'움직임',one:'여자를 대하는 데서 생기는 실패는 말솜씨가 아니라 안쪽, 곧 친밀함을 다룰 준비가 안 된 데서 온다.',
+body:`<p>예전에는 남자의 역할이 분명했다. 지키고, 벌어 오는 사람. 지금 세대는 "매력 있고 성숙한 남자"가 어떤 모습인지 보여 주는 본보기 없이 자랐다. 이 책은 그 빈자리에 정직하고 성숙한 남자의 새 모델을 제시하려 한다.</p>
+<p>저자는 첫사랑에게 배신당한 뒤 인정받고 싶은 갈증에 사로잡혀 몇 년간 무작정 여자를 쫓아다녔다. 겉으로는 성과가 있었지만 공허했다. 그러다 다른 남자들을 코칭하면서 깨달았다. 대부분의 문제는 "무슨 말을 하느냐"가 아니라 감정의 문제, 곧 자신을 열등하게 느끼고 친밀함을 두려워하는 데 있었다.</p>
+<p>그래서 이 책이 말하는 변화는 <b>안에서 밖으로</b> 일어난다. 믿음과 마음가짐이 바뀌면 행동은 따라온다. 대사를 외워 흉내 내는 것은 반창고일 뿐이다. "될 때까지 그런 척하라"가 아니라, 생각을 바꿔 감정이 바뀌고 그 감정이 몸에 밴 습관이 되게 하는 것이 목표다. 책의 앞부분은 원리(매력의 현실), 중간은 전략, 뒷부분은 생활·용기·소통이라는 실천으로 짜여 있다.</p>
+<p>저자가 아르헨티나에서 말도 거의 통하지 않는 사람과 몸짓, 장난, 그림만으로 가까워진 경험은 핵심을 보여 준다. 사람 사이의 끌림은 단어보다 감정과 <b>움직임</b>으로 오간다. 앉아만 있는 문화에서 벗어나 일어나 움직이고, 느끼고, 부딪혀 보라는 것이 이 책의 첫 초대다.</p>`,
+pics:['다섯 명의 같은 이름이 저장된 휴대폰 · 겉의 성과가 속의 충만함을 보장하지 않는다','말이 안 통하는 춤 상대 · 끌림은 단어가 아니라 몸짓과 감정으로 오간다','반창고 처방 · 대사 암기는 증상만 가린다'],
+q:['나는 관계에서 "무슨 말을 할까"에 더 신경 쓰나, "나는 어떤 사람인가"에 더 신경 쓰나?','내가 본받을 만한 성숙한 남자의 모델은 누구인가?'],
+act:'오늘 하루 의자에서 일어나 해 보지 않은 일 하나(산책, 새 장소, 먼저 인사)를 몸으로 해 본다.',
+ref:[]},
+/* 1부 */
+{id:'c1',b:1,t:'매달리지 않음 (Non-Neediness)',one:'매력은 매달림에 반비례한다. 남의 시선보다 나 자신의 기준을 더 우선할수록 매력적이다.',
+body:`<p><b>매달림(neediness)</b>은 남이 나를 어떻게 보는지를 내가 나를 보는 것보다 더 중요하게 여기는 상태다. 그러면 말과 행동이 모두 인정받기 위한 것이 된다. <b>매달리지 않음</b>은 반대로 내 가치와 욕구를 사는 것이 우선이다. 이 차이는 서 있는 자세, 웃음, 농담, 옷차림 등 모든 행동에 배어 나온다. 사람들이 말하는 "그 사람은 뭔가 있어"의 정체가 이것이다.</p>
+<p><b>투자</b>란 상대를 위해 내 생각·감정·동기를 얼마나 바꾸거나 희생하느냐다. 핵심은 상대가 나에게 투자하는 것보다 더 많이 나를 바꾸지 않는 것이다. 여자는 이것을 계산하지 않고 직감으로 느낀다. 문자를 너무 많이 보내거나, 농담에 과하게 웃는 순간 같은 사소한 데서 의도가 드러난다.</p>
+<p>그렇다고 자기만 아는 <b>나르시시즘</b>이 답은 아니다. 나르시시스트는 여자를 트로피처럼 대하고, 거절당하면 화를 내고 상대를 깎아내린다. 겉은 강해 보여도 속은 여전히 인정에 굶주려 있다. 매달리는 남자는 상대만 존중하고, 나르시시스트는 자기만 존중한다. 건강한 남자는 <b>둘 다</b> 존중하며, 서로의 필요가 만나는 지점을 찾는다.</p>
+<p>졸업 후 친구와 즐거움을 잃고 연인에게만 기대게 된 남자, 기술로 잠깐 자신감 있는 척했다가 본모습이 드러나 무너진 남자의 사례가 보여 주듯, 결국 유일한 길은 <b>자기 자신에게 투자</b>하는 것이다. "그녀가 나를 좋아할까?" 대신 "나는 그녀가 마음에 드나?"를 묻는 것, 시간을 내 주는 사람에게만 시간을 내는 것이 높은 자존감과 건강한 경계다.</p>`,
+pics:['제임스와 제프 · 모든 일정을 상대에게 맞추는 남자 vs 자기 삶을 즐기며 맞는 사람만 만나는 남자','라이언의 몰락 · 처음 매력이던 자기 삶(친구, 활기)을 잃자 관계도 무너졌다','기술로 버틴 대니얼 · 대사가 떨어지자 원래의 매달림이 드러났다','로이의 반대쪽 극단 · 여자를 숭배하다가 자기를 숭배하는 쪽으로 넘어갔을 뿐이다'],
+q:['요즘 나는 누구의 인정을 얻으려고 내 생각이나 일정을 바꾸고 있나?','나는 상대를 존중하는 만큼 나 자신도 존중하고 있나?'],
+act:'오늘 누군가를 만나기 전, "그 사람이 나를 좋아할까?" 대신 "나는 그 사람의 어떤 점이 궁금한가?"를 적어 보고 그 질문을 품고 만난다.',
+ref:[]},
+{id:'c2',b:1,t:'취약성의 힘',one:'취약함은 약함이 아니다. 거절당할 수 있는 자리에 기꺼이 서는 것이 진짜 힘이다.',
+body:`<p>남자들은 감정을 숨기고 약점을 보이지 말라고 배운다. 그러나 저자가 말하는 <b>취약성</b>은 울며 매달리는 것이 아니다. 거절당할 수 있는데도 말을 거는 것, 재미없을 수도 있는 농담을 하는 것, 누군가 불편해할 의견을 말하는 것, 좋아한다고 고백하는 것. 목을 내밀고 "이게 나다"라고 말하는 모든 행동이다.</p>
+<p>두 남자를 비교해 보자. 한 사람은 눈을 맞추고 생각을 말하며, 실수하면 인정하고 사과하고, 거절당해도 털고 일어선다. 다른 사람은 늘 쿨한 척 연기하고, 갈등을 피하려 거짓말하고, 실수는 남 탓을 한다. 어느 쪽이 더 강하고 더 끌리는가? 앞사람이 더 취약하고 동시에 더 강하다. 진화적으로도 남의 반응에 흔들리지 않고 자기 잘못을 인정하는 사람이 믿을 만한 사람이었다.</p>
+<p>변화에는 <b>고통의 시기</b>가 있다. 처음 감정을 꺼내면 어색하고 못나 보인다. 저자 자신도 첫 데이트 상대에게 전 여자친구 험담을 쏟아 놓았다가 관계를 망쳤고, 긴장으로 실패한 순간에 솔직하게 "긴장했다, 천천히 알아 가고 싶다"고 털어놓은 경험이 있다. 창피했지만 그것이 성장의 시작이었다. 피해 갈 길은 없고, 통과하는 수밖에 없다.</p>
+<p>주의할 점이 있다. 취약성은 <b>기술이 아니라 존재 방식</b>이다. 불쌍한 이야기를 해서 호감을 사려 하면 그것도 연기이고 매달림이다. "그거 효과 없던데"라는 생각이 든다면 이미 결과에 매달리고 있다는 뜻이다. 말 뒤의 감정이 진짜일 때, 사소한 이야기조차 사람을 움직인다.</p>`,
+pics:['허리를 편 남자와 웅크린 남자 · 더 취약한 쪽이 더 강하다','부족 속의 두 부류 · 남 눈치 보며 탓하는 자 vs 잘못을 인정하고 자기 일에 집중하는 자','거친 모서리 · 사람은 서로의 완벽함이 아니라 울퉁불퉁한 부분에 끌린다','고통의 시기 · 운동이나 외국어처럼 처음엔 어색하고 아프다'],
+q:['내가 실수했을 때 주로 인정하나, 숨기거나 남 탓을 하나?','내가 가장 두려워하는 "목을 내미는 행동"은 무엇인가?'],
+act:'오늘 하나: 내 진짜 의견 하나를 돌려 말하지 않고 말하거나, 실수 하나를 변명 없이 인정한다.',
+ref:[]},
+{id:'c3',b:1,t:'진실이라는 선물',one:'무엇을 말하느냐보다 왜 말하느냐가 중요하다. 대가를 바라지 않는 정직만이 진짜 정직이다.',
+body:`<p>저자는 상식 밖의 말을 던지고도 매력을 얻은 친구를 보며 깨닫는다. 핵심은 말 자체가 아니라 그 밑의 메시지, 곧 <b>"네 반응에 상관없이 이게 나다"</b>였다. 그러나 그 말을 흉내 낸 저자는 아무 반응도 얻지 못했다. 반응을 노리고 했기 때문이다. 진실은 언제나 새어 나온다. 정직과 취약함은 흉내 낼 수 없다.</p>
+<p>관심을 숨긴 채 다가가는 것은 피곤하고 결국 들킨다. 반대로 "당신이 마음에 들어서 인사하고 싶었다"고 솔직히 말하는 것은 "나는 거절당해도 괜찮다"는 뜻을 함께 전한다. 그렇다고 처음 본 사람에게 칭찬을 쏟아붓고 선물을 사 주는 것은 다르다. 그것은 <b>거래</b>다. 술 한 잔, 칭찬 한마디에 "그러니 나랑 있어 줘"라는 조건이 붙어 있다. 이런 '착한 남자'는 결국 나르시시스트와 같다. 하나는 주기만 하고 하나는 빼앗기만 하지만, 둘 다 인정에 굶주려 있다.</p>
+<p><b>경계 세우기</b>도 정직의 일부다. 상대가 불쾌한 말을 하면 화내거나 설교하지 않고 "그런 말은 싫다"고 선을 긋는다. 약속을 자꾸 미루는 상대에게는 "만나고 싶으면 알려 줘, 아니어도 괜찮아"라고 분명히 말한다. 내 선은 지키되 남의 선은 넘지 않는다.</p>
+<p>경계를 세우려면 먼저 <b>나의 진실을 찾아야</b> 한다. 왜 나는 인정에 목마른가? 가정사, 이별의 분노, 따돌림의 기억, 다른 남자에게 인정받고 싶은 마음 등. 이를 정직하게 인정할 때 매달림이 줄어든다. 필요하면 상담도 도구가 된다. 또 끌림이 있어도 관계가 안 되는 이유로 <b>마찰</b>(가치관·상황의 차이)과 <b>투사</b>(상대의 상처가 나에게 덧씌워짐)가 있다. 세상 대부분의 사람과 맞지 않는 것은 당연하다. 목표는 모두를 끄는 것이 아니라 진짜 나를 좋아할 사람을 찾는 것이다.</p>`,
+pics:['같은 말, 다른 결과 · 반응을 노리면 같은 말도 실패한다','바에서 술을 사 주는 남자 · 선물이 아니라 조건이 붙은 거래','"원할 때 연락 줘, 아니어도 괜찮아" · 분명한 경계가 오히려 게임을 끝낸다','마찰 · 결혼한 사람, 다른 신념, 먼 거리는 끌림이 있어도 넘지 않는다'],
+q:['내가 최근에 한 칭찬이나 호의에는 보이지 않는 조건이 붙어 있었나?','내가 절대 양보하지 않을 나의 경계 세 가지는 무엇인가?'],
+act:'내 경계(참지 않을 것) 3가지와 가장 중요한 가치 3가지를 적는다. 그리고 오늘 대가 없이 진심 어린 칭찬 하나를 건넨다.',
+ref:[],
+note:`저자는 "마찰"의 예로 혼전 순결을 지키는 신앙인과 방탕한 사람의 가치관 차이를 든다. 그리스도인에게 이것은 마찰을 넘어 "믿음 안에서 같은 방향을 보는 사람"을 찾으라는 기준이다(고후 6:14). 또 저자가 유부녀나 연인 있는 사람에게 다가가지 말라고 단호히 말하는 부분은 성경의 가르침과도 같다.`},
+/* 2부 */
+{id:'c4',b:2,t:'양극화',one:'모두에게 미움받지 않으려 하면 아무에게도 사랑받지 못한다. 솔직하게 드러내서 상대가 판단하게 하라.',
+body:`<p>거절은 서로 맞지 않는 사람을 떼어 놓기 위해 존재한다. 내 키나 성격 때문에 나를 거절한 사람과는 어차피 함께 즐겁지 않았을 것이다. 그러니 거절은 저주가 아니라 걸러 주는 축복이다.</p>
+<p>내가 끌리는 사람은 세 부류로 나눌 수 있다. <b>비수용형</b>은 이미 연인이 있거나, 가치관 마찰이 크거나, 내가 더 매달리기 때문에 관심이 없다. 계속 핑계를 대거나 연락이 없다면 그것이 답이다. "물어봐야 한다면 그게 답이다." <b>중립형</b>은 아직 판단이 서지 않은 사람이다. 중립은 오래가지 않고, 아무 행동도 하지 않으면 대개 비수용으로 기운다. 이것이 <b>친구 영역</b>이다. <b>수용형</b>은 먼저 다가오거나, 내 표현에 적극적으로 반응한다.</p>
+<p>전략은 분명하다. 비수용형은 빨리 알아보고 정중히 물러난다. 몇 년씩 친구로 지내며 "언젠가 알아주겠지" 하는 것은 가장 큰 시간 낭비이자 조종하려는 마음이다. 중립형에게는 나의 진실을 드러내 <b>양극화</b>한다. 칭찬, 장난, 데이트 신청, 미소 하나도 상대에게 판단을 요구한다. 어느 쪽으로 기우는지보다 행동했다는 사실이 중요하다. 수용형에게는 머뭇거리지 말고 관계를 한 걸음 앞으로 진전시킨다.</p>
+<p>저자는 춤만 추고 진전이 없던 상대에게 "가장 좋아하는 게 뭐냐"고 물어 공통 관심사(여행)를 찾고, 결국 그 사람과 사귀게 된 경험을 든다. 매력 있는 모든 것은 양극화한다. 누군가에게 인생을 바꾸는 사람이 되려면 누군가에게는 우스운 사람이 될 각오가 필요하다. 놀랍게도 정직하고 대담하게 다가가면 거절하는 사람조차 존중을 보인다.</p>`,
+pics:['세 부류 · 비수용, 중립, 수용','친구 영역의 4년 · 고백을 미룬 시간 자체가 매달림을 말해 준다','"가장 좋아하는 게 뭐예요?" · 열정과 공통점을 단번에 드러내는 질문','"연인 있어요" · 사실 여부가 아니라 "관심 없다"는 의도를 들어라'],
+q:['지금 내가 결론을 미룬 채 붙잡고 있는 관계(친구 영역 등)가 있나?','나는 "모두에게 무난한 사람"이 되려고 내 색을 지우고 있지 않나?'],
+act:'이번 주, 내 취향이나 의견 하나를 무난하게 얼버무리지 않고 분명히 표현해 반응을 본다.',
+ref:[]},
+{id:'c5',b:2,t:'거절과 성공',one:'거절은 대개 나에 대한 판결이 아니다. 성공은 숫자가 아니라 맞는 사람과 함께 행복한 것이다.',
+body:`<p>저자는 이유도 모른 채 뺨을 맞고 쫓겨난 일, 외모로 사람을 깎아내리는 상대에게 쏘아붙였다가 음료를 뒤집어쓴 일을 오히려 소중한 배움으로 기억한다. 강한 반응은 무관심보다 낫고, 사람의 반응은 내가 다 통제할 수 없다는 것을 배웠기 때문이다. 거절을 충분히 겪고 나면 그것이 얼마나 사소한지 깨닫는다.</p>
+<p>거절이 두려운 이유는 남의 진실로 살기 때문이다. 내 욕구와 가치를 분명히 알면 두려울 것이 없다. 게다가 <b>대부분의 거절은 나와 상관없다.</b> 내일 떠나는 여행객일 수도, 막 재결합했을 수도, 오늘 기분이 최악일 수도 있다. "맞는 사람, 틀린 때"는 흔하다.</p>
+<p>그래서 질문을 바꾼다. "그녀가 나를 좋아할까?" 대신 "그녀는 어떤 사람일까?", "거절당하지 않을까?" 대신 "나와 맞는지 알게 될까?" 그러면 결과가 어떻든 진실을 알게 되었으니 성공이다. 저자는 열렬한 "예"가 아니라면 미지근한 "글쎄"보다 차라리 "아니오"가 낫다고 말한다.</p>
+<p><b>성공의 재정의</b> · 몇 명을 만났는지, 친구들 앞에서 자랑할 만한지, 한 번도 거절당하지 않았는지가 아니다. 성공은 내가 함께하고 싶은 사람과 행복을 최대로 누리는 것이다. 이렇게 보면 거절은 성공률을 깎는 것이 아니라 오히려 돕는다. 그리고 그 길은 세 가지 정직(삶, 행동, 소통)으로 걷는다.</p>`,
+pics:['뺨과 음료 세례 · 가장 아픈 거절이 가장 큰 교훈이 되었다','"맞는 사람, 틀린 때" · 거절 대부분은 상대 사정이다','질문 바꾸기 · "날 좋아할까?" → "그녀는 어떤 사람일까?"','사격장이 아니다 · 관계는 점수판이 아니라 감정의 건강이다'],
+q:['나는 지금 관계의 "성공"을 무엇으로 재고 있나?','최근 거절을 나에 대한 판결로 받아들인 적이 있나? 다른 해석은 없었나?'],
+act:'거절이나 실패를 겪으면 "상대 사정일 수 있는 이유 3가지"와 "내가 배울 점 1가지"를 적는다.',
+ref:[],
+note:`저자가 말하는 "성공 = 내가 원하는 사람과 행복을 최대로" 는 숫자를 좇는 문화를 비판한다는 점에서 귀하다. 그리스도인은 여기서 한 걸음 더 나아가 관계의 성공을 하나님 앞에서 서로를 귀히 여기고 세워 주는 것으로 본다. 연애의 목적이 나의 행복만이 아니라 함께 성숙하는 것임을 기억하자.`},
+{id:'c6',b:2,t:'세 가지 기본기',one:'정직한 삶(생활), 정직한 행동(용기), 정직한 소통(표현). 셋은 서로를 끌어올린다.',
+body:`<p>매달림을 줄이는 길은 세 갈래다. <b>정직한 삶</b>은 내가 원하는 삶을 알고 그것을 실제로 만들어 가는 것이다. 싫어하는 일, 싫어하는 취미, 맞지 않는 친구에 둘러싸여 있다면 매일 남이 원하는 대로 사는 셈이고, 그것이 기본적인 매달림이 된다. 생활은 만나는 사람의 <b>질</b>을 좌우한다.</p>
+<p><b>정직한 행동</b>은 두려움을 넘어서는 것이다. 마음에 드는 사람을 밤새 바라만 보는 것은 내 마음에 대해 정직하지 않은 것이다. 모든 두려움은 상대의 평가를 내 평가보다 중요하게 여기는 데서 온다. 용기는 만나는 사람의 <b>양</b>을 좌우한다.</p>
+<p><b>정직한 소통</b>은 내 생각과 감정을 분명하고 매력 있게 전하는 능력이다. 유머, 이야기, 공감, 연결. 소통은 맞는 사람과 이어지는 <b>효율</b>을 좌우한다. 오해와 애매함으로 놓치는 기회를 줄여 준다.</p>
+<p>사람마다 강점과 약점이 다르다. 생활은 좋은데 행동이 없는 사람은 기회 속에서도 혼자이고, 겁은 없는데 소통이 서툰 사람은 노력 대비 결과가 나쁘다. 사회적으로 <b>불안한 유형</b>은 눈치가 너무 밝아 움직이지 못하고, <b>단절된 유형</b>은 겁은 없지만 눈치가 없어 엉뚱한 때 엉뚱한 행동을 한다. 내 약점에 맞는 처방을 골라야 한다. 목표는 눈치 있고 겁 없으며 멋진 삶을 사는, 셋이 다 갖춰진 사람이다.</p>`,
+pics:['세 기본기 · 삶은 질, 행동은 양, 소통은 효율','불안형과 단절형 · 너무 의식해서 못 움직이거나, 너무 몰라서 잘못 움직이거나','맞춤 처방 · 겁 많은 사람에게 화려한 대사는 소용없다'],
+q:['세 기본기 중 나의 가장 강한 것과 가장 약한 것은?','나는 불안형에 가까운가, 단절형에 가까운가?'],
+act:'생활·용기·소통을 각각 10점 만점으로 매기고, 가장 낮은 하나를 이번 달 집중 과제로 정한다.',
+ref:[]},
+/* 3부 */
+{id:'c7',b:3,t:'인구 집단과 맥락 (Demographics)',one:'끌림은 늘 맥락 속에서 일어난다. 비슷한 것끼리 끌린다. 나는 내가 사는 모습대로의 사람을 끌어당긴다.',
+body:`<p>어디서, 어떤 맥락에서 사람을 만나느냐는 모든 것을 바꾼다. 마흔의 은행원과 열아홉 대학생에게 같은 조언을 하는 것은 어리석다. 저자는 이것을 <b>인구 집단(demographics)</b>이라 부르고, 원리는 단순하다. 비슷한 것끼리 끌린다.</p>
+<p>내성적인 공학자가 갑자기 시끄러운 클럽에서 전혀 다른 삶을 사는 사람에게 다가가면, 대사가 아무리 좋아도 마찰 때문에 안 된다. 그런데 2년 뒤 그가 자기를 가꾸고 삶을 넓히고, 상대도 성숙해졌을 때 두 사람은 자연스럽게 끌렸다. 답은 정체성을 <b>바꾸는</b> 것이 아니라 <b>넓히는</b> 것이다.</p>
+<p>그래서 먼저 스스로 물어야 한다. 나는 상대의 어떤 점을 가장 중요하게 여기나? 그런 사람은 어디에 있나? 나는 무엇을 즐기나? 해 보고 싶었지만 미뤄 온 것은? 댄스, 봉사, 운동 동호회, 강좌, 여행 모임, 교회 등 내 관심사가 사람을 만나는 자리가 된다. 단순히 참여하지 말고 그 안에서 <b>이끄는 사람</b>이 되면 사회적 증거도 생긴다.</p>
+<p>더 깊은 것은 <b>믿음의 선별 효과</b>다. "여자는 다 믿을 수 없다"고 믿으면 그런 태도를 견디는 사람만 남는다. 사람은 기대받는 대로 행동하는 경향이 있어서, 의심하고 무시하면 상대도 그렇게 반응한다. "내가 만난 사람들의 유일한 공통점은 나"라는 사실을 직면하자. 나이·돈·외모도 분명 영향이 있지만 생각보다 작고, 핑계가 될 수는 없다. 매력적인 말을 <b>하는</b> 것보다 매력적인 사람이 <b>되는</b> 것이 훨씬 강하다.</p>`,
+pics:['2년 뒤의 존과 제나 · 두 사람이 각자 성장하자 마찰이 사라졌다','"만난 사람들의 공통점은 나" · 반복되는 관계 패턴은 내 믿음과 행동의 거울이다','메뉴에 없는 요리를 강요하는 남자 · 힘을 과시하는 연기는 오히려 초라하다','같은 말, 다른 사람 · 매력 있는 사람의 말이어야 무게가 실린다'],
+q:['내가 진심으로 즐기는 활동 중 사람을 만날 수 있는 자리는 어디인가?','내가 이성(혹은 사람 일반)에 대해 가진 부정적 믿음 하나는 무엇이고, 그것이 어떤 사람을 끌어당기고 있을까?'],
+act:'내가 중요하게 여기는 상대의 특성 3가지, 즐기는 활동 3가지를 적고 그 둘이 겹치는 모임이나 장소 하나를 찾아본다.',
+ref:[]},
+{id:'c8',b:3,t:'생활과 자기 표현',one:'잘생긴 것과 매력 있는 것은 다르다. 매력은 누구나 노력으로 만들 수 있다.',
+body:`<p>외모는 자기 투자의 거울이다. 씻기, 면도, 이발, 양치, 손톱, 깨끗한 옷은 기본 중의 기본이다. 그 위에 두 가지 큰 축이 있다. <b>옷(패션)과 몸(체력)</b>.</p>
+<p><b>옷</b>의 원칙은 셋이다. 몸에 맞게, 서로 어울리게, 내 성격에 맞게. 대부분의 남자 옷은 너무 크다. 어깨 솔기가 어깨 끝에 오는지, 바지 밑단이 신발에 살짝 닿는지 보자. 벨트와 신발 색을 맞추고, 검정 세트와 갈색 세트를 갖추면 조합이 쉬워진다. 그리고 남 흉내가 아니라 나다운 스타일을 고른다. <b>몸</b>은 어떤 방식이든 운동하는 것이 중요하고, 탄산음료·패스트푸드·단것만 줄여도 큰 변화가 온다. 운동은 외모뿐 아니라 기분과 자신감을 올린다.</p>
+<p><b>자세와 목소리</b>도 빨리 고칠 수 있다. 어깨를 펴고 턱을 들고 시선은 앞으로, 발은 곧게, 팔은 가볍게 흔들며 걷는다. 눈이 마주치면 먼저 피하지 않는다. 목소리는 코가 아닌 가슴에서 내고, 너무 빠르지 않게, 조금 더 크게 말한다. 몸을 자신 있게 쓰면 실제로 기분도 그렇게 바뀐다.</p>
+<p><b>성격과 깊이</b> · 남들 다 좋아하는 것만 좋아하는 "평범한 남자"에서 벗어나 자기 의견을 가진 사람이 되자. 모든 장르에는 가치가 있다고 보고 그 가치를 찾아본다. 새 분야는 최고로 꼽히는 작품부터 접한다. 영화를 "재밌었다"로 끝내지 말고 왜 좋았는지 말할 수 있어야 한다. 그리고 건강, 좋은 친구, 즐기는 취미, 최소한의 자립이라는 삶의 바닥을 다져야 다른 노력도 효과가 있다.</p>`,
+pics:['두 개의 F · 패션과 피트니스는 가장 빠른 매력 처방','어깨 솔기 · 어깨 끝을 넘으면 옷이 큰 것이다','검정 세트·갈색 세트 · 신발·벨트·재킷 색을 맞춰 두면 실패가 없다','코를 막고 말하기 · 소리가 달라지면 가슴 목소리를 연습할 때다','열 명의 남자와 나란히 · 나를 기억하게 할 나만의 경험은 무엇인가'],
+q:['내 옷장에서 몸에 맞지 않는 옷은 몇 벌인가?','내가 남들과 다르게 가진 경험이나 의견은 무엇인가?'],
+act:'거울 앞에서 자세 5단계(어깨-턱-발-걸음-팔)를 연습하고, 이번 주 밖에 나갈 때마다 의식적으로 적용한다.',
+ref:[]},
+/* 4부 */
+{id:'c9',b:4,t:'내가 나에게 하는 이야기',one:'유일하게 중요한 기술은 내가 지어내는 핑계 이야기를 믿지 않는 것이다.',
+body:`<p>저자는 헬스장에서 마음에 드는 사람을 보고도 "저런 옷 입는 사람은 뻔해", "전화만 붙잡고 있네" 같은 판단을 하며 결국 말을 걸지 않았다. 그는 자책하지 않는다. 다만 우리 모두가 변화에 저항하며 <b>이야기</b>를 지어낸다는 것에 주목한다. 처음엔 불안이던 저항이 나중엔 무관심으로, 그다음엔 오만으로 모양만 바꿀 뿐 사라지지 않는다.</p>
+<p>"나는 키가 작아서", "몇 잔 마신 뒤에", "옷 사고 머리 자른 뒤에"처럼 늘 무언가가 준비되지 않았다는 이야기가 있다. 그 이야기들의 목적은 하나, 지금 상태를 지키는 것이다. 이야기를 알아차려야 행동을 바꿀 수 있다.</p>
+<p>두려움을 피하는 대표적 <b>방어 패턴</b>은 셋이다. <b>남 탓</b>("저 사람은 거만해", "이 동네 여자들은 다 그래")은 분노와 비뚤어진 믿음을 쌓는다. <b>무관심과 회피</b>("별로 관심 없어")는 저자의 고질병이었다. <b>지식화</b>("더 공부하고 나서")는 똑똑한 사람일수록 빠지기 쉽고, 오히려 압박을 키운다. 내 패턴을 적고, 목표를 정하고, 친구에게 말해 책임을 나누면 깨기 쉬워진다.</p>
+<p><b>나는 피해자가 아니다</b> · 수십만 명이 모두 같은 식으로 잘못되었을 확률보다 내가 잘못 보고 있을 확률이 훨씬 높다. 탓은 또 다른 매달림이다. 책임을 지면 "누구 잘못인가"가 "나는 얼마나 대가를 치를 것인가"로 바뀌고, 공은 내 쪽으로 돌아온다. 사람 안의 좋은 점을 찾는 것은 내 몫이다. 또 저자는 음란물이 현실의 관계를 향한 동기를 떨어뜨리고 비현실적 기대를 만든다고 지적하며, 끊고 절제할 것을 권한다.</p>`,
+pics:['헬스장의 "PINK" 바지 · 모르는 사람을 판단하는 것은 저항이 만든 방어막이다','변신하는 저항 · 불안 → 무관심 → 오만','세 방어 패턴 · 남 탓, 무관심, 지식화','15만 명이 다 잘못됐다? · 그럴 확률보다 내가 틀렸을 확률이 높다','탓을 희생으로 · "누구 잘못인가"에서 "얼마나 애쓸 것인가"로'],
+q:['내가 행동을 미룰 때 가장 자주 하는 이야기는 무엇인가?','나의 주된 방어 패턴은 남 탓, 무관심, 지식화 중 무엇인가?'],
+act:'"두려운 일 · 나의 패턴 · 목표"를 한 줄로 적고, 믿을 만한 친구 한 명에게 말해 점검을 부탁한다.',
+ref:[],
+note:`저자는 음란물을 끊으라고 강하게 권하는데, 이는 그리스도인의 순결 가르침과 방향이 같다. 다만 저자가 성적 에너지를 "이성에게 다가갈 동기"로 돌리라고 하는 반면, 성경은 몸과 마음을 하나님께 드리고 욕망을 다스리는 것 자체를 거룩함으로 본다(살전 4:3-4). 넘어져도 정죄보다 은혜 안에서 다시 시작하라는 점은 같다.`},
+{id:'c10',b:4,t:'불안을 넘어서는 법',one:'두려움은 없애는 것이 아니라 안고 움직이는 것이다. 작은 노출을 꾸준히 반복하라.',
+body:`<p>누군가를 거절해야 했던 기억을 떠올려 보자. 불편했을 것이다. 상대도 마찬가지다. 사람들은 거절하는 걸 즐기지 않는다. 오히려 다가오는 사람이 괜찮은 사람이기를 <b>속으로 응원한다.</b> 그러니 다가가는 나를 이미 반쯤 응원하는 사람으로 생각하자. 그리고 관계를 앞으로 움직이는 몫은 늘 나에게 있다.</p>
+<p>많은 사람이 읽기만 하고 움직이지 않는다. 책을 읽는 것이 무언가를 하고 있다는 착각을 주기 때문이다. 하지만 두려움은 피하거나 억누르면 더 커진다. 저항하는 것은 남는다. 대신 받아들이고, 숨기지 않고, 에너지로 쓴다. 발표 전 긴장이 설렘이 되는 것처럼, 중요한 것은 불안의 크기가 아니라 <b>내가 할 수 있다는 자신감(역량)</b>이다. 저자도 지금까지 늘 긴장한다. 달라진 것은 매달림의 크기다. 매달리지 않음은 두려움이 없는 것이 아니라 두려움보다 중요한 것을 택하는 것이다.</p>
+<p><b>계단식 노출</b> · 한 번에 극한으로 던지는 방식은 마라톤 한 번 뛰고 운동을 끝내는 것과 같다. 대신 아주 쉬운 것부터 매일 반복한다. 처음엔 지나가는 사람에게 시간을 묻기, 다음엔 "오늘 어때요?" 덧붙이기, 이어서 마음에 든다고 말하고 약속 잡기. 한 번에 <b>한 가지</b>만 집중하고, 더 쉬운 단계로 도망가서 다음 단계를 회피하지 않도록 정직해야 한다.</p>
+<p><b>용기와 대담함</b> · 두려움을 느끼고도 움직일 때마다 용기라는 근육이 자란다. 대담한 행동일수록 끌림과 양극화가 커진다. 다만 내가 평범하지 않은 일을 하고 있다는 걸 <b>알고 표현해야</b> 한다("갑작스럽지만…"). 모르면 대담함이 아니라 눈치 없음이 된다. 망설여지면 더 적극적인 쪽을 택하되, 대담함은 매력적인 소통으로 다듬어야 한다.</p>`,
+pics:['속으로 응원하는 상대 · "제발 괜찮은 사람이길"','마라톤 한 번 vs 매일 걷기 · 극한 노출보다 꾸준한 작은 노출','시간 묻기 → 인사 → 고백 · 계단을 한 칸씩','거꾸로 에스컬레이터를 뛰어오른 남자 · 자각 없는 대담함은 소름이 된다','"갑작스럽지만…" · 평범하지 않음을 인정하는 한마디가 대담함을 매력으로 바꾼다'],
+q:['내가 지금 가장 피하고 있는 한 걸음은 무엇인가?','그 걸음을 5단계로 쪼개면 첫 단계는 무엇인가?'],
+act:'두려운 행동 하나를 5단계 계단으로 쪼개고, 이번 주 1단계를 3번 실행한다(예: 낯선 사람에게 먼저 인사·길 묻기).',
+ref:[]},
+/* 5부 */
+{id:'c11',b:5,t:'나의 의도',one:'상대는 말이 아니라 의도를 듣는다. 장난과 모욕, 나눔과 자랑의 차이는 의도다.',
+body:`<p>남자들은 대체로 사실과 정보로 말하고, 여자들은 그 밑의 감정과 의도를 더 듣는 경향이 있다. 이것이 <b>숨은 메시지(sub-communication)</b>다. 같은 칭찬도 진심으로 감탄해서 하면 기쁨이 되고, 무언가를 얻으려고 하면 불편함이 된다. 장난과 모욕은 둘 다 놀리는 말이지만 하나는 즐거운 의도, 하나는 나쁜 의도다. 경험을 나누는 것과 자랑하는 것도 인상을 남기려는 의도냐, 나를 보여 주려는 의도냐로 갈린다.</p>
+<p><b>소름 끼침(creepy)</b>이란 상대를 성적으로 불안하게 만드는 행동이다. 말과 의도가 어긋날수록, 신뢰가 쌓이기 전에 선을 넘을수록 그렇게 된다. 여자는 남자보다 잃을 것이 훨씬 많다는 점을 기억해야 한다. 역설적이지만 가끔 오해받을 수 있음을 받아들이고, 정직하고 상대의 감정을 존중할수록 소름 끼치는 일은 줄어든다. 감정을 숨기고 조종할수록 늘어난다.</p>
+<p><b>설렘과 긴장</b> · 장난은 "좋아하나? 아닌가?" 하는 불확실함으로 긴장을 만든다. 그런데 "당신이 마음에 든다"고 솔직하게 말하는 것도 다른 종류의 긴장을 만든다. 대화의 주제가 "다음엔 무슨 말을 하지?"에서 "이 사람과 다음엔 무슨 일이 생길까?"로 바뀌기 때문이다.</p>
+<p><b>감정적 연결</b> · 내 감정과 동기를 먼저 알고, 먼저 나누면 신뢰가 생기고 상대도 마음을 연다. 사실이 아니라 <b>감정</b>으로 연결하라. 고향이 같아도 통하지 않을 수 있고, 전혀 다른 삶을 살았어도 외로움·야망·상실 같은 보편적 감정으로 깊이 통할 수 있다. 소통 습관은 한 번에 한두 개씩 의식적으로 연습해 몸에 익힌다.</p>`,
+pics:['장난 vs 모욕 · 같은 말, 다른 의도','"그 밴드는 형을 떠올리게 해" · 좋아하는 이유와 감정까지 나누면 깊어진다','사실이 아니라 감정 · 다른 삶도 같은 외로움으로 통한다','소름의 정의 · 상대를 불안하게 만드는 말과 의도의 어긋남'],
+q:['최근 내가 한 말 중 의도와 말이 어긋났던 것은?','나는 대화에서 사실을 주고받나, 감정을 주고받나?'],
+act:'오늘 대화에서 "좋아한다/싫다"로 끝내지 말고 "왜 그런지, 무엇이 떠오르는지" 한 단계 더 깊이 나눠 본다.',
+ref:[]},
+{id:'c12',b:5,t:'대화와 유머',one:'첫마디는 중요하지 않다. 차분한 첫인상, 질문보다 진술, 이야기의 구조, 나를 여는 용기가 대화를 만든다.',
+body:`<p><b>첫인상</b> · 사람은 처음 몇 분으로 상대를 판단한다. 하지만 무슨 말을 하느냐보다 차림새, 긴장, 의도가 더 크다. 그냥 "안녕하세요, 저는 ○○예요. 인사하고 싶었어요"면 충분하다. 뒤에서 다가가 놀라게 하지 말고, 망설이며 주변을 맴돌지 말고, 곧장 다가가 웃으며 눈을 맞추고 또렷하게 말한다. 생각을 오래 할수록 어색해진다.</p>
+<p><b>대화 기술</b> · ①군더더기("음, 그러니까, 약간")를 빼고 짧고 분명하게 말한다. ②질문 공세 대신 <b>진술</b>로 대화를 연다. "어디서 왔어요?" 대신 "왠지 바닷가 출신 같아요"처럼 추측해서 말하면, 틀려도 대화가 이어지고 맞으면 놀라움이 된다. ③상대 말 속의 <b>점프 지점</b>(장소, 사람, 사건)을 잡아 내 이야기로 연결하면 대화가 끊기지 않는다. ④이야기는 <b>도입-갈등-마무리</b>의 구조로 한다. ⑤결국 대화의 주제는 둘뿐이다. 나와 상대. 내 열정, 꿈, 최고·최악의 경험, 성장 배경을 먼저 꺼낼 수 있어야 상대도 연다.</p>
+<p><b>유머</b> · 유머는 나를 가볍게 웃어넘길 줄 아는 여유, 곧 매달리지 않음을 보여 준다. 예상을 뒤집는 반전, 과장, 장난과 반어, 말장난, 역할극 같은 형태가 있다. 어떤 유머가 통하는지는 사람마다 다르니 내가 웃긴 것을 나누면 된다. 농담이 실패하면 설명하거나 자책하지 말고 그냥 넘어간다. 장난을 불편해하는 사람도 있으니 알아보고 진심 어린 칭찬으로 바꾼다. 욕설은 아껴 쓰고, 과한 자기 비하는 매달림이다.</p>
+<p>단, 웃기기만 하는 사람은 "재밌는 친구"로 남는다. 유머는 상대를 이끌고 마음과 거리를 좁히는 것과 함께일 때 의미가 있다.</p>`,
+pics:['"인사하고 싶었어요" · 화려한 첫마디보다 솔직한 한 문장','콜드 리딩 · 질문을 추측으로 바꾸면 틀려도 이긴다','점프 지점 · 상대 문장 속 단어 하나가 새 대화의 길이 된다','도입-갈등-마무리 · "그게 내 대학 룸메이트였어"로 끝을 알린다','엔터테이너의 함정 · 웃기기만 하면 관심이 아니라 구경이 된다'],
+q:['나는 대화에서 질문만 하나, 나를 드러내는 진술도 하나?','내 이야기 중 도입-갈등-마무리로 들려줄 수 있는 에피소드는?'],
+act:'종이에 내 열정·꿈·최고/최악의 경험·성장 배경을 각 3개씩 적고, 하나를 골라 1분간 소리 내어 이야기해 본다.',
+ref:[]},
+{id:'c13',b:5,t:'데이트의 과정',one:'연락은 단순하게, 만남은 활동적으로, 결정은 내가 이끈다. 마음이 있으면 상대는 방법을 찾는다.',
+body:`<p>연애에는 문화적으로 정해진 흐름이 있다. 연락처 교환, 문자나 통화, 데이트, 그리고 어떤 관계가 될지 정하는 단계. 이 흐름을 알아야 한다.</p>
+<p><b>연락과 약속 펑크</b> · 연락처를 받고도 답이 없거나 약속을 계속 미루는 일은 누구에게나 생긴다. 그러나 펑크를 막는 묘수를 찾는 것은 증상만 고치는 것이다. 근본 해결은 처음부터 진짜로 관심 있는 사람을 만나는 것이다. 연락처는 꾸미지 말고 그냥 달라고 한다. 하루 안에 "만나서 반가웠다"고 짧게 보내고, 만났을 때 나눈 이야기를 이어 가볍게 대화한 뒤 약속을 잡는다. 문자는 오해받기 쉬우니 재치보다 <b>분명함</b>. 문자는 만날 약속을 정하는 데 쓰고, 진짜 교감은 직접 만나서 한다. 마음이 있으면 상대는 시간을 낸다. 두세 번 시도해도 안 되면 정중히 놓아준다.</p>
+<p><b>좋은 데이트</b> · 앉아서 마주 보기만 하는 영화나 긴 식사보다 함께 움직이는 활동이 좋다. 산책, 전시, 공연, 댄스 수업, 볼링, 디저트 가게처럼 짧은 활동을 여러 개 이어 붙이면 짧은 시간에 공유한 경험이 쌓여 친밀함이 깊어진다. 둘만의 시간이어야 데이트다. 친구가 끼면 데이트가 아니다.</p>
+<p><b>태도</b> · "뭐 하고 싶어?"를 묻기보다 "저기 맛있는 데 있어, 가 보자"처럼 계획하고 이끈다. 대화는 처음보다 깊어져 상대의 과거, 열정, 꿈을 알아 가되 면접처럼 캐묻지 말고 내가 먼저 나눈다. 계산은 상대가 직접 나서지 않는 한 내가 기꺼이 한다.</p>`,
+pics:['유명 배우가 연락했다면? · 정말 마음이 있으면 바쁜 일정도 비운다','지루한 문자 · 좋은 문자는 대부분 "목요일 7시, 거기서"','활동 이어 붙이기 · 커피 → 아이스크림 → 공원 그네 → 서점','"뭐 할래?" 금지 · 결정을 제안하고 이끄는 사람'],
+q:['나는 연락의 "기술"에 매달리고 있나, 만남 자체에 집중하고 있나?','내 주변에 함께 움직이며 즐길 수 있는 장소 4곳은 어디인가?'],
+act:'함께 걷거나 체험할 수 있는 근처 장소 4~6곳을 목록으로 만들어 두고, 다음 만남에서는 내가 계획을 제안해 이끈다.',
+ref:[],
+note:`저자의 데이트 조언에는 첫 만남의 밤을 함께 보내는 것을 염두에 둔 부분(늦은 시간, 집과의 거리 등)이 있다. 그리스도인은 이 부분을 따르기보다, 활동적인 데이트·분명한 소통·이끄는 태도 같은 원리만 취하고, 만남의 시간과 장소를 서로의 순결과 평판을 지키는 쪽으로 정하는 것이 지혜롭다.`},
+{id:'c14',b:5,t:'스킨십, 동의, 그리고 친밀함',one:'관계의 진전은 상대의 신호를 읽고 존중하며 함께 만드는 것이다. 상대가 멈추라고 하면 즉시 멈춘다.',
+body:`<p>저자는 여성의 끌림이 "원해지고 있다"는 느낌, 곧 진심 어린 욕구에 크게 반응한다고 본다. 그래서 대화만 끝없이 하는 사람보다 자연스럽게 거리를 좁히는 사람이 친구가 아닌 연인으로 인식된다고 말한다. 가볍게 팔을 톡 치며 웃음에 맞장구치는 것 같은 작은 신체 표현은 신뢰와 호감을 높인다. 진전은 늘 바깥(팔, 등)에서 안쪽으로, 천천히 단계적으로 이루어진다.</p>
+<p><b>신호 읽기</b> · 다가가기 전에는 자꾸 마주치는 눈, 미소, 이유 없이 가까이 오는 것. 대화 중에는 많이 웃고, 눈을 오래 맞추고, 친구보다 나를 우선하는 것. 더 가까워질 때는 둘만 있으려 하고, 먼저 손을 대는 것. 각 신호는 <b>다음 한 단계</b>로 가도 된다는 신호일 뿐이다. 하나의 신호로 비약하면 안 되고, 상대는 언제든 마음을 바꿀 권리가 있다.</p>
+<p><b>동의와 존중</b> · 상대가 말이나 몸짓으로 멈추라고 하면 즉시 멈춘다. 기분 나빠하지 말고 "불편해? 내가 너무 빨랐나?"라고 묻는다. 상대가 술이나 약 등으로 분명한 판단을 할 수 없는 상태라면 무조건 멈춘다. 무엇이 편한지, 무엇을 기대하는지 일찍부터 분명히 확인하는 것이 정직이자 존중이다. 친밀함은 내가 따 내거나 빼앗는 것이 아니라 <b>둘이 함께 참여하는 것</b>이다.</p>
+<p><b>성적 불안</b> · 긴장, 경험 부족, 엄격한 성장 배경, 과거의 상처는 누구에게나 있다. 핵심 해법은 역시 취약성이다. 서두르지 말고, 유머와 솔직한 대화로 편안함을 만든다. 저자는 깊은 연결이 꼭 헌신을 뜻하지는 않는다면서도, 결국 오래가는 깊은 연결은 장기적 헌신을 통해서만 온다고 덧붙인다.</p>`,
+pics:['느낌표처럼 · 웃음의 순간에 팔을 가볍게 톡','바깥에서 안쪽으로 · 친밀함은 계단식으로 천천히','신호 세 묶음 · 다가가기 전, 대화 중, 더 가까워질 때','"멈춰" = 멈춤 · 묻고, 듣고, 존중한다','팀 경기 · 친밀함은 얻어 내는 것이 아니라 함께 하는 것'],
+q:['나는 상대의 신호를 읽으려 하나, 내 기대대로 해석하나?','상대가 불편해할 때 나는 서운해하나, 먼저 묻고 존중하나?'],
+act:'누군가와 가까워질 때 "괜찮아? 편해?"를 묻는 습관을 들이고, 나의 신체적·관계적 선(경계)을 미리 정해 적어 둔다.',
+ref:[],
+note:`이 장은 혼전 성관계를 전제로 쓰였다. 그리스도인은 성을 결혼 언약 안에서 누리는 하나님의 선물로 본다(히 13:4). 그래도 이 장의 원리, 곧 상대의 의사를 묻고 "아니"를 즉시 존중하는 것, 친밀함을 빼앗는 것이 아니라 함께 세우는 것으로 보는 것, 깊은 연결은 헌신에서 온다는 것은 그리스도인의 연애와 결혼에도 그대로 귀하다. 스킨십의 선은 연인과 함께 미리 정하고 지키자.`},
+/* 마무리 */
+{id:'end',b:6,t:'실행 계획과 "이것이 선물이라면?"',one:'변화는 단계별 도전으로 쌓인다. 어떤 일이 닥쳐도 "이것이 선물이라면?"이라고 물어라.',
+body:`<p>저자는 책 끝에 단계별 <b>실행 계획</b>을 둔다. 1단계는 <b>기초</b>다. 운동 습관 들이기, 옷장 업그레이드, 괜찮은 이발, 일이나 진로 상황 점검, 사람과 어울리는 취미 하나 꾸준히 하기. 2단계는 <b>만남</b>이다. 내 인구 집단(관심사와 만나고 싶은 사람이 겹치는 곳)을 찾고, 하루·한 주에 여러 사람에게 먼저 말 걸기. 3단계는 <b>알아 가기</b>다. 처음 만난 사람과 30분 대화하기, 연락처 묻기, 데이트하기. 그 뒤 단계는 관계를 더 깊게 하는 도전이다. 각 단계는 몇 주, 몇 달이 걸릴 수 있고 그래도 괜찮다.</p>
+<p>책 전체를 한 줄로 줄이면 이렇다. 끌림은 매달리지 않음에서 오고, 매달리지 않음은 취약성을 감수하는 데서 자라며, 그 취약성은 정직에서 나온다. 정직하게 표현하면 반응이 갈리고(양극화), 더 많이 거절당하지만 맞는 사람과는 더 깊이 이어진다. 누구를 끌어당기는지는 내 삶이, 얼마나 만나는지는 용기가, 얼마나 깊어지는지는 소통이 정한다.</p>
+<p><b>"이것이 선물이라면?"</b> · 저자는 로버트 글로버에게서 빌린 이 질문으로 마무리한다. 이별, 모욕적인 거절, 주변의 비웃음 앞에서 그것이 나를 어떻게 성장시킬 선물일 수 있을지 묻는 것이다. 저자는 열아홉 살 때 눈앞에서 친구를 잃은 비극을 겪었다. 그 일은 결코 좋은 일이 아니었지만, 삶이 짧고 누구도 내 삶을 대신 살아 주지 않는다는 사실을 깨우쳐 두려워 숨지 않고 표현하며 살 용기를 주었다.</p>
+<p>삶은 매일 선물을 건넨다. 그것을 받을지는 나에게 달려 있다.</p>`,
+pics:['단계별 체크리스트 · 기초 → 만남 → 알아 가기 → 깊어지기','한 줄 요약 · 정직 → 취약성 → 매달리지 않음 → 매력','"이것이 선물이라면?" · 아픈 일에서 성장의 의미를 찾는 질문','친구의 죽음 · 삶의 유한함이 용기의 근거가 되었다'],
+q:['지금 나에게 일어난 힘든 일 하나를 "선물"로 본다면 어떤 의미가 있을까?','실행 계획 1단계 중 내가 아직 하지 않은 것은?'],
+act:'1단계(운동·옷·이발·진로 점검·사교 취미) 중 이번 달에 할 두 가지를 정해 달력에 적는다.',
+ref:[],
+note:`실행 계획의 후반 단계에는 혼전 성관계를 목표로 한 도전이 있는데, 그리스도인은 이 부분을 건너뛰고 "깊은 대화, 진실한 교제, 서로를 존중하는 데이트"를 목표로 삼으면 된다. "이것이 선물이라면?"이라는 질문은 "모든 것이 합력하여 선을 이룬다"(롬 8:28)는 믿음과 맞닿아 있다. 고난 속에서도 일하시는 하나님을 바라보는 연습이다.`}
+];
+
+/* ---------- 실천 ---------- */
+const PRACTICES=[
+ {k:'askwant',t:'질문 뒤집기',s:'만남 전 "날 좋아할까?" 대신 "나는 이 사람의 무엇이 궁금한가?"를 떠올린다',from:'1부·1장',freq:'매일'},
+ {k:'selfinvest',t:'나에게 투자하기',s:'오늘 남이 아니라 나를 위해 시간을 쓴 일 하나(공부·운동·취미)를 기록한다',from:'1부·1장',freq:'매일'},
+ {k:'vulnerable',t:'목 내밀기 1회',s:'진짜 의견 말하기, 먼저 인사하기, 실수 인정하기 중 하나를 한다',from:'1부·2장',freq:'매일'},
+ {k:'giftpraise',t:'대가 없는 칭찬',s:'진심으로 감탄한 순간에만, 아무것도 기대하지 않고 칭찬 한마디',from:'1부·3장',freq:'매일'},
+ {k:'boundary',t:'경계 점검',s:'이번 주 내 선을 넘은 일과 내가 남의 선을 넘은 일을 각각 돌아본다',from:'1부·3장',freq:'매주'},
+ {k:'truth',t:'나의 진실 일기',s:'내가 왜 인정에 목말랐는지, 어떤 상처가 영향을 주는지 정직하게 적는다',from:'1부·3장',freq:'매주'},
+ {k:'polarize',t:'내 색 드러내기',s:'무난하게 얼버무리던 취향·의견 하나를 분명히 표현하고 반응을 받아들인다',from:'2부·4장',freq:'매주'},
+ {k:'reframe',t:'거절 재해석',s:'거절·실패 후 "상대 사정 3가지 + 배울 점 1가지"를 적는다',from:'2부·5장',freq:'매주'},
+ {k:'posture',t:'자세와 목소리',s:'어깨 펴고 턱 들고 시선 앞으로, 눈 맞춤 먼저 피하지 않기, 가슴 목소리로 또렷하게',from:'3부·8장',freq:'매일'},
+ {k:'fitstyle',t:'두 개의 F',s:'운동 30분 이상, 단것·탄산 줄이기, 몸에 맞는 깔끔한 옷차림',from:'3부·8장',freq:'매일'},
+ {k:'story',t:'핑계 이야기 잡기',s:'오늘 행동을 미루며 나에게 한 이야기를 적고, 남 탓·무관심·지식화 중 무엇인지 표시',from:'4부·9장',freq:'매일'},
+ {k:'ladder',t:'용기의 계단',s:'두려운 일을 작게 쪼개 이번 단계를 3회 반복한다. 한 번에 한 가지만',from:'4부·10장',freq:'매주'},
+ {k:'deeper',t:'한 단계 더 깊이',s:'대화에서 사실 대신 감정과 이유를 나누고, 질문 하나를 추측 진술로 바꿔 본다',from:'5부·11~12장',freq:'매일'},
+ {k:'gift',t:'이것이 선물이라면?',s:'이번 달 가장 힘들었던 일이 나를 어떻게 키웠는지 적고 감사로 기도한다',from:'에필로그',freq:'매월'}
+];
+
+/* ---------- 상황 카드 ---------- */
+const CARDS=[
+ {q:'마음에 드는 사람에게 말을 걸까 망설여진다',a:'상대는 대개 괜찮은 사람이 다가오기를 속으로 응원한다. 화려한 첫마디는 필요 없다. 곧장 다가가 웃으며 "인사하고 싶었어요"라고 말하면 충분하다. 망설일수록 어색해지니, 거절은 맞는지 알아보는 과정일 뿐이라고 생각하자.',ch:'c10'},
+ {q:'만나기 전부터 "날 좋아할까?" 걱정이 앞선다',a:'질문을 뒤집는다. "그 사람은 어떤 사람일까, 나는 그 사람이 마음에 들까?" 상대의 평가보다 내 기준을 앞에 두는 것이 매달리지 않음의 출발이다.',ch:'c1'},
+ {q:'연인(혹은 좋아하는 사람)에게 맞추느라 친구, 운동, 공부를 다 놓치고 있다',a:'처음 나를 매력 있게 만든 것은 내 삶이었다. 그것을 버리고 상대에게만 기대면 매달림이 커져 관계도 무너진다. 내 삶에 계속 투자하는 것이 관계를 지키는 길이다.',ch:'c1'},
+ {q:'자신감 있는 척하려고 기술이나 멘트를 외우고 싶다',a:'연기는 오래가지 못하고, 대사가 떨어지면 본래의 매달림이 드러난다. 외울 시간에 진짜 매력 있는 사람이 되는 데 투자하라. 의도는 언제나 새어 나온다.',ch:'c3'},
+ {q:'잘 보이려고 비싼 선물이나 칭찬을 쏟아붓고 싶다',a:'잘 알지도 못하는데 퍼붓는 호의는 "그러니 나를 좋아해 줘"라는 거래다. 상대는 그 조건을 느낀다. 칭찬은 진심으로 감탄했을 때, 대가 없이 건넬 때만 선물이 된다.',ch:'c3'},
+ {q:'상대가 내 친구를 무시하거나 불쾌한 말을 했다',a:'참고 넘기거나 맞장구치지 말고, 화내거나 설교하지도 말자. 차분하게 "그런 말은 듣기 불편해"라고 선을 긋고, 그 다음은 상대의 선택에 맡긴다.',ch:'c3'},
+ {q:'약속을 자꾸 미루고 답도 애매한 사람이 있다',a:'게임에 끌려다니지 말고 분명히 말한다. "만나고 싶으면 편할 때 알려 줘, 아니어도 괜찮아." 마음이 있으면 상대는 방법을 찾는다. 두세 번 시도 뒤에도 안 되면 정중히 놓아준다.',ch:'c13'},
+ {q:'오래된 이성 친구를 몰래 좋아한 지 몇 년째다',a:'친구 영역은 기다린다고 바뀌지 않는다. 오래 미룬 시간 자체가 매달림의 신호가 된다. 솔직하게 마음을 말해 답을 듣든지, 마음을 정리하고 다른 만남으로 나아가라.',ch:'c4'},
+ {q:'"저 연인 있어요"라는 말을 들었다',a:'사실인지 따지지 말고 그 의도, 곧 "관심 없다"를 받아들인다. 연인이 있는 사람에게 계속 다가가는 것은 시간 낭비이자 옳지 않은 일이다. 미소 짓고 물러난다.',ch:'c4'},
+ {q:'모두에게 무난한 사람으로 보이고 싶어 내 의견을 숨긴다',a:'아무에게도 미움받지 않으면 아무에게도 깊이 사랑받지 못한다. 내 색을 드러내면 몇 사람은 멀어지지만 맞는 사람은 더 강하게 끌린다. 그것이 양극화다.',ch:'c4'},
+ {q:'고백했다가 거절당해서 내가 별로인 사람 같다',a:'거절의 대부분은 나에 대한 판결이 아니라 상대의 사정이거나 맞지 않음이다. 맞는 사람, 틀린 때일 수도 있다. 진실을 알게 되었으니 그것도 성공이다. 미지근한 "글쎄"보다 분명한 "아니"가 낫다.',ch:'c5'},
+ {q:'친구들처럼 "몇 명 사귀어 봤는지"로 나를 평가하게 된다',a:'성공은 숫자나 자랑거리가 아니라 내가 함께하고 싶은 사람과 함께 행복한 것이다. 점수판을 내려놓으면 거절도 실패가 아니라 걸러 주는 과정이 된다.',ch:'c5'},
+ {q:'나는 겁은 없는데 이상하게 사람들이 불편해한다',a:'단절형일 수 있다. 용기는 충분하니 소통, 곧 상대의 감정과 분위기를 읽고 표현을 다듬는 연습에 집중하자. 평범하지 않은 행동을 할 때는 그것을 알고 있다는 한마디를 덧붙인다.',ch:'c6'},
+ {q:'눈치가 너무 보여서 아무것도 시도하지 못한다',a:'불안형일 수 있다. 소통 능력은 이미 있으니 작은 행동을 꾸준히 반복하는 용기 훈련이 필요하다. 아주 쉬운 단계부터 계단을 오르듯 시작한다.',ch:'c6'},
+ {q:'어디서 좋은 사람을 만날 수 있을지 모르겠다',a:'내가 즐기는 일과 내가 바라는 사람이 겹치는 자리를 찾는다. 동아리, 봉사, 운동 모임, 강좌, 교회 공동체. 그리고 그저 참여하지 말고 그 안에서 무언가를 이끌어 보라.',ch:'c7'},
+ {q:'만나는 사람마다 비슷한 문제로 끝난다',a:'그 관계들의 공통점은 나다. 내가 사람에 대해 가진 믿음과 태도가 비슷한 사람을 끌어당기고, 상대도 내 기대대로 반응한다. 내 믿음부터 정직하게 점검하자.',ch:'c7'},
+ {q:'키나 외모가 부족해서 안 될 것 같다',a:'외모와 돈은 영향이 있지만 생각보다 작고, 핑계가 될 수는 없다. 잘생긴 것과 매력 있는 것은 다르다. 몸에 맞는 옷, 운동, 자세, 목소리는 누구나 바꿀 수 있다.',ch:'c8'},
+ {q:'옷을 어떻게 입어야 할지 모르겠다',a:'세 원칙: 몸에 맞게, 서로 어울리게, 내 성격답게. 너무 큰 옷부터 정리하고, 신발과 벨트 색을 맞추고, 나와 비슷한 분위기의 롤모델을 참고한다.',ch:'c8'},
+ {q:'"아직 준비가 안 됐어, 좀 더 나아지면 해야지" 하고 미룬다',a:'늘 무언가가 준비되지 않았다는 이야기는 변화에 저항하는 마음이 지어낸 것이다. 그 이야기를 알아차리고, 지금 할 수 있는 가장 작은 한 걸음을 바로 한다.',ch:'c9'},
+ {q:'"우리 학교(동네) 애들은 다 별로야"라는 생각이 든다',a:'그 많은 사람이 모두 같은 식으로 잘못되었을 확률보다 내가 탓하며 피하고 있을 확률이 높다. 탓을 책임으로 바꾸면 "내가 얼마나 애쓸 것인가"라는 질문이 남고, 공은 내 손에 돌아온다.',ch:'c9'},
+ {q:'관련 책과 영상은 많이 봤는데 정작 행동은 안 한다',a:'지식화라는 회피일 수 있다. 공부가 어느 선을 넘으면 오히려 압박과 불안을 키운다. 가장 좋은 선생은 경험이다. 오늘 할 작은 행동 하나를 정한다.',ch:'c10'},
+ {q:'긴장을 아예 없애고 싶다',a:'두려움은 없어지지 않는다. 억누를수록 커진다. 받아들이고, 숨기지 않고, 설렘의 에너지로 쓰자. 중요한 것은 긴장의 크기가 아니라 할 수 있다는 감각이고, 그것은 작은 반복으로 자란다.',ch:'c10'},
+ {q:'장난을 쳤는데 상대 표정이 굳었다',a:'장난과 모욕의 차이는 의도다. 장난을 불편해하는 사람도 있으니 알아차리면 바로 멈추고, 필요하면 사과한 뒤 진심 어린 칭찬이나 진지한 대화로 바꾼다.',ch:'c11'},
+ {q:'대화가 자꾸 끊기고 무슨 말을 할지 막힌다',a:'질문 대신 진술을 던지고(추측해서 말하기), 상대 말 속의 단어 하나를 잡아 내 이야기로 연결한다. 그리고 사실보다 감정과 이유를 나누면 대화가 깊어진다.',ch:'c12'},
+ {q:'웃기면 좋아해 줄 줄 알았는데 "재밌는 친구"로만 남는다',a:'유머만으로는 부족하다. 웃기기만 하는 사람은 관심의 대상이 아니라 구경거리가 될 수 있다. 진심을 표현하고, 계획을 제안하며 이끄는 모습이 함께 있어야 한다.',ch:'c12'},
+ {q:'첫 데이트를 어디서 해야 할지 고민이다',a:'마주 앉아만 있는 곳보다 함께 움직이는 활동이 좋다. 산책, 전시, 체험, 디저트 가게처럼 짧은 활동을 여러 개 이어 경험을 쌓는다. "뭐 하고 싶어?" 대신 내가 제안하고 이끈다.',ch:'c13'},
+ {q:'상대가 스킨십에 머뭇거리거나 몸을 뺀다',a:'즉시 멈추고 기분 상해하지 말자. "불편해? 내가 너무 빨랐나?"라고 묻고 상대의 대답을 존중한다. 친밀함은 빼앗는 것이 아니라 둘이 함께 만드는 것이다.',ch:'c14'},
+ {q:'헤어짐이나 큰 실패를 겪어 마음이 무너졌다',a:'"이것이 선물이라면?"이라고 물어본다. 이 아픔이 나를 어떻게 성장시킬 수 있을지 찾는 것이다. 저자도 이별의 분노를 자기 계발의 연료로 바꾸며 다시 시작했다.',ch:'end'},
+ {q:'좋아하는 사람 앞에서 내 약점이나 실패담을 숨기고 싶다',a:'완벽한 사람은 믿기 어렵다. 사람은 서로의 울퉁불퉁한 부분에 끌린다. 동정을 바라지 않고 "그래, 그런 일도 있었어" 하고 담담히 나누는 태도가 신뢰를 만든다.',ch:'c2'}
+];
+
+/* ---------- 오늘의 생각 ---------- */
+const THOUGHTS=[
+ ['끌림은 말이 아니라 감정과 움직임으로 오간다.','서론'],
+ ['안이 바뀌면 행동은 따라온다. 대사 암기는 반창고일 뿐이다.','서론'],
+ ['매력은 매달림에 반비례한다.','1부·1장'],
+ ['남이 나를 보는 눈보다 내가 나를 보는 눈을 앞에 두라.','1부·1장'],
+ ['날 좋아할까를 묻지 말고, 내가 그 사람을 좋아하는지 물어라.','1부·1장'],
+ ['나르시시즘은 매달림의 반대가 아니라 매달림의 가면이다.','1부·1장'],
+ ['나를 존중하고, 상대도 존중하라. 둘 다여야 한다.','1부·1장'],
+ ['취약함은 약함이 아니라 거절의 자리에 서는 용기다.','1부·2장'],
+ ['사람은 서로의 완벽함이 아니라 거친 모서리에 끌린다.','1부·2장'],
+ ['"효과가 없네"라는 생각이 들면 이미 결과에 매달리고 있다.','1부·2장'],
+ ['고통의 시기는 건너뛸 수 없다. 통과하는 수밖에 없다.','1부·2장'],
+ ['무엇을 말하느냐보다 왜 말하느냐가 중요하다.','1부·3장'],
+ ['조건이 붙은 칭찬은 선물이 아니라 거래다.','1부·3장'],
+ ['내 선은 지키고, 남의 선은 넘지 마라.','1부·3장'],
+ ['진실은 언제나 새어 나온다.','1부·3장'],
+ ['모두에게 미움받지 않으려 하면 아무에게도 깊이 사랑받지 못한다.','2부·4장'],
+ ['물어봐야 한다면 그게 답이다.','2부·4장'],
+ ['매력 있는 모든 것은 반응을 갈라놓는다.','2부·4장'],
+ ['거절의 대부분은 나에 대한 판결이 아니다.','2부·5장'],
+ ['미지근한 "글쎄"보다 분명한 "아니"가 낫다.','2부·5장'],
+ ['성공은 숫자가 아니라 맞는 사람과 함께하는 행복이다.','2부·5장'],
+ ['삶은 질을, 용기는 양을, 소통은 효율을 정한다.','2부·6장'],
+ ['나는 내가 사는 모습대로의 사람을 끌어당긴다.','3부·7장'],
+ ['정체성을 바꾸지 말고 넓혀라.','3부·7장'],
+ ['내가 만난 사람들의 유일한 공통점은 나다.','3부·7장'],
+ ['매력적인 말을 하는 것보다 매력적인 사람이 되는 것이 강하다.','3부·7장'],
+ ['잘생긴 것과 매력 있는 것은 다르다. 매력은 만들 수 있다.','3부·8장'],
+ ['눈이 마주치면 먼저 피하지 마라.','3부·8장'],
+ ['"재밌었다"로 끝내지 말고 왜 좋았는지 말할 수 있어야 한다.','3부·8장'],
+ ['유일하게 중요한 기술은 내 핑계 이야기를 믿지 않는 것이다.','4부·9장'],
+ ['탓을 멈추면 공은 다시 내 손에 돌아온다.','4부·9장'],
+ ['상대는 다가오는 사람을 속으로 응원하고 있다.','4부·10장'],
+ ['두려움을 없애려 하지 말고, 두려움을 안고 움직여라.','4부·10장'],
+ ['매달리지 않음은 두려움이 없는 게 아니라 두려움보다 중요한 것을 고르는 것이다.','4부·10장'],
+ ['용기는 근육이다. 작은 반복으로 자란다.','4부·10장'],
+ ['장난과 모욕의 차이는 의도다.','5부·11장'],
+ ['사실이 아니라 감정으로 연결하라.','5부·11장'],
+ ['질문만 하지 말고 나를 드러내는 진술을 던져라.','5부·12장'],
+ ['농담이 실패하면 설명하지 말고 그냥 넘어가라.','5부·12장'],
+ ['마음이 있으면 상대는 방법을 찾는다.','5부·13장'],
+ ['"뭐 할래?" 대신 "이거 하자"라고 이끌어라.','5부·13장'],
+ ['"멈춰"는 언제나 멈춤이다.','5부·14장'],
+ ['친밀함은 따 내는 것이 아니라 함께 만드는 것이다.','5부·14장'],
+ ['이것이 선물이라면?','에필로그']
+];
+
+/* ---------- 주간 자기 점검 ---------- */
+const SELFCHECK=[
+ {k:'nonneedy',t:'매달리지 않음',s:'남의 인정보다 내 기준과 가치를 앞에 두고 행동했다'},
+ {k:'selfinvest',t:'자기 삶에 투자',s:'공부·운동·취미·친구 등 내 삶을 가꾸는 데 시간과 힘을 썼다'},
+ {k:'honest',t:'정직한 표현',s:'돌려 말하거나 꾸미지 않고 내 생각과 마음을 솔직하게 말했다'},
+ {k:'vulnerable',t:'취약성 감수',s:'거절이나 창피를 무릅쓰고 목을 내미는 행동을 했다'},
+ {k:'uncond',t:'대가 없는 마음',s:'칭찬과 호의에 조건을 달지 않았다'},
+ {k:'boundary',t:'경계 지키기',s:'싫은 것은 분명히 말하고, 남의 선은 존중했다'},
+ {k:'action',t:'행동량',s:'핑계 이야기를 알아차리고 두려운 일을 작게라도 실제로 했다'},
+ {k:'responsible',t:'책임지기',s:'남 탓 대신 내가 할 수 있는 몫을 찾았다'},
+ {k:'connect',t:'감정적 연결',s:'대화에서 사실을 넘어 감정과 이유를 나누고 상대를 깊이 알려 했다'},
+ {k:'present',t:'자기 표현과 관리',s:'자세·목소리·옷차림·몸 관리를 의식하며 나를 가꿨다'}
+];
+const CFG={key:'jeongjik-maeryeok-v1',title:'정직한 매력',kicker:'Models · Mark Manson',sub:'매달리지 않고, 솔직하게, 움직인다. 결과가 아니라 행동을 센다.',
+ cardStat:'이해한 카드',intentPh:'예: 오늘 수업 끝나고 먼저 인사하기',readTitle:'책 읽기',readHelp:'서론부터 마무리까지 한 장씩 풀어 썼다. 장마다 질문에 답하고, 실천 하나를 오늘 할 일로 가져간다.',
+ picsLabel:'기억할 장면',noteLabel:'신앙 관점 노트',practiceHelp:'매일 것은 오늘, 매주 것은 이번 주 안에 한 번 하면 된다.',
+ cardHead:'상황 카드',cardHelp:'실제 상황을 보고 "나라면 어떻게 할까"를 먼저 써 본 뒤 책의 답과 견준다.'};
+/* ---------- 공통 도우미 ---------- */
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>{d=new Date(d);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
+const parseD=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const addD=(s,n)=>{const d=parseD(s);d.setDate(d.getDate()+n);return ymd(d);};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const today=()=>ymd(Date.now());
+const clone=o=>JSON.parse(JSON.stringify(o));
+function weekKey(d=today()){const dt=parseD(d);const day=(dt.getDay()+6)%7;dt.setDate(dt.getDate()-day);return ymd(dt);}
+let toastT;function toast(m,ms=2600){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,ms);}
+function dialog(html,bind){$('ovl').innerHTML=`<div class="overlay"><div class="dialog" role="dialog" aria-modal="true">${html}</div></div>`;const ov=$('ovl').firstChild;ov.onclick=e=>{if(e.target===ov||e.target.hasAttribute('data-close'))closeDialog();};bind&&bind(ov);}
+function closeDialog(){$('ovl').innerHTML='';}
+function armed(btn,label,fn){if(btn.dataset.arm){fn();return;}btn.dataset.arm=1;const old=btn.textContent;btn.textContent=label;setTimeout(()=>{if(btn.isConnected){delete btn.dataset.arm;btn.textContent=old;}},3000);}
+const PARTSHORT=b=>{const t=BOOKS[b].t;return t.split(' · ')[0];};
+function chNo(l){const same=L.filter(x=>x.b===l.b);return same.length>1?`${PARTSHORT(l.b)} ${same.indexOf(l)+1}`:PARTSHORT(l.b);}
+
+/* ---------- 저장 (이 기기 + 아이폰·맥 동기화, 계정별 개인 공간) ---------- */
+let DOCS={};
+try{DOCS=JSON.parse(localStorage.getItem(CFG.key)||'{}').docs||{};}catch(e){}
+function defState(){return {read:{},notes:{},days:{},cards:{},weekly:{},last:null};}
+if(!DOCS.state)DOCS.state=Object.assign(defState(),{updatedAt:0});
+DOCS.state=Object.assign(defState(),DOCS.state);
+const ST=()=>DOCS.state;
+let COL=null;const wq={},wt={};
+function saveLocal(){try{localStorage.setItem(CFG.key,JSON.stringify({docs:DOCS}));}catch(e){}}
+function touch(name='state'){const d=DOCS[name];if(!d)return;d.updatedAt=Date.now();saveLocal();push(name);}
+function push(name){if(!COL)return;clearTimeout(wt[name]);wt[name]=setTimeout(()=>{const body=DOCS[name]?clone(DOCS[name]):null;wq[name]=(wq[name]||Promise.resolve()).then(()=>body?COL.doc(name).set(body):COL.doc(name).delete()).then(()=>{$('syncTxt').textContent='아이폰·맥 동기화';}).catch(()=>{$('syncTxt').textContent='동기화 실패 · 이 기기에는 저장됨';});},600);}
+function removeDoc(name){delete DOCS[name];saveLocal();if(COL){clearTimeout(wt[name]);wq[name]=(wq[name]||Promise.resolve()).then(()=>COL.doc(name).delete()).catch(()=>{});}}
+(async()=>{try{
+  const user=await (window.claude?.use?.('user')??Promise.resolve(null));const id=user?await user.id():null;
+  const db=await (window.claude?.use?.('db')??Promise.resolve(null));if(!db||!id)return;
+  COL=db.collection('data/users/'+id);let first=true;
+  COL.onSnapshot(qs=>{let changed=false;const seen=new Set();
+    for(const d of qs.docs){seen.add(d.id);const r=d.data();if(!r)continue;const l=DOCS[d.id];if(!l||(r.updatedAt||0)>(l.updatedAt||0)){DOCS[d.id]=clone(r);changed=true;}}
+    for(const ch of qs.docChanges()){if(ch.type==='removed'&&!first&&DOCS[ch.doc.id]){delete DOCS[ch.doc.id];changed=true;}}
+    if(first){first=false;for(const k in DOCS){const r=qs.docs.find(x=>x.id===k)?.data();if(!seen.has(k)?(DOCS[k].updatedAt||0)>0:(r&&(DOCS[k].updatedAt||0)>(r.updatedAt||0)))push(k);}}
+    $('syncTxt').textContent='아이폰·맥 동기화';
+    if(changed){DOCS.state=Object.assign(defState(),DOCS.state);saveLocal();safeRender();}
+  },()=>{$('syncTxt').textContent='동기화 끊김 · 이 기기에는 저장됨';});
+}catch(e){}})();
+let pendingRender=false;
+function safeRender(){const a=document.activeElement;if(a&&['TEXTAREA','INPUT'].includes(a.tagName)){pendingRender=true;return;}render();}
+document.addEventListener('focusout',()=>setTimeout(()=>{const a=document.activeElement;if(pendingRender&&!(a&&['TEXTAREA','INPUT'].includes(a.tagName))){pendingRender=false;render();}},250));
+
+/* ---------- 계산 ---------- */
+function day(d=today()){const s=ST();if(!s.days[d])s.days[d]={p:[]};return s.days[d];}
+function did(k,d=today()){return (ST().days[d]?.p||[]).includes(k);}
+function toggleP(k,d=today()){const r=day(d);const i=r.p.indexOf(k);i>=0?r.p.splice(i,1):r.p.push(k);touch();}
+function streak(){let n=0;let d=today();const has=x=>(ST().days[x]?.p||[]).length||Object.values(ST().days[x]?.h||{}).some(v=>v==='done'||v==='two'||v==='kept')||logs().some(g=>g.d===x);if(!has(d))d=addD(d,-1);while(has(d)){n++;d=addD(d,-1);}return n;}
+function weekDone(k){const t=today();for(let i=0;i<7;i++)if(did(k,addD(t,-i)))return true;return false;}
+function monthDone(k){const m=today().slice(0,7);return Object.keys(ST().days).some(d=>d.startsWith(m)&&did(k,d));}
+function pDone(p){return p.freq==='매일'?did(p.k):p.freq==='매주'?weekDone(p.k):monthDone(p.k);}
+function logs(){let a=[];for(const k in DOCS)if(k.startsWith('g_'))a=a.concat(DOCS[k].list||[]);return a.sort((x,y)=>y.t-x.t);}
+function addLog(e){const k='g_'+e.d.slice(0,7);if(!DOCS[k])DOCS[k]={list:[],updatedAt:0};DOCS[k].list.push(e);touch(k);}
+function delLog(id){for(const k in DOCS)if(k.startsWith('g_')){const n=DOCS[k].list.length;DOCS[k].list=DOCS[k].list.filter(x=>x.id!==id);if(DOCS[k].list.length!==n)touch(k);}}
+function readCount(b){return L.filter(l=>(b===undefined||l.b===b)&&ST().read[l.id]).length;}
+function nextUnread(){return L.find(l=>!ST().read[l.id])||null;}
+function knownCards(){return Object.values(ST().cards).filter(c=>c.ok).length;}
+
+/* ---------- 화면 ---------- */
+let VIEW='home',LID=null;
+function render(){const v=$('view');v.innerHTML='';({home:rHome,read:rRead,practice:rPractice,qa:rQA,log:rLog})[VIEW]?.(v);document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===VIEW));}
+function go(v,lid){VIEW=v;LID=lid??null;render();window.scrollTo(0,0);}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+
+function bar(p){return `<span class="pbar"><i style="width:${Math.round(p*100)}%"></i></span>`;}
+function rHome(v){const s=ST(),t=today(),rec=s.days[t]||{p:[]};const di=Math.floor(Date.now()/864e5);const th=THOUGHTS[di%THOUGHTS.length];const nx=nextUnread();
+  const dailies=PRACTICES.filter(p=>p.freq==='매일');const doneN=dailies.filter(p=>did(p.k)).length;
+  v.innerHTML=`<div class="page"><div class="col">
+  <section class="hall" aria-label="진도">
+    <div class="kicker">${CFG.kicker}</div><h1>${CFG.title}</h1><div class="sub">${CFG.sub}</div>
+    <div class="parts">${BOOKS.map(B=>{const tot=L.filter(l=>l.b===B.n).length;if(!tot)return '';const r=readCount(B.n);return `<button class="part" data-b="${B.n}"><span>${esc(PARTSHORT(B.n))}</span>${bar(r/tot)}<small>${r}/${tot}</small></button>`;}).join('')}</div>
+    <div class="stats"><div><small>읽은 장</small><b>${readCount()}/${L.length}</b></div><div><small>실천 연속</small><b>${streak()}일</b></div><div><small>${CFG.cardStat}</small><b>${knownCards()}/${CARDS.length}</b></div></div>
+  </section>
+  ${SPECIAL.homeTop?SPECIAL.homeTop():''}
+  <section class="card"><div class="lbl"><span>오늘 할 한 가지</span>${rec.intentDone?'<span class="tag ok">해냈다</span>':''}</div>
+    <input class="txt" id="intentIn" maxlength="120" placeholder="${CFG.intentPh}" value="${esc(rec.intent||'')}">
+    <p class="help" style="margin-top:6px">읽기에서 각 장의 실천을 누르면 여기로 들어온다.</p>
+    ${rec.intent?`<div class="row" style="margin-top:8px"><button class="btn sm ${rec.intentDone?'acc2':''}" id="intentDone">${rec.intentDone?'해냈다 ✓':'해냈으면 누른다'}</button></div>`:''}
+  </section>
+  <section class="card"><div class="lbl"><span>오늘의 실천</span><span>${doneN}/${dailies.length}</span></div>
+    ${dailies.map(p=>`<div class="ptk"><button class="chk ${did(p.k)?'on':''}" data-p="${p.k}" aria-pressed="${did(p.k)}" aria-label="${esc(p.t)}">${did(p.k)?'✓':''}</button><div class="tx"><b>${esc(p.t)}</b><small>${esc(p.s)}</small></div><span class="src">${esc(p.from)}</span></div>`).join('')}
+  </section>
+  </div><div class="col">
+  ${SPECIAL.homeCards()}
+  <section class="card"><div class="lbl"><span>오늘의 생각</span></div><p class="quote">${esc(th[0])}<cite>${esc(th[1])}</cite></p></section>
+  ${nx?`<button class="btn wide" id="nextRead">이어 읽기 · ${esc(chNo(nx))} ${esc(nx.t)}</button>`:'<section class="card"><p class="help"><b>책을 다 읽었다.</b> 이제 카드로 꼭꼭 씹고 실천을 이어 간다.</p></section>'}
+  </div></div>`;
+  v.querySelectorAll('.part').forEach(b=>b.onclick=()=>{VIEW='read';LID=null;render();setTimeout(()=>$('bk'+b.dataset.b)?.scrollIntoView({behavior:'smooth'}),30);});
+  let iT;$('intentIn').oninput=e=>{clearTimeout(iT);iT=setTimeout(()=>{day().intent=e.target.value.trim();touch();},600);};
+  $('intentIn').onchange=()=>render();
+  $('intentDone')&&($('intentDone').onclick=()=>{const r=day();r.intentDone=!r.intentDone;touch();render();if(r.intentDone)toast('해냈다');});
+  v.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{toggleP(b.dataset.p);render();});
+  SPECIAL.bindHome(v);
+  $('nextRead')&&($('nextRead').onclick=()=>go('read',nx.id));
+}
+
+/* ---------- 읽기 ---------- */
+function rRead(v){if(LID){rLesson(v,LID);return;}
+  v.innerHTML=`<div style="max-width:760px;margin:0 auto">
+  <section class="card"><h2>${CFG.readTitle}</h2><p class="help">${CFG.readHelp}</p>
+   <div style="margin-top:12px">${bar(readCount()/L.length)}</div><p class="help" style="margin-top:6px">${readCount()} / ${L.length}장 읽음</p></section>
+  ${BOOKS.map(B=>{const ls=L.filter(l=>l.b===B.n);if(!ls.length)return '';return `<div class="bookttl" id="bk${B.n}">${esc(B.t)}</div><p class="booksub">${esc(B.s)}</p>${ls.map((l,i)=>`<button class="lsn" data-l="${l.id}"><span class="no">${ls.length>1?i+1:'·'}</span><span class="tt">${esc(l.t)}<small>${esc(l.one)}</small></span>${ST().read[l.id]?'<span class="rd">읽음</span>':''}</button>`).join('')}`;}).join('')}
+  </div>`;
+  v.querySelectorAll('.lsn').forEach(b=>b.onclick=()=>go('read',b.dataset.l));}
+function rLesson(v,id){const l=L.find(x=>x.id===id);const i=L.indexOf(l);const s=ST();const nt=s.notes[id]||{};const prev=L[i-1],next=L[i+1];
+  v.innerHTML=`<article class="reader">
+   <div class="head"><button class="btn ghost sm" id="back">← 목차</button><div class="crumb" style="margin-top:10px">${esc(BOOKS[l.b].t)}</div><h1>${esc(l.t)}</h1><p class="one">${esc(l.one)}</p></div>
+   <section class="card body">${l.body}</section>
+   ${(l.pics||[]).length?`<section class="card"><div class="lbl"><span>${CFG.picsLabel}</span></div>${l.pics.map(p=>{const [a,...b]=p.split(' · ');return `<div class="pic"><span class="ic">✦</span><div><b>${esc(a)}</b>${b.length?` · ${esc(b.join(' · '))}`:''}</div></div>`;}).join('')}</section>`:''}
+   ${l.note?`<section class="card note"><div class="lbl"><span>${CFG.noteLabel}</span></div><p>${esc(l.note)}</p></section>`:''}
+   <section class="card"><div class="lbl"><span>꼭꼭 씹기 · 질문</span><span class="help" id="saved"></span></div>
+    ${l.q.map((q,qi)=>`<div class="qa"><b>${esc(q)}</b><textarea class="txt" data-q="q${qi}" rows="2" placeholder="내 생각을 적는다">${esc(nt['q'+qi]||'')}</textarea></div>`).join('')}
+    <div class="qa"><b>이 장에서 남은 한 줄</b><textarea class="txt" data-q="my" rows="2" placeholder="내 말로 다시 쓴 핵심">${esc(nt.my||'')}</textarea></div></section>
+   <section class="card actcard"><div class="lbl"><span>이 장의 실천</span></div><p style="margin:0 0 10px">${esc(l.act)}</p><button class="btn acc2 sm" id="toIntent">오늘 할 한 가지로 정하기</button></section>
+   <button class="btn ${s.read[id]?'':'pri'} wide" id="readBtn">${s.read[id]?'읽음으로 표시됨 · 취소':'다 읽었다'}</button>
+   <div class="navrow">${prev?`<button class="btn sm" data-go="${prev.id}">← 이전 장</button>`:'<span></span>'}${next?`<button class="btn sm" data-go="${next.id}">다음 장 →</button>`:'<span></span>'}</div>
+  </article>`;
+  $('back').onclick=()=>go('read');
+  let qT;v.querySelectorAll('textarea[data-q]').forEach(ta=>ta.oninput=()=>{clearTimeout(qT);qT=setTimeout(()=>{s.notes[id]=Object.assign({},s.notes[id],{[ta.dataset.q]:ta.value,t:Date.now()});touch();$('saved').textContent='저장됨';},700);});
+  $('readBtn').onclick=()=>{if(s.read[id])delete s.read[id];else s.read[id]=Date.now();touch();if(s.read[id]&&next){toast('읽었다. 다음 장으로');go('read',next.id);}else render();};
+  $('toIntent').onclick=()=>{day().intent=l.act;day().intentDone=false;touch();toast('오늘 탭에 담았다');};
+  v.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go('read',b.dataset.go));
+}
+
+/* ---------- 실천 ---------- */
+function rPractice(v){
+  v.innerHTML=`<div class="page"><div class="col">
+  ${SPECIAL.practiceTop?SPECIAL.practiceTop():''}
+  <section class="card"><h2>책에서 나온 실천 ${PRACTICES.length}가지</h2><p class="help" style="margin-bottom:6px">${CFG.practiceHelp}</p>
+   ${PRACTICES.map(p=>{const dn=pDone(p);return `<div class="ptk"><button class="chk ${dn?'on':''}" data-p="${p.k}" aria-pressed="${dn}" aria-label="${esc(p.t)}">${dn?'✓':''}</button><div class="tx"><b>${esc(p.t)}</b> <span class="tag no">${p.freq}</span><small>${esc(p.s)}</small></div><span class="src">${esc(p.from)}</span></div>`;}).join('')}</section>
+  </div><div class="col">${SPECIAL.practiceCards()}</div></div>`;
+  v.querySelectorAll('.ptk [data-p]').forEach(b=>b.onclick=()=>{const p=PRACTICES.find(x=>x.k===b.dataset.p);if(p.freq==='매일'||did(p.k)||!pDone(p))toggleP(p.k);else toast(p.freq==='매주'?'이번 주에 이미 했다':'이번 달에 이미 했다');render();});
+  SPECIAL.bindPractice(v);
+}
+
+/* ---------- 카드 ---------- */
+let QI=null,QSHOW=false,QF='all',QPICK=null;
+function rQA(v){const s=ST();const list=CARDS.map((c,i)=>Object.assign({i},c)).filter(c=>QF==='all'||(QF==='ok'?s.cards[c.i]?.ok:!s.cards[c.i]?.ok));
+  if(QI===null||!CARDS[QI])QI=list.length?list[0].i:0;const c=CARDS[QI];const cs=s.cards[QI]||{};const ch=L.find(l=>l.id===c.ch);
+  v.innerHTML=`<div class="page"><div class="col">
+  <section class="card"><div class="lbl"><span>${CFG.cardHead}</span><span class="tag ${cs.ok?'ok':'no'}">${cs.ok?'이해했다':'아직'}</span></div>
+   <div class="flash"><div class="qq">${esc(c.q)}</div>
+    ${SPECIAL.cardGuess?SPECIAL.cardGuess(c,cs):`<div class="qa"><b style="font-size:13px;color:var(--mute)">먼저 내 생각을 써 본다</b><textarea class="txt" id="mine" rows="3" placeholder="책의 답을 보기 전에 써 본다">${esc(cs.mine||'')}</textarea></div>`}
+    ${QSHOW?`<div class="aa">${esc(c.a)}</div>${ch?`<button class="btn ghost sm" id="toCh" style="align-self:flex-start">관련 장 · ${esc(ch.t)} →</button>`:''}`:`<button class="btn" id="showA">책의 답 보기</button>`}
+   </div>
+   <div class="row" style="margin-top:12px"><button class="btn ${cs.ok?'acc2':''}" id="okBtn">${cs.ok?'이해했다 ✓':'이제 이해했다'}</button><button class="btn" id="nextQ">다음 카드</button><button class="btn ghost" id="randQ">무작위</button></div>
+  </section>
+  <p class="help" style="padding:0 4px">${CFG.cardHelp}</p>
+  </div><div class="col">
+  <section class="card"><div class="lbl"><span>카드 ${CARDS.length}장</span><span>${knownCards()} 이해</span></div>
+   <div class="row" style="margin-bottom:8px">${[['all','전체'],['no','아직'],['ok','이해함']].map(([k,t])=>`<button class="chip ${QF===k?'on':''}" data-f="${k}">${t}</button>`).join('')}</div>
+   <div class="cardlist">${list.map(x=>`<button data-i="${x.i}" style="${x.i===QI?'font-weight:700':''}"><span class="t">${esc(x.q)}</span>${s.cards[x.i]?.ok?'<span class="tag ok">✓</span>':''}</button>`).join('')||'<p class="help">해당하는 카드가 없다.</p>'}</div></section>
+  </div></div>`;
+  let mT;$('mine')&&($('mine').oninput=e=>{clearTimeout(mT);mT=setTimeout(()=>{s.cards[QI]=Object.assign({},s.cards[QI],{mine:e.target.value});touch();},700);});
+  $('showA')&&($('showA').onclick=()=>{QSHOW=true;render();});
+  $('toCh')&&($('toCh').onclick=()=>go('read',ch.id));
+  $('okBtn').onclick=()=>{s.cards[QI]=Object.assign({},s.cards[QI],{ok:!cs.ok,t:Date.now()});touch();render();};
+  const moveTo=i=>{QI=i;QSHOW=false;QPICK=null;render();};
+  $('nextQ').onclick=()=>{const idx=list.findIndex(x=>x.i===QI);const nx=list[(idx+1)%Math.max(1,list.length)];moveTo(nx?nx.i:0);};
+  $('randQ').onclick=()=>{const pool=CARDS.map((_,i)=>i).filter(i=>!s.cards[i]?.ok);const arr=pool.length?pool:CARDS.map((_,i)=>i);moveTo(arr[Math.floor(Math.random()*arr.length)]);};
+  v.querySelectorAll('.cardlist [data-i]').forEach(b=>b.onclick=()=>moveTo(+b.dataset.i));
+  v.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{QF=b.dataset.f;QI=null;QSHOW=false;QPICK=null;render();});
+  SPECIAL.bindCard&&SPECIAL.bindCard(v,c,cs);
+}
+
+/* ---------- 기록 ---------- */
+let CALM=null;
+function rLog(v){const s=ST(),t=today();if(!CALM)CALM=t.slice(0,7);const [Y,M]=CALM.split('-').map(Number);const off=new Date(Y,M-1,1).getDay(),dim=new Date(Y,M,0).getDate();
+  let cal='';['일','월','화','수','목','금','토'].forEach(h=>cal+=`<div class="h">${h}</div>`);for(let i=0;i<off;i++)cal+='<div></div>';
+  const G=logs();
+  for(let d=1;d<=dim;d++){const k=`${CALM}-${pad(d)}`;const n=(s.days[k]?.p||[]).length+Object.values(s.days[k]?.h||{}).filter(v=>v==='done'||v==='two'||v==='kept').length+G.filter(g=>g.d===k).length;cal+=`<div class="d ${n>=5?'l3':n>=3?'l2':n>=1?'l1':''} ${k===t?'today':''}" title="${k} ${n}">${d}</div>`;}
+  const notes=Object.entries(s.notes).filter(([id,n])=>n.my||n.q0||n.q1).sort((a,b)=>(b[1].t||0)-(a[1].t||0));
+  v.innerHTML=`<div class="page"><div class="col">
+  <section class="card"><div class="lbl"><button class="btn ghost sm" id="cP" aria-label="이전 달">‹</button><span style="color:var(--ink);font-size:14px">${Y}년 ${M}월</span><button class="btn ghost sm" id="cN" aria-label="다음 달">›</button></div><div class="cal">${cal}</div>
+   <p class="help" style="margin-top:8px">진할수록 그날 실천과 기록이 많다. 연속 ${streak()}일.</p></section>
+  ${SPECIAL.logCards()}
+  <section class="card"><div class="lbl"><span>백업</span></div><p class="help" style="margin-bottom:8px">이 판은 기록을 이 기기에만 저장한다. 다른 기기로 옮길 때는 백업 복사 → 그 기기에서 복원.</p>
+   <div class="row"><button class="btn sm" id="bkC">백업 복사</button><button class="btn sm" id="bkR">복원</button></div><textarea class="txt" id="bkT" rows="3" hidden placeholder="백업 글자를 붙여넣고 복원을 다시 누른다" style="margin-top:8px"></textarea></section>
+  </div><div class="col">
+  ${SPECIAL.logList()}
+  <section class="card"><div class="lbl"><span>내가 꼭꼭 씹은 장</span><span>${notes.length}</span></div>${notes.length?notes.map(([id,n])=>{const l=L.find(x=>x.id===id);return l?`<div class="entry"><div class="meta"><span>${esc(l.t)}</span><button class="x" data-open="${id}">열기</button></div><div class="tx">${esc(n.my||n.q0||n.q1)}</div></div>`:'';}).join(''):'<p class="help">읽기에서 질문에 답하면 여기 모인다.</p>'}</section>
+  </div></div>`;
+  $('cP').onclick=()=>{CALM=ymd(new Date(Y,M-2,1)).slice(0,7);render();};$('cN').onclick=()=>{CALM=ymd(new Date(Y,M,1)).slice(0,7);render();};
+  v.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>go('read',b.dataset.open));
+  v.querySelectorAll('[data-gdel]').forEach(b=>b.onclick=()=>armed(b,'정말?',()=>{delLog(b.dataset.gdel);render();}));
+  $('bkC').onclick=async()=>{const tx=JSON.stringify(DOCS);try{await navigator.clipboard.writeText(tx);toast('백업을 복사했다');}catch(e){const ta=$('bkT');ta.hidden=false;ta.value=tx;ta.select();toast('선택된 글자를 직접 복사한다');}};
+  $('bkR').onclick=()=>{const ta=$('bkT');if(ta.hidden||!ta.value.trim()){ta.hidden=false;ta.value='';ta.focus();return;}try{const r=JSON.parse(ta.value);if(!r.state)throw 0;for(const k in r){DOCS[k]=r[k];touch(k);}DOCS.state=Object.assign(defState(),DOCS.state);render();toast('복원했다');}catch(e){toast('백업 글자를 읽지 못했다');}};
+  SPECIAL.bindLog&&SPECIAL.bindLog(v);
+}
+document.addEventListener('dblclick',e=>{if(!['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))e.preventDefault();},{passive:false});
+/* ---------- 정직한 매력 · 용기 일지와 주간 점검 ---------- */
+const CTYPES=['말 걸기','솔직한 표현','취약성 드러냄','경계 지킴','거절당함','새로운 활동'];
+const COUTS=[['good','좋았다'],['rej','거절당했다 · 그래도 성공'],['learn','배웠다'],['none','아무 일 없음']];
+let CT=null,CO=null,CDRAFT='';
+const weekLogs=()=>{const w=weekKey();return logs().filter(g=>g.d>=w);};
+function wkAvg(w){const r=ST().weekly[w];if(!r)return null;const v=SELFCHECK.map(x=>r[x.k]).filter(Boolean);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;}
+function courageForm(){return `<section class="card"><div class="lbl"><span>용기 일지</span><span>이번 주 ${weekLogs().length}번 움직였다</span></div>
+  <p class="help" style="margin-bottom:8px">결과는 묻지 않는다. 목을 내밀었으면 그걸로 성공이다.</p>
+  <div class="sublbl">무엇을 했나</div><div class="row">${CTYPES.map(t=>`<button class="chip ${CT===t?'on':''}" data-ct="${t}">${t}</button>`).join('')}</div>
+  <div class="sublbl">어떻게 했나</div><textarea class="txt" id="cTx" rows="2" placeholder="예: 동아리에서 처음 보는 친구에게 먼저 이름을 물었다">${esc(CDRAFT)}</textarea>
+  <div class="sublbl">그래서</div><div class="row">${COUTS.map(([k,t])=>`<button class="chip ${CO===k?'on':''}" data-co="${k}">${t}</button>`).join('')}</div>
+  <button class="btn pri wide" id="cSave" style="margin-top:12px">기록한다</button></section>`;}
+function bindCourage(v){
+  v.querySelectorAll('[data-ct]').forEach(b=>b.onclick=()=>{CT=CT===b.dataset.ct?null:b.dataset.ct;render();});
+  v.querySelectorAll('[data-co]').forEach(b=>b.onclick=()=>{CO=CO===b.dataset.co?null:b.dataset.co;render();});
+  $('cTx').oninput=e=>CDRAFT=e.target.value;
+  $('cSave').onclick=()=>{const tx=CDRAFT.trim();if(!CT&&!tx){toast('무엇을 했는지 고르거나 적는다');return;}
+    addLog({id:uid(),d:today(),t:Date.now(),type:CT||'기타',text:tx,out:CO||''});CT=null;CO=null;CDRAFT='';render();
+    toast(weekLogs().length===1?'이번 주 첫 움직임이다':'움직였다. 이번 주 '+weekLogs().length+'번째');};
+}
+const outName=k=>(COUTS.find(x=>x[0]===k)||[,''])[1];
+const SPECIAL={
+  homeCards(){const w=weekKey(),r=ST().weekly[w]||{};const n=SELFCHECK.filter(x=>r[x.k]).length;
+    return courageForm()+`<section class="card"><div class="lbl"><span>이번 주 자기 점검</span><span>${n}/${SELFCHECK.length}</span></div>
+     <p class="help" style="margin-bottom:10px">매달리지 않음, 정직, 경계, 행동… 열 가지를 한 주에 한 번 1~5로 매긴다.</p>
+     <button class="btn sm" id="toCheck">${n?'이어서 점검하기':'점검하러 가기'} →</button></section>`;},
+  bindHome(v){bindCourage(v);$('toCheck').onclick=()=>{go('practice');setTimeout(()=>$('chk')?.scrollIntoView({behavior:'smooth'}),30);};},
+  practiceCards(){const w=weekKey(),prev=addD(w,-7);const r=ST().weekly[w]||{},p=ST().weekly[prev]||{};
+    return `<section class="card" id="chk"><h2>주간 자기 점검</h2><p class="help" style="margin-bottom:4px">${w.slice(5).replace('-','/')} 주 · 1은 거의 못 했다, 5는 꾸준히 했다. 지난주와 비교해 화살표가 뜬다.</p>
+     ${SELFCHECK.map(x=>{const val=r[x.k],pv=p[x.k];const d=val&&pv?val-pv:null;
+       return `<div class="sc"><div class="h"><b>${esc(x.t)}</b>${d===null?'':`<span class="delta ${d>0?'up':d<0?'down':'eq'}">${d>0?'▲ '+d:d<0?'▼ '+(-d):'지난주와 같음'}</span>`}</div><small>${esc(x.s)}</small>
+       <div class="scale">${[1,2,3,4,5].map(n=>`<button class="${val===n?'on':''}" data-sk="${x.k}" data-sv="${n}" aria-label="${esc(x.t)} ${n}점">${n}</button>`).join('')}</div></div>`;}).join('')}
+     </section>`;},
+  bindPractice(v){v.querySelectorAll('[data-sk]').forEach(b=>b.onclick=()=>{const w=weekKey();const s=ST();if(!s.weekly[w])s.weekly[w]={};const k=b.dataset.sk,n=+b.dataset.sv;
+    if(s.weekly[w][k]===n)delete s.weekly[w][k];else s.weekly[w][k]=n;touch();const y=window.scrollY;render();window.scrollTo(0,y);});},
+  logCards(){const weeks=[];let w=weekKey();for(let i=0;i<8;i++){weeks.unshift(w);w=addD(w,-7);}
+    const G=logs();const cnt=wk=>G.filter(g=>g.d>=wk&&g.d<addD(wk,7)).length;const mx=Math.max(1,...weeks.map(cnt));
+    const avgs=weeks.map(wkAvg);
+    const typeCount=CTYPES.map(t=>[t,G.filter(g=>g.type===t).length]);
+    return `<section class="card"><div class="lbl"><span>주별 움직임</span><span>최근 8주</span></div>
+     <div class="trend">${weeks.map((wk,i)=>`<div><span>${cnt(wk)||''}</span><i class="${i===7?'now':''}" style="height:${Math.max(3,cnt(wk)/mx*62)}px"></i><span>${wk.slice(5).replace('-','/')}</span></div>`).join('')}</div></section>
+     <section class="card"><div class="lbl"><span>자기 점검 평균</span><span>1~5</span></div>
+     ${avgs.some(a=>a)?`<div class="trend">${weeks.map((wk,i)=>{const a=avgs[i];return `<div><span>${a?a.toFixed(1):''}</span><i class="${i===7?'now':''}" style="height:${a?Math.max(3,a/5*62):3}px;${a?'':'opacity:.25'}"></i><span>${wk.slice(5).replace('-','/')}</span></div>`;}).join('')}</div>`:'<p class="help">실천 탭에서 한 주에 한 번 점검하면 흐름이 보인다.</p>'}</section>
+     <section class="card"><div class="lbl"><span>지금까지 한 일</span><span>${G.length}번</span></div><div class="stat6">${typeCount.map(([t,n])=>`<div>${t}<b>${n}</b></div>`).join('')}</div></section>`;},
+  logList(){const G=logs();return `<section class="card"><div class="lbl"><span>용기 일지</span><span>${G.length}</span></div>
+    ${G.length?G.slice(0,60).map(g=>`<div class="entry"><div class="meta"><span>${g.d.slice(5).replace('-','/')} · ${esc(g.type)}${g.out?' · '+esc(outName(g.out)):''}</span><button class="x" data-gdel="${g.id}">지우기</button></div>${g.text?`<div class="tx">${esc(g.text)}</div>`:''}</div>`).join(''):'<p class="help">오늘 화면에서 움직인 일을 적으면 여기 쌓인다.</p>'}</section>`;}
+};
+render();
+</script>
+
+<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
+</body>
+</html>

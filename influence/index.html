@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1F2A47">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="설득 방패">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>설득 방패</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700;900&family=Noto+Sans+KR:wght@400;500;700&family=Playfair+Display:ital@1&display=swap">
+<style>
+/* Layout: 남색 판 위에 여덟 개 진도 막대(들어가며~맺음말). 진홍은 경고와 주요 버튼, 남색은 차분한 판. 오늘 화면의 중심은 영향력 일지, 퀴즈는 상황을 보고 여섯 원리 중 하나를 고른다. 맥에서는 두 단. */
+:root{
+  --bg:#F3F1EF; --card:#FDFCFB; --sunk:#E8E4E1; --line:#D9D2CD; --ink:#1D1A22; --mute:#5E5864; --faint:#928B94;
+  --navy:#A3283A; --navy-soft:#F5DDE0; --brass:#2A3F6B; --brass-soft:#DEE4F0; --holly:#2D6B4D; --holly-soft:#D8EBE0; --wine:#A3283A; --wine-soft:#F5DDE0;
+  --on-navy:#FFFFFF; --hall:#1F2A47; --on-hall:#F2F3F8; --hall-bar:#F07A8A;
+  --f-head:"Noto Serif KR","AppleMyungjo",serif;
+  --f-body:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo",sans-serif;
+  --f-latin:"Playfair Display",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#13121A; --card:#1B1A23; --sunk:#24222E; --line:#33303F; --ink:#EAE7EE; --mute:#A9A3B0; --faint:#757080;
+  --navy:#F0788A; --navy-soft:#3D1A21; --brass:#93AEE6; --brass-soft:#1E2944; --holly:#6CC69A; --holly-soft:#173327; --wine:#F0788A; --wine-soft:#3D1A21;
+  --on-navy:#160D10; --hall:#1A2240; --on-hall:#ECEEF6; --hall-bar:#F0788A; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#13121A; --card:#1B1A23; --sunk:#24222E; --line:#33303F; --ink:#EAE7EE; --mute:#A9A3B0; --faint:#757080;
+  --navy:#F0788A; --navy-soft:#3D1A21; --brass:#93AEE6; --brass-soft:#1E2944; --holly:#6CC69A; --holly-soft:#173327; --wine:#F0788A; --wine-soft:#3D1A21;
+  --on-navy:#160D10; --hall:#1A2240; --on-hall:#ECEEF6; --hall-bar:#F0788A; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;touch-action:manipulation}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0;line-height:1.35;font-weight:800}
+.wrap{max-width:1080px;margin:0 auto;padding-block:14px calc(96px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.top .ttl{font-family:var(--f-head);font-weight:800;font-size:19px}
+.top .sync{font-size:11.5px;color:var(--faint);margin-left:auto}
+.page{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.page>.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+@media (max-width:820px){.page{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{font-size:18px;margin-bottom:6px}
+.card h3{font-size:15.5px;margin-bottom:4px}
+.lbl{font-size:12px;letter-spacing:.05em;color:var(--mute);font-weight:700;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.help{font-size:13.5px;color:var(--mute);margin:0}
+.help b{color:var(--ink)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 14px;font-weight:500}
+.btn.pri{background:var(--navy);border-color:var(--navy);color:var(--on-navy);font-weight:700}
+.btn.brass{background:var(--brass);border-color:var(--brass);color:var(--on-navy);font-weight:700}
+.btn.ghost{background:transparent}
+.btn.wide{width:100%}
+.btn.sm{padding:6px 10px;font-size:13px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;font-size:13.5px}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.txt{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;font:inherit;color:inherit}
+textarea.txt{resize:vertical;min-height:72px;line-height:1.65}
+.scale{display:flex;gap:6px}
+.scale button{flex:1;border:1px solid var(--line);background:transparent;border-radius:9px;padding:6px 0;font-size:13px}
+.scale button.on{background:var(--navy);border-color:var(--navy);color:var(--on-navy);font-weight:700}
+/* 복도와 문 */
+.hall{background:var(--hall);color:var(--on-hall);border:0;border-radius:16px;padding:18px 18px 16px;position:relative;overflow:hidden}
+.hall .kicker{font-family:var(--f-latin);font-style:italic;font-size:16px;opacity:.85}
+.hall h1{font-size:30px;margin:2px 0 4px}
+.hall .sub{font-size:13px;opacity:.85}
+.hall .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.hall .stats div{background:color-mix(in srgb,var(--on-hall) 10%,transparent);border-radius:10px;padding:8px 10px}
+.hall .stats small{display:block;font-size:11px;opacity:.75}
+.hall .stats b{font-size:18px;font-variant-numeric:tabular-nums}
+.quote{font-family:var(--f-head);font-size:16px;line-height:1.7;font-weight:700}
+.quote cite{display:block;font-family:var(--f-body);font-style:normal;font-weight:400;font-size:12.5px;color:var(--mute);margin-top:6px}
+.verse{font-family:var(--f-head);font-weight:700;font-size:15px;line-height:1.75}
+.verse cite{display:block;font-family:var(--f-body);font-weight:400;font-style:normal;font-size:12px;color:var(--mute);margin-top:4px}
+.ptk{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.ptk:last-child{border-bottom:0}
+.ptk .chk{width:26px;height:26px;border-radius:8px;border:1.5px solid var(--line);background:transparent;flex:none;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--on-navy);padding:0}
+.ptk .chk.on{background:var(--holly);border-color:var(--holly)}
+.ptk .tx{flex:1;min-width:0}
+.ptk .tx b{font-weight:700;font-size:14.5px}
+.ptk .tx small{display:block;color:var(--mute);font-size:12.5px;line-height:1.5}
+.ptk .src{font-size:11px;color:var(--faint);white-space:nowrap}
+.sixdots{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:3px;margin:8px 0}
+.sixdots i{aspect-ratio:1;border-radius:3px;background:var(--sunk);display:block}
+.sixdots i.ok{background:var(--holly)}
+.sixdots i.fail{background:var(--wine)}
+.sixdots i.today{outline:2px solid var(--brass);outline-offset:-2px}
+.timer{font-variant-numeric:tabular-nums;font-size:40px;font-weight:700;text-align:center;font-family:var(--f-body)}
+/* 읽기 */
+.bookttl{font-family:var(--f-head);font-weight:800;font-size:17px;margin:14px 2px 2px}
+.booksub{font-size:12.5px;color:var(--mute);margin:0 2px 8px}
+.lsn{width:100%;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:11px 14px;display:flex;gap:10px;align-items:center;margin-bottom:6px}
+.lsn .no{font-size:12px;color:var(--faint);width:30px;flex:none;font-variant-numeric:tabular-nums}
+.lsn .tt{flex:1;min-width:0;font-weight:700}
+.lsn .tt small{display:block;font-weight:400;color:var(--mute);font-size:12.5px;line-height:1.5}
+.lsn .rd{font-size:12px;color:var(--holly);font-weight:700}
+.reader{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.reader .head .crumb{font-size:12.5px;color:var(--mute)}
+.reader .head h1{font-size:27px;margin:4px 0 8px}
+.reader .one{font-family:var(--f-head);font-weight:700;font-size:17px;line-height:1.7;border-left:3px solid var(--brass);padding-left:12px;margin:0}
+.reader .body p{margin:0 0 12px}
+.reader .body ul{margin:0 0 12px;padding-left:20px}
+.reader .body li{margin-bottom:6px}
+.pic{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.pic:last-child{border-bottom:0}
+.pic .ic{color:var(--brass);font-family:var(--f-latin);font-style:italic;font-size:18px;line-height:1.2}
+.pres{background:var(--navy-soft);border:1px solid color-mix(in srgb,var(--navy) 30%,var(--line))}
+.pres .lbl{color:var(--navy)}
+.pres p{margin:0;font-size:14.5px}
+.qa{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.qa b{font-size:14.5px}
+.navrow{display:flex;justify-content:space-between;gap:8px}
+/* 문답 */
+.flash{min-height:180px;display:flex;flex-direction:column;gap:12px}
+.flash .qq{font-family:var(--f-head);font-weight:800;font-size:20px;line-height:1.5}
+.flash .aa{font-size:15px;background:var(--sunk);border-radius:10px;padding:12px 14px}
+.tag{display:inline-block;font-size:11.5px;border-radius:999px;padding:1px 9px;font-weight:700}
+.tag.ok{background:var(--holly-soft);color:var(--holly)}
+.tag.no{background:var(--sunk);color:var(--mute)}
+.cardlist button{width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:9px 2px;display:flex;gap:8px;align-items:center;font-size:14px}
+.cardlist button span.t{flex:1;min-width:0}
+/* 기록 */
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal .d{aspect-ratio:1;border-radius:6px;background:var(--sunk);font-size:10.5px;display:flex;align-items:flex-start;justify-content:flex-end;padding:2px 4px;color:var(--faint);max-width:100%}
+.cal .d.l1{background:color-mix(in srgb,var(--holly) 30%,var(--sunk));color:var(--ink)}
+.cal .d.l2{background:color-mix(in srgb,var(--holly) 60%,var(--sunk));color:var(--ink)}
+.cal .d.l3{background:var(--holly);color:var(--on-navy)}
+.cal .d.today{outline:2px solid var(--brass);outline-offset:-2px}
+.cal .h{font-size:11px;color:var(--faint);text-align:center}
+.entry{border-bottom:1px solid var(--line);padding:10px 0;font-size:14px}
+.entry:last-child{border-bottom:0}
+.entry .meta{font-size:12px;color:var(--faint);display:flex;justify-content:space-between;gap:8px}
+.entry .tx{white-space:pre-wrap;overflow-wrap:anywhere}
+.x{border:0;background:none;color:var(--faint);padding:0 4px;font-size:13px}
+/* tabs */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--card) 93%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px max(10px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px));display:flex;justify-content:center;gap:4px}
+nav.tabs button{flex:1;max-width:130px;border:0;background:none;border-radius:10px;padding:6px 0;font-size:12px;color:var(--mute);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav.tabs button svg{width:22px;height:22px}
+nav.tabs button.on{color:var(--navy);font-weight:700}
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(8,12,22,.5);display:flex;align-items:flex-end;justify-content:center;padding:16px}
+@media (min-width:640px){.overlay{align-items:center}}
+.dialog{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;max-width:560px;width:100%;max-height:90vh;overflow:auto}
+.dialog h3{font-size:19px;margin-bottom:6px}
+.dialog .acts2{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:14px}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:13.5px;z-index:90;max-width:calc(100% - 32px);text-align:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.parts{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px;margin-top:14px}
+.part{border:0;background:color-mix(in srgb,var(--on-hall) 10%,transparent);border-radius:10px;padding:8px 10px;color:inherit;text-align:left;display:flex;flex-direction:column;gap:5px;font-size:12px;line-height:1.3;min-width:0}
+.part span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.part small{opacity:.72;font-size:11px;font-variant-numeric:tabular-nums}
+.pbar{display:block;height:6px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--brass);border-radius:inherit}
+.hall .pbar{background:color-mix(in srgb,var(--on-hall) 18%,transparent)}
+.hall .pbar i{background:var(--hall-bar)}
+.btn.acc2{background:var(--holly);border-color:var(--holly);color:var(--on-navy);font-weight:700}
+.note{background:var(--navy-soft);border:1px solid color-mix(in srgb,var(--navy) 30%,var(--line))}
+.note .lbl{color:var(--navy)}
+.note p{margin:0;font-size:14.5px}
+.actcard{background:var(--brass-soft);border-color:color-mix(in srgb,var(--brass) 35%,var(--line))}
+.actcard .lbl{color:var(--brass)}
+.sublbl{font-size:12.5px;color:var(--mute);font-weight:700;margin:10px 0 6px}
+.big{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.trend{display:flex;align-items:flex-end;gap:6px;height:90px;margin-top:6px}
+.trend div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%;font-size:10.5px;color:var(--faint);min-width:0}
+.trend i{display:block;width:100%;max-width:34px;border-radius:6px 6px 2px 2px;background:var(--navy)}
+.trend i.now{background:var(--brass)}
+.sc{padding:10px 0;border-bottom:1px solid var(--line)}
+.sc:last-child{border-bottom:0}
+.sc .h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.sc .h b{font-size:14.5px}
+.sc small{display:block;color:var(--mute);font-size:12.5px;line-height:1.5;margin-bottom:6px}
+.delta{font-size:12px;font-weight:700;white-space:nowrap}
+.delta.up{color:var(--holly)}.delta.down{color:var(--wine)}.delta.eq{color:var(--faint)}
+.pgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.pgrid button{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 4px;font-weight:700;font-size:14px}
+.pgrid button.right{background:var(--holly-soft);border-color:var(--holly);color:var(--holly)}
+.pgrid button.wrong{background:var(--wine-soft);border-color:var(--wine);color:var(--wine)}
+.pgrid button:disabled{cursor:default}
+details.prin{border:1px solid var(--line);border-radius:12px;padding:0 14px;margin-bottom:8px;background:var(--card)}
+details.prin summary{cursor:pointer;padding:12px 0;font-weight:700;display:flex;justify-content:space-between;gap:8px;list-style:none}
+details.prin summary::-webkit-details-marker{display:none}
+details.prin summary small{font-weight:400;color:var(--mute);font-size:12.5px;text-align:right}
+details.prin ul{margin:0 0 10px;padding-left:18px;font-size:14px}
+details.prin li{margin-bottom:4px}
+details.prin p{font-size:14px;margin:0 0 10px}
+.stat6{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.stat6 div{background:var(--sunk);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--mute)}
+.stat6 b{display:block;font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <span class="ttl">설득 방패</span>
+    <span class="sync" id="syncTxt">이 기기에만 저장</span>
+  </header>
+  <main id="view"></main>
+</div>
+<nav class="tabs" id="tabs" aria-label="화면">
+  <button data-v="home" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>오늘</button>
+  <button data-v="read"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 21V4h9l5 5v12z"/><path d="M14 4v5h5"/><path d="M12 13v6M9 16h6"/></svg>읽기</button>
+  <button data-v="practice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12l5 5L20 6"/></svg>실천</button>
+  <button data-v="qa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v11H9l-5 4z"/><path d="M10 9.5a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6.9V13M12 15.2v.3"/></svg>퀴즈</button>
+  <button data-v="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 3h14v18H5z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>기록</button>
+</nav>
+<div id="ovl"></div>
+<div class="toast" id="toast" hidden></div>
+<script>
+/* ---------- 『설득의 심리학(Influence)』 요약·재구성 (원문 인용 없이 풀어 씀) ---------- */
+const BOOKS=[
+ {n:0,t:'들어가며 · 영향력의 무기',s:'딸깍, 재생: 생각 없이 "예"라고 말하는 순간들'},
+ {n:1,t:'1장 · 상호성',s:'받으면 갚아야 한다는 오래된 규칙'},
+ {n:2,t:'2장 · 일관성',s:'한 번 한 말과 행동에 묶이는 마음'},
+ {n:3,t:'3장 · 사회적 증거',s:'남들이 하면 맞는 것처럼 보인다'},
+ {n:4,t:'4장 · 호감',s:'좋아하는 사람에게는 쉽게 "예"라고 한다'},
+ {n:5,t:'5장 · 권위',s:'직함과 제복 앞에서 멈추는 판단'},
+ {n:6,t:'6장 · 희소성',s:'얻기 어려운 것이 더 좋아 보인다'},
+ {n:7,t:'맺음말 · 자동화 시대의 원시적 동의',s:'지름길은 필요하다. 그래서 지켜야 한다'}
+];
+const L=[
+/* 들어가며 */
+{id:'i1',b:0,t:'딸깍, 재생: 자동 반응',one:'사람은 바쁠수록 한 가지 신호만 보고 자동으로 반응하고, 그 신호를 아는 사람은 그것을 이용한다.',
+body:`<p>치알디니는 스스로를 평생 "잘 넘어가는 사람"이었다고 고백한다. 왜 같은 부탁도 어떤 방식으로 하면 거절당하고 조금만 바꾸면 성공하는지 궁금했던 그는 실험실 연구에 더해, 3년 가까이 판매원·모금원·광고 회사에 신분을 숨기고 들어가 그들이 실제로 쓰는 기술을 배웠다. 수천 가지 기술이 있었지만 대부분 여섯 가지 심리 원리, 곧 상호성·일관성·사회적 증거·호감·권위·희소성으로 묶였다.</p>
+<p>출발점은 동물행동학이다. 어미 칠면조는 새끼의 "삐약" 소리 하나에 반응해 돌본다. 그 소리를 내는 녹음기를 천적인 족제비 박제 안에 넣으면 어미는 족제비를 품어 준다. 울새는 진짜 같은 박제보다 붉은 깃털 뭉치를 더 맹렬히 공격한다. 특정 신호(방아쇠)가 들어오면 정해진 행동 테이프가 재생되는 것, 이것이 "고정 행동 패턴"이다.</p>
+<p>사람도 비슷하다. 엘런 랭어의 복사기 실험에서 "급해서 그런데 먼저 해도 될까요?"라고 하면 대부분 양보했다. 놀랍게도 "복사를 해야 해서 그런데"처럼 아무 정보 없는 이유를 붙여도 거의 똑같이 양보했다. "~때문에"라는 말 자체가 방아쇠였던 것이다. 애리조나의 보석 가게에서는 안 팔리던 터키석에 직원이 실수로 가격을 두 배로 붙이자 순식간에 다 팔렸다. 보석을 잘 모르는 관광객들이 "비싸면 좋다"는 고정관념으로 판단했기 때문이다. 할인율이 0인 잘못 인쇄된 쿠폰도 정상 쿠폰만큼 반응을 얻었다.</p>
+<p>이런 지름길은 어리석은 게 아니다. 세상은 너무 복잡하고 빠르기 때문에 우리는 대부분의 경우 핵심 신호 하나에 기대는 것이 합리적이다. 문제는 그 신호를 흉내 내는 사람이다. 반딧불이 암컷 중에는 다른 종의 짝짓기 신호를 흉내 내 수컷을 잡아먹는 종이 있고, 청소물고기의 춤을 흉내 내 큰 물고기 살점을 뜯는 물고기도 있다. 사람 사회에도 이렇게 방아쇠를 흉내 내는 "모방자"가 있다.</p>
+<p><b>이 앱의 두 축</b> · 첫째, 자동 반응이 이용당하는 순간을 알아채고 막는다. 둘째, 같은 원리를 정직하게 사용한다. 책 전체가 말하듯 원리 자체는 나쁘지 않다. 가짜 신호로 남을 속이는 것이 착취다.</p>`,
+pics:['칠면조와 족제비 박제 · "삐약" 소리 하나에 천적을 품어 주는 어미','랭어의 복사기 · 내용 없는 "때문에"만 붙여도 93%가 양보했다','터키석 가격 두 배 · 실수로 값을 올렸더니 오히려 다 팔렸다','반딧불이 모방자 · 짝짓기 신호를 흉내 내 사냥하는 암컷'],
+q:['최근에 "비싸니까 좋겠지", "다들 사니까"처럼 신호 하나로 결정한 적은?','내가 남을 설득할 때 무심코 쓰는 방아쇠 말은 무엇인가?'],
+act:'오늘 하루 "예"라고 대답한 순간을 세 개 적고, 무엇이 그 대답을 이끌었는지 한 단어로 표시한다.',
+ref:[]},
+{id:'i2',b:0,t:'대비의 원리와 주짓수',one:'같은 것도 무엇 다음에 보느냐에 따라 더 크게, 더 싸게 보인다.',
+body:`<p>여섯 원리를 다루기 전에 치알디니는 하나의 지각 원리를 먼저 소개한다. 바로 대비다. 가벼운 것을 든 다음 무거운 것을 들면 더 무겁게 느껴진다. 한 손은 찬물, 한 손은 뜨거운 물에 담갔다가 두 손을 미지근한 물에 넣으면, 같은 물인데 한쪽은 뜨겁고 한쪽은 차갑게 느껴진다. 잡지 속 모델 사진을 본 뒤에는 평범한 사람이 덜 매력적으로 보인다는 연구도 있다.</p>
+<p>판매 현장은 이것을 잘 안다. 옷 가게는 정장을 먼저 팔고 스웨터를 나중에 권한다. 큰돈을 쓴 직후에는 작은 지출이 사소해 보이기 때문이다. 부동산 중개인은 일부러 낡고 비싼 "들러리 집"을 먼저 보여 주고 진짜 팔 집을 보여 준다. 자동차 판매원은 차값 협상이 끝난 뒤에야 옵션을 하나씩 따로 꺼낸다. 큰 금액 옆에서 각 옵션은 하찮아 보이고, 결국 최종 금액은 훌쩍 커진다.</p>
+<p>무서운 점은 이것이 거의 티가 나지 않는다는 것이다. 영향력의 무기는 주짓수와 같다. 고수는 자기 힘을 거의 쓰지 않고 중력·지렛대·관성처럼 이미 있는 힘을 이용한다. 마찬가지로 착취자는 원래 우리 안에 있는 원리를 살짝 건드릴 뿐이라서, 당하는 사람조차 "내가 선택했다"고 느낀다. 1930년대 한 양복점 형제는 귀가 안 들리는 척하며 일부러 비싼 값을 크게 외친 뒤 "싸게" 잘못 들은 척해 손님이 서둘러 사게 만들었다.</p>
+<p>장 끝의 독자 편지는 대비 원리의 걸작이다. 대학에 간 딸이 부모에게 화재, 입원, 임신, 결혼을 줄줄이 알린 뒤 "사실 다 거짓말이고, 역사는 D, 화학은 F예요. 이 성적을 제대로 된 관점에서 봐 주세요"라고 쓴다.</p>
+<p><b>한국 생활 속 대비</b> · 홈쇼핑의 "정가 39만 원 → 오늘만 19만 원", 메뉴판 맨 위의 비싼 세트, 학원 상담에서 먼저 보여 주는 고가 패키지가 모두 같은 구조다. 첫 숫자가 기준점이 된다는 것을 알면 그 숫자를 의심할 수 있다.</p>`,
+pics:['미지근한 물 세 양동이 · 같은 물이 뜨겁게도 차갑게도 느껴진다','들러리 집 · 낡은 집을 먼저 보여 주면 진짜 매물이 빛난다','자동차 옵션 · 큰 금액 뒤에 하나씩 붙이면 작아 보인다','대학생 딸의 편지 · 가짜 재난 뒤에 진짜 나쁜 성적을 알린다'],
+q:['내가 최근 "원래 가격"이라는 숫자에 끌려 산 물건은?','대비를 정직하게 쓸 수 있는 상황(예: 공부 계획 설명)은 무엇일까?'],
+act:'다음에 할인 표시를 보면 "원래 가격"을 지우고 지금 가격만 보고 살지 말지 판단한다.',
+ref:[]},
+
+/* 1장 상호성 */
+{id:'r1',b:1,t:'받으면 갚아야 한다',one:'상호성 규칙은 인류를 서로 돕게 만든 힘이지만, 너무 강해서 싫어하는 사람의 부탁도 들어주게 만든다.',
+body:`<p>한 교수가 모르는 사람들에게 크리스마스카드를 보냈더니 답장 카드가 쏟아졌다. 대부분은 그가 누군지 묻지도 않았다. 받았으니 보낸 것이다. 이것이 상호성 규칙이다. 남이 내게 해 준 만큼 같은 종류로 돌려주어야 한다는 규칙이고, 사회학자들은 이 규칙이 없는 인간 사회는 없다고 본다.</p>
+<p>이 규칙 덕분에 인류는 "주어도 잃지 않는다"는 확신을 갖게 되었다. 먼저 주면 언젠가 돌아온다는 믿음이 있어야 분업, 교역, 상호 방위가 가능하다. 그래서 모든 사회는 아이들에게 이 규칙을 철저히 가르치고, 받기만 하는 사람에게 "얌체", "배은망덕"이라는 딱지를 붙인다. 1985년 기근에 시달리던 에티오피아가 지진 피해를 입은 멕시코에 구호금을 보낸 이유는, 50년 전 이탈리아의 침공 때 멕시코가 도와주었기 때문이었다.</p>
+<p>코넬 대학의 리건 실험은 이 규칙의 힘을 보여 준다. 그림 평가 실험 중 가짜 참가자 "조"가 쉬는 시간에 콜라 한 병을 사다 준 경우, 나중에 그가 파는 복권을 두 배나 더 샀다. 더 놀라운 결과는 호감과의 관계였다. 보통은 조를 좋아할수록 복권을 더 샀지만, 콜라를 받은 사람들은 조를 싫어해도 똑같이 많이 샀다. 빚진 느낌이 호감을 압도한 것이다.</p>
+<p>그래서 우리가 평소라면 피할 사람, 곧 불쾌한 판매원이나 낯선 단체도 작은 호의 하나로 승낙 확률을 크게 높일 수 있다. 정치에서도 마찬가지다. 많은 호의를 쌓아 둔 정치인은 법안을 쉽게 통과시켰고, 반대로 "누구에게도 빚지지 않았다"고 내세운 정치인은 아무도 그에게 빚지지 않아 고전했다.</p>
+<p><b>정직하게 쓰기</b> · 상호성은 원래 좋은 관계를 시작하게 하는 장치다. 먼저 친절을 베푸는 것은 좋은 일이다. 다만 되돌려 받을 것을 계산해 미끼로 쓰는 순간 그것은 선물이 아니라 영업 도구가 된다.</p>`,
+pics:['낯선 사람의 크리스마스카드 · 받으니 묻지도 않고 답장했다','에티오피아의 구호금 · 50년 전 받은 도움을 기근 중에 갚았다','리건의 콜라 · 10센트 콜라가 복권 판매를 두 배로 늘렸다'],
+q:['내가 "빚진 느낌" 때문에 원치 않는 부탁을 들어준 적은?','받기만 하고 갚지 않는 관계가 내게 있나?'],
+act:'오늘 받은 호의 하나를 떠올리고, 계산 없이 감사로 갚을 방법 하나를 정해 실행한다.',
+ref:[]},
+{id:'r2',b:1,t:'원치 않은 선물과 불공정한 교환',one:'상호성은 내가 청하지 않은 선물에도 빚을 만들고, 작은 선물로 큰 대가를 끌어낼 수 있다.',
+body:`<p>1970년대 하레 크리슈나 교단은 공항에서 모금을 했지만 사람들이 그들의 외모와 복장을 낯설어해 성과가 없었다. 해결책은 상호성이었다. 지나가는 사람 손에 꽃을 쥐여 주고, 돌려주려 하면 "우리의 선물입니다"라며 받지 않은 뒤 기부를 청했다. 이 방식은 큰 성공을 거두었다. 치알디니는 한 신도가 공항 쓰레기통을 돌며 버려진 꽃을 주워 다시 나눠 주는 장면을 목격했다. 버려질 만큼 원치 않은 선물인데도 이미 기부를 받아 낸 뒤였다.</p>
+<p>핵심은 규칙이 "청했는지"를 따지지 않는다는 점이다. 인류학자 모스의 말처럼 줄 의무, 받을 의무, 갚을 의무가 함께 있다. 받을 의무 때문에 우리는 누구에게 빚질지를 고를 수 없게 된다. 장애인 재향군인회의 모금 편지에 주소 스티커를 동봉했더니 응답률이 18%에서 35%로 뛰었다. 슈퍼마켓 시식, 암웨이가 집에 며칠 두고 가는 제품 묶음도 같은 구조다. 써 보라고 준 것이 사실상 선물이 되어 주문으로 돌아온다.</p>
+<p>더 위험한 것은 교환이 불공평해질 수 있다는 점이다. 리건 실험에서 10센트 콜라는 평균 50센트어치 복권으로 돌아왔다. 한 학생은 주차장에서 시동을 걸어 준 낯선 남자에게 "언제든 도움이 필요하면 말하라"고 했다가, 한 달 뒤 차를 빌려주고 말았다. 그는 무보험 미성년자였고 차는 박살 났다. 빚진 상태는 불편하고, 갚지 않는 사람으로 보이는 것은 부끄럽다. 그래서 우리는 빚을 빨리 털기 위해 받은 것보다 더 많이 준다.</p>
+<p>반대로 선물을 거절해 목숨을 구한 사례도 있다. 존스타운 집단 자살 때 살아남은 한 여성은, 아플 때 지도자가 주는 특별 음식을 거절했다고 한다. 그에게 빚지면 그의 사람이 될 것 같았기 때문이다. 1차 대전 때 적군을 생포하러 간 독일 병사는 겁에 질린 적이 건넨 빵 한 조각 때문에 임무를 포기하고 돌아왔다.</p>
+<p><b>한국에서</b> · 마트 시식 코너, 화장품 매장의 샘플, 길거리 설문 뒤의 사은품, 유튜버가 받은 협찬품, 단체 모금 우편 속 볼펜. 받는 것 자체가 잘못은 아니지만, 그 뒤에 따라오는 "부탁"과 받은 것의 크기를 비교해 보는 습관이 필요하다.</p>`,
+pics:['하레 크리슈나의 꽃 · 쓰레기통에서 다시 주워 와도 효과가 있었다','주소 스티커 · 동봉하자 기부 응답률이 거의 두 배','시동 걸어 준 남자 · 작은 호의 뒤에 새 차를 빌려줬다','적이 건넨 빵 · 독일 병사는 포로를 두고 돌아왔다'],
+q:['내가 거절하기 어려웠던 "공짜"는 무엇이었고, 그 뒤 무엇을 요구받았나?','받은 것과 돌려준 것의 크기가 맞지 않았던 경험은?'],
+act:'이번 주 공짜 샘플이나 사은품을 받으면, 그 뒤의 요청이 받은 것과 같은 크기인지 따져 보고 기록한다.',
+ref:[]},
+{id:'r3',b:1,t:'거절 후 양보: 큰 부탁 뒤의 작은 부탁',one:'큰 부탁을 거절한 직후의 작은 부탁은 "양보"처럼 느껴져, 나도 양보로 갚고 싶어진다.',
+body:`<p>치알디니는 길에서 보이스카우트 소년에게 5달러짜리 서커스 표를 권유받고 거절했다. 소년이 "그럼 1달러짜리 초콜릿은요?"라고 하자 그는 초콜릿을 두 개 샀다. 초콜릿을 좋아하지도 않는데 말이다. 상호성 규칙에는 "양보에는 양보로 갚는다"는 면도 있다. 상대가 큰 요구에서 물러서면 나도 거절에서 승낙으로 물러서야 할 것 같다.</p>
+<p>그는 실험으로 확인했다. 대학생에게 비행 청소년들의 동물원 견학 인솔을 부탁하면 17%만 승낙했다. 하지만 먼저 "2년 동안 매주 두 시간 상담 봉사"라는 터무니없는 부탁을 해서 거절당한 뒤 동물원 견학을 부탁하자 50%가 승낙했다. 두 번째 부탁이 작을 필요는 없다. 첫 부탁보다 작기만 하면 된다. 단, 첫 요구가 너무 황당하면 진심이 아닌 것으로 보여 역효과가 난다.</p>
+<p>이 기술에는 대비 원리도 함께 작용한다. 10달러를 빌려 달라고 했다가 5달러로 낮추면 5달러가 더 작아 보인다. 게다가 구조상 손해가 없다. 첫 부탁을 들어주면 이익이고, 거절하면 진짜 원하던 것으로 물러서면 된다. 당구대 매장은 3천 달러짜리부터 보여 주는 "위에서 아래로" 판매로 평균 판매액을 두 배로 올렸다. TV 작가들은 검열에 잘릴 대사를 일부러 넣어 두고 진짜 원하던 대사로 "양보"했다.</p>
+<p>가장 충격적인 사례는 워터게이트다. 리디는 처음에 100만 달러짜리 황당한 공작 계획을, 다음에 50만 달러 계획을 냈다가 거절당한 뒤 25만 달러짜리 도청 계획을 냈고, 그것이 승인되었다. 앞의 회의에 빠졌던 한 사람만 "위험할 가치가 없다"고 반대했다. 대비와 양보의 압력을 받지 않았기 때문이다.</p>
+<p>더 이상한 점은 이 기술에 당한 사람이 더 잘 따른다는 것이다. 이 방식으로 봉사를 승낙한 사람은 실제로 나타날 확률이 높았고, 헌혈자들은 다음 헌혈 연락처도 더 많이 남겼다. 상대를 양보하게 만든 것이 "나"라고 느껴 결과에 책임감과 만족감을 느끼기 때문이다.</p>`,
+pics:['보이스카우트의 초콜릿 · 표를 거절했더니 초콜릿을 샀다','동물원 인솔 · 큰 부탁을 먼저 하자 승낙이 17%에서 50%로','워터게이트 · 100만 달러 계획 뒤의 25만 달러 계획이 통과됐다','당구대 판매 · 비싼 것부터 보여 주자 평균 판매액이 두 배'],
+q:['"그럼 이것만이라도"라는 말에 넘어간 적이 있나?','협상이나 부탁에서 나는 첫 요구를 정직하게 하는가?'],
+act:'누군가 요구를 낮춰 다시 부탁하면, 첫 요구를 지우고 두 번째 요구만 놓고 처음 듣는 부탁처럼 판단한다.',
+note:'책은 이 기술 자체를 나쁘다고 하지 않는다. 다만 일부러 거절당할 요구를 꾸며 내는 것은 상대의 공정함을 이용하는 것이다.',
+ref:[]},
+{id:'r4',b:1,t:'거절하는 법: 선물을 다시 정의하라',one:'호의는 호의로 갚되, 영업 도구로 드러난 "선물"은 갚을 의무가 없다.',
+body:`<p>상호성에 맞서는 일은 어렵다. 따르면 규칙에 굴복하는 것이고, 거절하면 깊이 길들여진 공정함의 감각이 아프다. 치알디니는 진짜 적은 부탁하는 사람이 아니라 규칙 자체라고 말한다. 상대는 그 힘을 빌려 쓰는 주짓수 선수일 뿐이다.</p>
+<p>그렇다고 모든 선물을 거절하는 것은 답이 아니다. 한 동료의 열 살 딸이 학교 행사에서 조부모님께 꽃을 드리는 역할을 맡았는데, 첫 번째 남자가 "무슨 속셈이냐"며 매몰차게 거절했다. 아이는 상처를 받아 역할을 그만두었다. 착취자들 때문에 정직한 친절까지 의심하게 되면 관계가 메마르고 외로워진다.</p>
+<p>더 나은 방법은 받은 것을 "그것이 실제로 무엇인지"에 따라 받는 것이다. 진짜 호의라면 기쁘게 받고 언젠가 갚으면 된다. 그것은 인류를 지탱해 온 명예로운 빚의 그물에 참여하는 일이다. 그러나 그 호의가 더 큰 승낙을 끌어내려는 장치였다면 상대는 은인이 아니라 장사꾼이다. 규칙은 호의에 호의로 갚으라고 하지, 속임수에 호의로 갚으라고 하지 않는다.</p>
+<p>예를 들어 무료 화재 안전 점검을 해 주고 소화기까지 준 사람이 갑자기 비싼 경보기 판매를 시작한다면, 마음속에서 소화기와 점검을 "선물"이 아니라 "판매 기술"로 다시 이름 붙이면 된다. 그러면 사든 안 사든 자유롭다. 거절 뒤에 "그럼 친구 이름이라도"라고 물러서도, 그것을 양보가 아니라 기술로 보면 압력이 사라진다. 치알디니는 한발 더 나가, 착취 시도라면 받은 것은 정중히 감사하고 챙긴 뒤 보내도 된다고 말한다.</p>
+<p>장 끝의 독자 편지에서, 전자제품 판매원은 늘 3년 보증(약 140달러)을 먼저 권하고 거절당하면 1년 보증(35달러)으로 물러섰다. 동료들의 판매율은 40%였지만 그는 70%였고, 손님들은 만족했다.</p>`,
+pics:['꽃을 건넨 소녀 · 무조건 거절은 진짜 친절에 상처를 낸다','무료 화재 점검 · 선물을 "판매 도구"로 다시 정의하면 자유로워진다','보증 기간 판매원 · 3년을 먼저 권하고 1년으로 물러섰다'],
+q:['내가 진짜 호의까지 의심해서 상처를 준 적은 없나?','최근 받은 것 중 "선물"이 아니라 "판매 도구"였던 것은?'],
+act:'부담스러운 공짜를 받으면 속으로 "이건 선물이 아니라 영업이다"라고 한 번 말하고 결정한다.',
+ref:[]},
+
+/* 2장 일관성 */
+{id:'c1',b:2,t:'일관성이라는 자동 조종',one:'사람은 이미 한 선택과 일관되게 보이고 싶어 하며, 그 욕구는 생각하는 수고와 불편한 진실을 피하게 해 준다.',
+body:`<p>경마장에서 마권을 산 사람은 사기 직전보다 직후에 자기 말이 이길 거라고 훨씬 확신한다. 말은 그대로인데 결정을 내렸다는 사실이 마음을 바꾼 것이다. 일관성의 원리다. 한번 선택하거나 입장을 정하면, 그 결정과 일관되게 행동하라는 안팎의 압력이 생기고 우리는 그 결정을 정당화하는 쪽으로 생각을 맞춘다.</p>
+<p>해변 실험이 이 힘을 보여 준다. 옆자리 사람이 라디오를 두고 자리를 비운 사이 도둑이 그것을 들고 가면, 20번 중 4번만 누군가 막았다. 그런데 자리를 비우기 전에 "제 물건 좀 봐 주시겠어요?"라고 부탁해 "네"라는 대답을 받아 두자, 20번 중 19번이나 도둑을 쫓아가 붙잡았다. 작은 약속 하나가 위험을 무릅쓰게 만들었다.</p>
+<p>일관성은 보통 좋은 성품이다. 말과 행동이 다른 사람은 우유부단하거나 두 얼굴로 보이고, 일관된 사람은 믿음직하게 보인다. 하지만 바로 그 때문에 우리는 생각 없이 일관되는 습관에 빠진다. 자동 일관성의 매력은 두 가지다. 한 번 정해 두면 더 생각할 필요가 없고, 생각하면 보이게 될 불편한 진실을 피할 수 있다.</p>
+<p>초월명상(TM) 설명회에서 논리학 교수인 친구가 강사들의 주장을 2분 만에 무너뜨렸다. 그런데 오히려 그 직후 참가자들이 앞다투어 계약금을 냈다. 한 사람이 말했다. 집에 가서 그 반론을 생각하면 등록하지 않을 것 같아서 지금 냈다고. 절박한 문제를 해결해 줄 것처럼 보이는 희망을 지키려고, 생각 앞에 벽을 쌓은 것이다.</p>
+<p>장난감 회사는 이것을 이용한다. 크리스마스 전에 특정 장난감 광고를 잔뜩 내보내 부모가 아이에게 사 주겠다고 약속하게 만들고, 그 장난감은 일부러 적게 공급한다. 부모는 다른 장난감을 사 주고, 1~2월에 광고가 다시 나오면 아이가 "약속했잖아요"라고 조른다. 치알디니도 두 해 연속 당했고, 알고 난 뒤에도 약속을 지키기 위해 그 장난감을 돌려줄 수 없었다.</p>`,
+pics:['경마장 마권 · 사고 나면 내 말이 더 잘 뛸 것 같다','해변의 라디오 · "봐 주세요"에 "네"라고 한 사람 19명이 도둑을 쫓았다','초월명상 설명회 · 논리에 무너질수록 서둘러 돈을 냈다','장난감 회사의 품절 · 크리스마스 약속을 1월에 지키게 만든다'],
+q:['내가 "이미 시작했으니까" 계속하고 있는 것은 무엇인가?','생각하기 싫어서 굳게 믿고 있는 결정이 있나?'],
+act:'최근 결정 하나를 골라 "오늘 처음 정한다면 똑같이 할까?"를 적어 본다.',
+ref:[]},
+{id:'c2',b:2,t:'작은 약속이 자기 이미지를 바꾼다',one:'아주 작은 승낙이 "나는 이런 사람"이라는 자기 이미지를 바꾸고, 그 이미지가 훨씬 큰 승낙을 끌어낸다.',
+body:`<p>일관성의 스위치는 "약속(커밋먼트)"이다. 입장을 정하고 기록에 남기게 만들면, 그 뒤는 일관성이 알아서 한다. 한 연구자는 주민들에게 "암협회가 3시간 모금 봉사를 부탁하면 하시겠어요?"라고 예측만 물었다. 거절하는 사람으로 보이기 싫어 많은 사람이 "하겠다"고 답했고, 며칠 뒤 진짜 요청을 하자 자원자가 일곱 배로 늘었다. 선거 전에 "투표하실 건가요?"라고 묻는 것만으로도 투표율이 올랐다.</p>
+<p>전화 모금원이 "오늘 기분 어떠세요?"로 시작하는 이유도 같다. "좋아요"라고 공개적으로 말한 사람은 형편이 어려운 이웃을 돕는 부탁을 거절하기 어렵다. 실험에서 이 질문을 하고 대답을 기다리면 승낙률이 18%에서 32%로 올랐고, 그중 89%가 실제로 구매했다. 같은 따뜻한 인사라도 "좋은 저녁 되세요"라고 말만 하면 효과가 없었다. 대답, 곧 약속을 받아 내는 것이 핵심이었다.</p>
+<p>6·25 전쟁 때 중국군 포로수용소는 고문 대신 이 방식을 썼다. "미국도 완벽하진 않다" 같은 사소한 말에 동의하게 하고, 그 이유를 적게 하고, 서명하게 하고, 토론 시간에 읽게 하고, 에세이로 쓰게 했다. 그 글이 방송되면 포로는 "협력자"가 되었고, 강요 없이 썼다는 사실 때문에 스스로를 그렇게 보기 시작했다. 처음부터 끝까지 "작게 시작해 키우기"였다.</p>
+<p>이것이 "문간에 발 들여놓기" 기법이다. 프리드먼과 프레이저의 실험에서, 집 앞마당에 "안전 운전" 대형 간판을 세우자는 황당한 요청을 다른 주민 대부분은 거절했지만, 2주 전에 작은 "안전 운전자가 됩시다" 스티커를 붙이기로 했던 집은 76%가 승낙했다. 더 놀랍게도 "캘리포니아를 아름답게" 같은 전혀 다른 주제의 청원에 서명했던 집도 절반이 승낙했다. 서명이 그들을 "공익을 위해 행동하는 사람"으로 바꿔 놓았기 때문이다.</p>
+<p>치알디니는 그래서 지지하는 내용이라도 청원 서명을 조심한다고 말한다. 작은 승낙은 행동뿐 아니라 자기 이미지를 바꾸고, 바뀐 이미지는 누군가 이용할 수 있는 손잡이가 된다. 반대로 정직하게 쓰면, 좋은 습관을 아주 작게 시작해 "나는 이런 사람"이 되게 하는 데 쓸 수 있다.</p>`,
+pics:['봉사 의향 질문 · 예측만 물었는데 자원자가 일곱 배','"오늘 기분 어떠세요?" · "좋아요"라는 대답이 기부를 두 배로','포로수용소의 에세이 · 사소한 동의에서 시작해 협력자로','안전 운전 간판 · 작은 스티커를 붙인 집의 76%가 큰 간판을 허락했다'],
+q:['내가 별생각 없이 한 작은 "네"가 더 큰 요구로 이어진 적은?','작게 시작해서 "나는 이런 사람"이 되고 싶은 습관은 무엇인가?'],
+act:'원하는 습관 하나를 2분짜리로 줄여 오늘 시작하고, "나는 ○○하는 사람이다"라고 적는다.',
+ref:[]},
+{id:'c3',b:2,t:'약속을 단단하게 만드는 네 가지',one:'약속은 적극적이고, 공개적이고, 노력이 들고, 스스로 선택했다고 느낄 때 가장 오래간다.',
+body:`<p><b>적극적일 것(글로 쓰기)</b> · 우리는 남의 행동을 보고 그 사람을 판단하듯, 자기 행동을 보고 자신을 판단한다. 그래서 포로수용소는 늘 "써 보라"고 했다. 직접 쓰기 싫으면 베껴 쓰라고까지 했다. 쓴 것은 부정할 수 없는 증거가 되고, 남에게 보여 줄 수도 있다. 사람들은 억지로 쓴 글이라는 걸 알아도 쓴 사람이 그렇게 믿는다고 여긴다(카스트로 지지 에세이 실험). 방문판매 회사는 계약서를 손님이 직접 작성하게 해 청약 철회를 크게 줄였다. 경품 응모 "이 제품이 좋은 이유" 글쓰기도 같은 원리다.</p>
+<p><b>공개적일 것</b> · 도이치와 제라드 실험에서, 선 길이 추정치를 머릿속에만 둔 학생은 반대 증거에 쉽게 생각을 바꿨고, 지울 수 있는 판에 잠깐 쓴 학생은 덜 바꿨고, 이름을 써서 제출한 학생은 가장 완고했다. 공개적으로 말한 것은 바꾸면 줏대 없어 보이기 때문이다. 다이어트 클리닉은 목표를 적어 주변에 알리게 하고, 한 여성은 존경받고 싶은 사람들에게 "다시는 담배를 피우지 않겠다"는 카드를 돌려 금연에 성공했다.</p>
+<p><b>노력이 들 것</b> · 남아프리카 통가족의 혹독한 성인식, 대학 사교클럽의 위험한 신고식은 금지하려 해도 사라지지 않는다. 애런슨과 밀스의 실험에서, 창피한 입회 절차를 거쳐 들어간 사람은 일부러 지루하게 꾸민 모임도 가치 있다고 믿었다. 고생해서 얻은 것을 우리는 더 귀하게 여긴다. 그래서 집단은 결속을 위해 고된 입회를 고집한다.</p>
+<p><b>스스로 선택했다고 느낄 것</b> · 가장 중요한 조건이다. 포로수용소의 에세이 상품은 일부러 작았다. 큰 상을 주면 "상 때문에 썼다"고 핑계 댈 수 있기 때문이다. 프리드먼의 로봇 실험에서, 강한 위협으로 로봇 장난감을 못 만지게 한 아이들은 6주 뒤 감시가 없자 77%가 로봇을 갖고 놀았다. 위협 없이 "그건 잘못이야"라고만 들은 아이들은 33%만 만졌다. 스스로 "내가 원하지 않아서 안 했다"고 믿게 된 것이다.</p>
+<p><b>정직하게 쓰기</b> · 아이나 후배를 가르칠 때 큰 보상이나 위협보다 "딱 충분한 이유"를 주면, 행동이 마음 안에 뿌리내린다. 반대로 사교클럽이나 군대식 신고식처럼 고통으로 충성을 만드는 문화는, 그 효과를 알기에 더 경계해야 한다.</p>`,
+pics:['도이치·제라드의 선 길이 · 이름 쓰고 제출한 판단이 가장 안 바뀐다','금연 약속 카드 · 존경받고 싶은 사람들에게 돌렸다','통가족 성인식과 신고식 · 고생이 클수록 집단을 더 귀히 여긴다','프리드먼의 로봇 · 위협 없이 금지한 아이들이 6주 뒤에도 지켰다'],
+q:['내가 공개적으로 선언하면 지킬 수 있을 목표는?','고생했다는 이유만으로 과대평가하는 모임이나 선택이 있나?'],
+act:'이번 주 목표 하나를 손으로 써서, 믿을 만한 사람 한 명에게 보여 준다.',
+note:'책은 신고식과 혹독한 입회식의 위험한 사례들을 자세히 기록한다. 원리를 안다고 해서 고통을 통한 결속을 정당화하는 것은 아니다.',
+ref:[]},
+{id:'c4',b:2,t:'로볼: 스스로 자라는 다리',one:'결정은 스스로 새 이유를 만들어 내서, 처음 이유를 빼도 무너지지 않는다. 로볼은 이것을 노린다.',
+body:`<p>약속이 무서운 이유는 "스스로 다리를 키운다"는 데 있다. 한번 결정하면 사람은 그 결정을 지지하는 새로운 이유들을 찾아낸다. 그래서 처음에 결정하게 만든 이유를 나중에 빼도 결정은 그대로 서 있다.</p>
+<p>자동차 판매장의 "로볼(lowball)"이 그렇다. 경쟁사보다 훨씬 싼 가격을 제시해 손님이 사기로 결정하게 만든다. 그다음 서류를 잔뜩 쓰고, 할부를 짜고, 하루 동안 차를 몰아 보게 한다. 그동안 손님은 이 차가 좋은 이유를 여러 개 갖게 된다. 그때 "계산 실수"가 발견되거나 상사가 가격을 취소한다. 원래 매력이었던 할인이 사라졌는데도 손님은 대부분 산다. 중고차 보상가를 높게 불렀다가 나중에 낮추는 변형도 있다.</p>
+<p>치알디니의 이웃 사라는 술을 끊고 결혼하겠다는 팀의 약속을 믿고 다른 남자와의 결혼식까지 취소했다. 팀은 곧 술도 결혼도 미뤘지만, 사라는 그 뒤 팀에게서 많은 장점을 "발견"하며 오히려 더 헌신했다. 처음 조건은 지켜지지 않았는데 결정은 새 다리로 서 있었다.</p>
+<p>같은 원리는 좋은 일에도 쓰였다. 아이오와의 에너지 절약 실험에서 그냥 절약을 부탁받은 가정은 전혀 아끼지 않았다. 하지만 "절약하는 시민으로 신문에 이름을 실어 주겠다"고 약속받은 가정은 가스를 아꼈다. 그 뒤 신문 게재가 어렵다는 편지를 보내자, 그들은 오히려 더 많이(12.2%에서 15.5%로) 아꼈다. 여름 에어컨 실험에서도 27.8%에서 41.6%로 늘었다. 유일한 외부 이유가 사라지자 "나는 원래 절약하는 사람"이라는 이미지만 남은 것이다.</p>
+<p><b>한국에서</b> · "첫 달 무료"로 가입시킨 뒤 해지를 어렵게 만드는 구독, 결제 직전에 붙는 배송비와 수수료, 계약 직전 "이 조건은 사실 안 된다"는 말. 결정한 뒤 조건이 바뀌면, 바뀐 조건으로 처음부터 다시 판단해야 한다.</p>`,
+pics:['자동차 로볼 · 싼 가격으로 결정시킨 뒤 슬쩍 빼 간다','사라와 팀 · 약속은 지켜지지 않았는데 사랑은 더 깊어졌다','아이오와 에너지 절약 · 신문 게재 약속을 취소하자 더 아꼈다'],
+q:['결정 뒤에 조건이 나빠졌는데도 그대로 간 적은?','내가 결정을 정당화하려고 나중에 만들어 낸 이유는 무엇인가?'],
+act:'결제나 계약 직전에 조건이 바뀌면 "바뀐 조건만 보고도 지금 결정할까?"를 묻고, 아니면 멈춘다.',
+note:'책은 로볼을 원래 의도하지 않은 혜택으로 결정을 끌어내는 기만적 판매로 소개한다.',
+ref:[]},
+{id:'c5',b:2,t:'거절하는 법: 위장 신호와 마음속 마음',one:'일관성 자체가 아니라 "어리석은 일관성"을 경계하라. 위장이 조이면 말하고, 첫 느낌으로 다시 물어라.',
+body:`<p>"일관성은 좁은 마음의 도깨비"라는 에머슨의 말은 사실 잘못 전해진 것이다. 원문은 "어리석은 일관성"이 도깨비라고 한다. 일관성은 대부분 좋은 것이고, 모든 결정을 매번 새로 따지면 아무것도 할 수 없다. 필요한 것은 언제 자동 일관성이 나쁜 선택으로 이끄는지 알려 주는 신호다. 치알디니는 몸의 두 곳에서 신호가 온다고 말한다.</p>
+<p><b>첫 번째 신호: 위장</b> · 원하지 않는 일에 갇혔다는 걸 알 때 배 속이 조인다. 젊은 시절 그는 매력적인 여성의 "여가 생활 설문"에 응하며 외식, 공연, 발레를 즐긴다고 부풀려 대답했다. 그러자 그녀는 "그렇게 활발하신 분이면 이 회원권으로 1년에 1,200달러를 아끼실 수 있다"고 했다. 거절하면 거짓말쟁이나 바보가 될 판이라 그는 가입했다. 이제 그는 위장이 조이면 상대에게 지금 무슨 일을 하고 있는지 그대로 말한다. 대부분 당황해서 물러난다.</p>
+<p><b>두 번째 신호: 마음속 마음</b> · 사라처럼 이미 결정에 새 다리가 자라 버린 경우 위장은 조이지 않는다. 이때는 "지금 아는 것을 다 알고 시간을 되돌린다면 똑같이 선택할까?"라고 묻고, 생각이 끼어들기 전 첫 순간의 느낌에 주목하라고 한다. 우리는 생각보다 느낌을 아주 조금 먼저 경험하기 때문이다.</p>
+<p>그는 표시 가격보다 비싼 주유소에서 이 질문을 했다. 급하다, 이 기름이 차에 잘 맞는다 같은 이유가 떠올랐지만 첫 느낌은 분명했다. 가격을 알았다면 그냥 지나쳤을 것이다. 그 이유들은 결정을 만든 게 아니라 결정이 만든 것이었다.</p>
+<p>장 끝 독자 편지에서, 한 여성은 "대회 중"이라는 남자의 부탁에 낯선 사람 뺨에 입을 맞췄다가, 이어진 잡지 구독 권유까지 승낙하고 말았다. 첫 승낙이 "이 사람을 돕는 나"를 만들었기 때문이다. 길거리 설문 뒤의 영업, "잠깐 얘기 좀" 뒤의 포교에도 같은 구조가 있다.</p>`,
+pics:['에머슨의 원문 · 도깨비는 "어리석은" 일관성이다','가짜 설문과 회원권 · 부풀린 대답에 스스로 갇혔다','주유소 질문 · "다시 돌아간다면?"의 첫 느낌은 분명했다','거리의 입맞춤 · 작은 부탁 뒤에 잡지 구독이 따라왔다'],
+q:['최근 위장이 조였는데도 "예"라고 한 순간은?','지금 하고 있는 일 중 "다시 돌아간다면?"에 첫 느낌이 "아니"인 것은?'],
+act:'오늘 밤 하나의 지속 중인 선택에 "지금 알고 다시 고른다면?"을 묻고, 첫 1초의 느낌을 적는다.',
+ref:[]},
+
+/* 3장 사회적 증거 */
+{id:'s1',b:3,t:'남들이 하면 맞다: 사회적 증거',one:'무엇이 옳은지 모를 때 우리는 다른 사람들이 하는 것을 보고 정한다. 가짜 증거에도 반응한다.',
+body:`<p>사람들은 시트콤의 녹음된 웃음소리를 싫어한다고 말한다. 그런데도 방송사는 계속 그것을 쓴다. 실험 결과 녹음 웃음이 있으면 사람들이 더 오래, 더 자주 웃고 더 재미있다고 평가하기 때문이다. 특히 재미없는 농담일수록 효과가 컸다. 가짜인 줄 뻔히 아는데도 통한다.</p>
+<p>이것이 사회적 증거의 원리다. 무엇이 올바른 행동인지 판단할 때 우리는 다른 사람들이 그것을 하는지를 본다. 대개는 잘 맞는다. 많은 사람이 하는 일은 대체로 맞는 일이다. 그래서 편리한 지름길이고, 바로 그래서 칠면조가 녹음된 "삐약"에 속듯 소리만 남은 가짜 증거에도 반응한다.</p>
+<p>이용 사례는 많다. 바텐더는 팁 통에 미리 지폐를 넣어 두고, 교회 안내자도 헌금 바구니에 미리 돈을 넣어 두기도 한다. 연구팀이 잠입한 한 대형 전도 집회는 정해진 순간에 앞으로 나올 사람들을 미리 대기시켜 자발적인 물결처럼 보이게 했다. 광고는 "가장 많이 팔린"을 강조하고, 클럽은 안이 비어 있어도 밖에 줄을 세우고, 모금 방송은 기부자 명단을 끝없이 읽는다.</p>
+<p>좋은 쪽으로도 쓰인다. 반두라의 연구에서 개를 무서워하던 아이들은 다른 아이가 개와 즐겁게 노는 모습을 하루 20분씩 나흘 보고 나서 67%가 개와 함께 울타리 안에 남았다. 영상으로 보여 줘도 효과가 있었고, 여러 아이가 나오는 영상이 가장 좋았다. 오코너는 혼자 노는 유치원생들에게 외톨이 아이가 놀이에 끼어 즐거워지는 23분짜리 영상을 한 번 보여 줬는데, 6주 뒤 그 아이들이 가장 활발한 아이들이 되어 있었다.</p>
+<p><b>한국에서</b> · 리뷰 수와 별점, "실시간 ○명이 보는 중", 판매량 1위 배너, 예능 자막과 효과음, 맛집 앞 긴 줄, 조회수와 좋아요. 대부분은 쓸모 있는 정보지만, 조작될 수 있다는 것도 기억해야 한다.</p>`,
+pics:['녹음된 웃음소리 · 모두 싫다면서 재미없는 농담에 더 웃는다','미리 채운 팁 통과 헌금 바구니 · 남들도 냈다는 신호','개를 무서워하던 아이들 · 다른 아이가 노는 걸 보고 두려움을 이겼다','외톨이 아이 영상 · 23분 영상 한 번이 6주 뒤까지 바꿨다'],
+q:['최근 리뷰 수나 줄 길이만 보고 고른 것은?','내가 좋은 행동을 퍼뜨리는 "보여 주는 한 사람"이 될 수 있는 곳은?'],
+act:'오늘 구매나 선택 하나를 할 때 리뷰 수를 가리고 내용만 읽고 판단해 본다.',
+note:'책은 집회에 미리 사람을 심어 두는 사례를 사회적 증거의 조작으로 소개한다. 교회 공동체에서도 진심과 연출을 구분하는 것이 신뢰를 지킨다.',
+ref:[]},
+{id:'s2',b:3,t:'불확실할 때: 방관자 효과',one:'상황이 애매할수록 남을 보고 판단하는데, 모두가 서로를 보며 침착한 척하면 아무도 돕지 않는다.',
+body:`<p>사회적 증거는 확신이 없을 때 가장 강하다. 종말을 예언한 시카고의 한 사이비 집단은 예언이 빗나가자 해체되지 않고 오히려 처음으로 언론에 전화를 걸고 적극적으로 포교를 시작했다. 물리적 증거가 무너지자, 더 많은 사람이 믿게 만들어 "사회적 증거"로 믿음을 지키려 한 것이다. 이미 직장과 재산과 관계를 다 버린 그들에게 다른 진실은 견딜 수 없었다.</p>
+<p>1964년 뉴욕에서 캐서린 제노비스가 30분 넘게 세 차례 공격당해 숨졌고, 38명의 이웃이 창문으로 보았지만 아무도 제때 신고하지 않았다는 보도가 나왔다. 언론은 도시인의 "무관심"을 탓했다. 그러나 심리학자 라타네와 달리는 오히려 "38명이나 있었기 때문"이라고 보았다. 사람이 많으면 책임이 나뉘고(누군가 하겠지), 더 중요하게는 모두가 서로를 보며 상황을 해석한다.</p>
+<p>응급 상황은 대개 애매하다. 쓰러진 사람이 환자인지 취객인지, 비명이 싸움인지 장난인지. 사람들은 침착해 보이려고 슬쩍 주변을 보고, 모두가 아무렇지 않아 보이니 "별일 아니구나" 하고 결론 내린다. 이것이 "다원적 무지"다. 실험에서 간질 발작을 일으킨 학생은 목격자가 혼자일 때 85%, 다섯 명일 때 31% 도움을 받았다. 문틈으로 연기가 들어오면 혼자일 때 75%가 신고했지만, 태연한 척하는 두 사람과 함께 있으면 10%만 신고했다. 반면 응급이 분명할 때는 사람들은 거의 언제나 도왔다. 문제는 냉정함이 아니라 불확실함이다.</p>
+<p><b>도움이 필요할 때</b> · 신음하거나 막연히 소리치지 말고 "도와주세요"라고 분명히 말하라. 그리고 군중 전체가 아니라 한 사람을 지목하라. "파란 재킷 입으신 분, 119에 전화해 주세요." 그러면 응급인지, 누가, 무엇을 해야 하는지가 한 번에 정해진다. 치알디니는 교통사고를 당했을 때 차들이 그냥 지나가자, 운전자들을 하나씩 가리키며 "경찰을 불러 주세요", "차를 세워 주세요"라고 했다. 즉시 도움이 왔고, 반대편 차들까지 멈춰 다른 부상자를 돌봤다. 사회적 증거가 이번에는 돕는 쪽으로 굴러간 것이다.</p>
+<p>교실이나 단체 채팅방에서 누군가 괴롭힘을 당할 때도 같다. 모두가 "아무도 안 나서니 괜찮은가 보다"라고 여기는 순간이 있다. 먼저 움직이는 한 사람이 그 흐름을 바꾼다.</p>`,
+pics:['빗나간 종말 예언 · 확신이 무너지자 처음으로 포교를 시작했다','캐서린 제노비스 · 38명의 목격자, 그래서 아무도 신고하지 않았다','연기 실험 · 태연한 두 사람 옆에서는 10%만 신고했다','"파란 재킷 입으신 분!" · 한 사람을 지목하면 도움이 온다'],
+q:['남들이 가만있어서 나도 가만있었던 순간은?','위급할 때 내가 쓸 문장을 미리 정해 둔다면?'],
+act:'위급 상황에서 쓸 한 문장("○○ 입으신 분, 119에 전화해 주세요")을 외우고, 가족에게도 알려 준다.',
+ref:[]},
+{id:'s3',b:3,t:'나와 비슷한 사람을 따른다',one:'사회적 증거는 나와 비슷한 사람의 행동일 때 가장 강하다. 그 힘은 생사까지 좌우한다.',
+body:`<p>컬럼비아 대학 연구진은 맨해튼 거리에 지갑을 떨어뜨려 두었다. 지갑에는 처음 주운 사람이 돌려주려다 다시 잃어버린 것처럼 보이는 편지가 들어 있었다. 편지가 평범한 미국인 말투면 70%가 돌아왔고, 서툰 영어를 쓰는 외국인이 쓴 것처럼 보이면 33%만 돌아왔다. 나와 비슷한 사람이 한 일이 더 큰 기준이 된다.</p>
+<p>아이들도 같다. 또래가 가르친 금연 교육만 효과가 오래갔고, 치과를 즐겁게 다녀오는 영상은 같은 나이 아이가 나올 때 효과가 컸다. 치알디니의 세 살 아들은 아빠와 수영 강사가 몇 달을 설득해도 튜브 없이는 물에 들어가지 않았는데, 어느 날 캠프에서 혼자 다이빙했다. 이유를 묻자 "토미도 세 살인데 튜브 없이 수영하니까 나도 할 수 있어"라고 했다.</p>
+<p>무서운 사례도 있다. 사회학자 필립스는 신문 1면에 자살 기사가 크게 실리면 그 지역에서 자살이 늘고, 자동차·비행기 사고 사망자도 늘어난다는 것을 발견했다(괴테의 소설에서 이름을 딴 "베르테르 효과"). 보도가 클수록, 보도된 지역일수록 늘었고, 젊은 사람의 자살이 보도되면 젊은 운전자의 단독 사고가, 나이 든 사람이면 나이 든 운전자의 사고가 늘었다. 일부 사고가 숨겨진 모방 자살이라는 해석이다. 이 내용 때문에 오늘날 언론은 자살 보도 권고 기준을 지킨다.</p>
+<p>1978년 가이아나 존스타운에서 900명 넘는 사람이 지도자 짐 존스의 명령에 따라 질서 정연하게 독약을 마셨다. 치알디니는 존스의 카리스마보다 1년 전 정글로 이주한 결정에 주목한다. 낯선 나라에서 사람들은 극도로 불확실했고, 비슷한 사람이라고는 공동체 구성원뿐이었다. 먼저 마신 사람들과 서로를 보며 침착해 보이는 군중이, 그것을 "옳은 행동"으로 보이게 만들었다. 지도자가 모두를 설득할 필요는 없었다. 일부만 움직이면 나머지는 서로를 따랐다.</p>
+<p><b>정직하게 쓰기</b> · 동생이나 후배를 바꾸고 싶다면 어른의 설교보다 비슷한 또래의 좋은 본보기를 보여 주는 편이 낫다. 그리고 내가 고립되어 한 집단만 바라보고 있다면, 그때가 가장 쉽게 휩쓸리는 때임을 기억하자.</p>`,
+pics:['떨어진 지갑 · 비슷한 사람의 편지면 70%, 다른 사람이면 33%가 돌려줬다','"토미도 세 살이니까" · 강사보다 또래 한 명이 더 강했다','베르테르 효과 · 1면 자살 보도 뒤 비슷한 사람들의 사고가 늘었다','존스타운 · 고립과 불확실성이 군중을 한 방향으로 몰았다'],
+q:['나는 주로 누구를 "나와 비슷한 사람"으로 보고 따라 하나?','내가 한 집단만 보고 판단하게 되는 환경은 어디인가?'],
+act:'내가 닮고 싶은 습관을 가진 또래 한 명을 정하고, 그 사람이 실제로 어떻게 하는지 하나 관찰해 따라 한다.',
+note:'마음이 힘들 때는 혼자 판단하지 말고 믿을 수 있는 어른이나 상담 창구(한국: 109 자살예방 상담전화)에 도움을 청하자.',
+ref:[]},
+{id:'s4',b:3,t:'거절하는 법: 자동 조종을 점검하라',one:'사회적 증거라는 자동 조종은 끄지 말되, 가짜 데이터와 서로 따라 하는 군중을 알아채면 손으로 조종하라.',
+body:`<p>사회적 증거는 비행기의 자동 조종 장치와 같다. 대부분의 경우 믿고 가면 된다. 문제는 잘못된 데이터가 들어갔을 때다. 치알디니는 두 가지 경우를 든다.</p>
+<p><b>첫째, 증거가 일부러 조작된 경우</b> · 19세기 파리 오페라에는 돈을 받고 박수를 쳐 주는 "클라크"가 있었다. 울음 전문, 앙코르 전문, 웃음 전문까지 있었고, 이탈리아에서는 박수 가격표를 신문에 광고할 정도로 대놓고 했다. 그래도 관객은 따라 박수를 쳤다. 요즘 광고의 "길거리 즉석 인터뷰"는 배우가 대본을 읽는 경우도 많다. 칼럼니스트 데이브 배리는 이들을 "화성에서 온 소비자"라 불렀다. 조작이 뻔히 보일 때가 바로 자동 조종을 끄고 손으로 잡을 때다. 치알디니는 조작 광고 제품은 사지 말고, 제조사에 항의 편지를 보내라고까지 권한다.</p>
+<p><b>둘째, 군중이 서로를 따라 하다 틀린 경우</b> · 한 고속도로 순찰대원 학생은 출퇴근길 사고를 이렇게 설명했다. 앞차 두 대가 우연히 동시에 깜빡이를 켜면 뒤차들이 "앞에 뭐가 있나 보다" 하고 줄줄이 차선을 바꾸다 충돌한다. 앞에는 아무것도 없었다. 군중은 더 나은 정보가 아니라 서로를 보고 움직이고 있었다. 북미 원주민은 들소 떼를 절벽 쪽으로 몰아 사냥했다. 들소는 옆을 잘 보고, 달릴 때 머리를 숙여 앞을 보지 못한다. 주변의 증거만 따르다 절벽 아래로 떨어진다.</p>
+<p>그래서 가끔은 고개를 들어 계기판과 창밖을 보아야 한다. 객관적 사실, 내 경험, 내 판단과 군중의 신호가 맞는지 잠깐 확인하는 것으로 충분하다.</p>
+<p>장 끝 독자 편지에서, 경마장의 한 큰손은 승산 없는 말에 처음 100달러를 걸어 "인기마"로 만든 뒤, 사람들이 몰리자 진짜 노린 말에 거액을 걸었다. 인기마는 꼴찌로 들어왔다. 별점 작업, 조회수 구매, 댓글 부대, 바이럴 마케팅이 오늘날의 클라크다.</p>`,
+pics:['오페라의 클라크 · 박수 가격표까지 신문에 냈다','화성에서 온 소비자 · 대본을 읽는 "즉석 인터뷰" 광고','고속도로 차선 변경 · 앞차를 따라 바꾸다 아무것도 없는 곳에서 충돌','들소 떼와 절벽 · 고개를 숙이고 옆만 보며 달렸다'],
+q:['최근 본 리뷰나 인기 순위 중 조작이 의심되는 것은?','"다들 그렇게 하니까"라는 이유로만 하고 있는 일이 있나?'],
+act:'이번 주 "모두가 한다"는 이유로 하려던 일 하나를 골라, 사실·경험·내 판단 세 가지로 다시 점검한다.',
+ref:[]},
+
+/* 4장 호감 */
+{id:'l1',b:4,t:'친구에게서 산다: 호감의 힘과 외모',one:'우리는 좋아하는 사람의 부탁에 "예"라고 하고, 외모는 그 호감을 생각보다 크게 움직인다.',
+body:`<p>타파웨어 파티는 미국식 영업의 정수다. 게임과 경품(상호성), 내가 쓰는 제품 자랑하기(일관성), 다른 사람들의 구매(사회적 증거)가 다 있지만, 진짜 힘은 다른 데 있다. 구매를 청하는 사람은 판매원이 아니라 거실 한쪽에서 다과를 내는 친구, 곧 판매 수익을 나눠 받는 주최자다. 연구에 따르면 주최자와의 친분이 제품 선호보다 두 배나 구매에 영향을 주었다. 한 여성은 이미 그릇이 충분한데도 친구가 부르면 가고, 가면 사게 된다고 털어놓았다.</p>
+<p>친구가 없어도 친구의 이름만으로 된다. 한 방문판매 회사는 "끝없는 사슬" 방식으로 고객에게 지인 이름을 받아 "○○ 씨가 소개해 주셨어요"라며 찾아간다. 판매원을 거절하는 것이 친구를 거절하는 것처럼 느껴진다. 기네스북에 오른 자동차 판매왕 조 지라드는 비결을 "공정한 가격과 좋아할 만한 판매원"이라고 했다. 그렇다면 무엇이 사람을 좋아하게 만드는가?</p>
+<p><b>신체적 매력</b> · 잘생긴 사람에게 우리는 자동으로 재능·친절·정직·지성 같은 좋은 특성을 붙인다. 이를 "후광 효과"라 한다. 캐나다 선거에서 매력적인 후보는 2.5배 넘게 표를 얻었지만, 유권자의 73%는 외모가 영향을 주지 않았다고 강하게 부인했다. 모의 면접에서는 차림새가 자격보다 채용에 더 영향을 주었다. 실제 재판에서 잘생긴 피고인은 실형을 피할 확률이 두 배였고, 교사들은 예쁜 아이를 더 똑똑하다고 여겼다.</p>
+<p>그래서 판매 교육에는 차림새 지침이 있고, 패션 매장은 외모가 좋은 직원을 뽑고, 사기꾼은 대개 매력적이다. 무서운 건 이 효과가 우리가 의식하지 못하는 사이에 일어난다는 점이다.</p>
+<p><b>한국에서</b> · 다단계 판매가 지인 관계로 퍼지는 이유, 친구가 시작한 쇼핑몰이나 공구, 연예인 광고 모델, 잘생긴 인플루언서의 추천이 같은 구조다. 친구를 돕고 싶은 마음은 좋은 것이지만, 필요하지 않은 물건까지 사야 하는 것은 아니다.</p>`,
+pics:['타파웨어 파티 · 사는 이유는 그릇보다 주최자인 친구','"○○ 씨가 소개해 주셨어요" · 이름만으로도 판매의 절반','조 지라드 · 공정한 가격과 좋아할 만한 판매원','후광 효과 · 매력적인 후보가 2.5배 표를 얻었지만 아무도 인정하지 않았다'],
+q:['친구의 부탁이라서 필요 없는 것을 산 적은?','나는 사람의 외모 때문에 그 사람의 말을 더 믿은 적이 있나?'],
+act:'지인이 권하는 제품이 있으면 "모르는 사람이 같은 걸 권해도 살까?"를 물어보고 결정한다.',
+ref:[]},
+{id:'l2',b:4,t:'비슷함, 칭찬, 접촉과 협력',one:'비슷하다고 느끼면, 칭찬을 들으면, 함께 협력하면 좋아하게 된다. 모두 쉽게 꾸며 낼 수 있다.',
+body:`<p><b>비슷함</b> · 우리는 의견, 성격, 배경, 생활 방식이 비슷한 사람을 좋아한다. 옷차림이 같은 사람이 동전을 빌려 달라고 하면 더 잘 빌려주었고, 시위 참가자들은 비슷하게 입은 사람의 청원서에 읽지도 않고 서명했다. 자동차 판매원은 손님의 차 트렁크에서 캠핑 장비나 골프공을 보고 같은 취미가 있는 척하고, 고향이 같다며 놀란다. 보험 판매 기록에서도 나이·종교·정치 성향이 비슷한 판매원에게 더 많이 가입했다. 요즘 판매 교육은 손님의 자세와 말투를 따라 하라고 가르친다. 그러니 "저도 그래요"를 너무 빨리 말하는 사람을 조심하자.</p>
+<p><b>칭찬</b> · 조 지라드는 1만 3천 명의 고객에게 매달 "당신을 좋아합니다"라는 문구만 적힌 카드를 보냈다. 이렇게 뻔한 것이 통할까? 실험에서 칭찬만 해 준 사람은 그가 부탁할 게 있다는 걸 알아도 가장 호감을 얻었고, 칭찬이 사실이 아니어도 효과는 같았다.</p>
+<p><b>접촉(익숙함)</b> · 우리는 익숙한 것을 좋아한다. 내 얼굴 사진을 좌우 반전하면 나는 거울로 익숙한 반전 사진을, 친구는 실제 사진을 더 좋아한다. 화면에 너무 빨리 지나가 기억나지 않는 얼굴도 자주 볼수록 더 좋아하게 되었다. 하지만 경쟁과 갈등 속에서 반복해 만나면 오히려 싫어진다. 그래서 단순히 섞어 놓는 것만으로는 집단 사이의 편견이 줄지 않았다.</p>
+<p><b>협력</b> · 셰리프의 여름 캠프 실험에서 소년들을 두 오두막으로 나누고 이름을 붙이고 경쟁시키자 금세 서로 미워했다. 함께 영화를 보거나 밥을 먹게 해도 음식 던지기만 벌어졌다. 해결책은 공동의 목표였다. 고장 난 트럭을 다 같이 밀고, 끊긴 수도를 함께 고치고, 돈을 모아 영화를 빌리자 적대가 사라졌다. 애런슨의 "직소 교실"에서는 학생마다 시험 범위의 한 조각만 주어 서로 가르쳐야 하게 만들었다. 놀림받던 멕시코계 소년 카를로스의 말을 친구들이 끌어내 듣게 되면서 우정이 생겼다.</p>
+<p>판매자도 협력을 꾸며 낸다. "제가 사장님께 싸워서 할인받아 드릴게요"가 그렇다. 경찰 신문의 "착한 경찰, 나쁜 경찰"은 위협하는 경찰과 대비되는 다정한 경찰이 "내가 네 편"이라며 자백을 끌어낸다. 대비, 상호성, 그리고 협력의 느낌이 한꺼번에 작동한다.</p>`,
+pics:['"저도 고향이 거기예요" · 꾸며 낸 비슷함','"당신을 좋아합니다" 카드 · 매달 1만 3천 명에게','셰리프의 캠프 · 공동의 목표가 적을 친구로 바꿨다','직소 교실의 카를로스 · 그의 조각이 필요해지자 친구들이 귀를 기울였다','착한 경찰, 나쁜 경찰 · "내가 네 편"이라는 말의 힘'],
+q:['누군가 나와 공통점을 말할 때 그 말이 사실인지 확인해 본 적이 있나?','우리 반이나 교회 모임에서 경쟁 대신 공동 목표를 만들 수 있는 일은?'],
+act:'사이가 서먹한 사람과 함께 해야만 끝나는 작은 일 하나를 제안해 같이 해 본다.',
+note:'칭찬과 공통점 찾기 자체는 관계를 따뜻하게 한다. 책이 경고하는 것은 진심 없이 판매를 위해 꾸며 낼 때다.',
+ref:[]},
+{id:'l3',b:4,t:'연합: 좋은 것 곁에 서기',one:'좋은 것이나 나쁜 것 옆에 있기만 해도 그 느낌이 옮겨 붙는다. 광고와 정치, 스포츠 팬이 모두 이것을 쓴다.',
+body:`<p>한 TV 기상캐스터가 치알디니에게 전화했다. 비가 계속 오면 협박 편지까지 받는다는 것이다. 날씨를 전할 뿐 만들지 않는다는 건 다들 아는데 왜 그럴까? 옛 페르시아의 전령은 승전보를 가져오면 영웅 대접을 받고 패전 소식을 가져오면 처형당했다. 나쁜 소식은 전하는 사람에게 옮겨 붙는다. 단지 연결되어 있다는 이유만으로.</p>
+<p>이 "연합"의 원리는 양쪽으로 작동한다. 어머니들은 나쁜 친구와 어울리지 말라고 가르쳤다. 사람들은 실제로 친구의 성격을 그 사람의 성격으로 본다. 광고는 반대로 좋은 것을 붙인다. 신차 광고에 매력적인 모델을 세우자 남성들은 차가 더 빠르고 비싸 보인다고 평가했지만, 모델 때문이라는 건 인정하지 않았다. 올림픽 공식 후원, 연예인과 운동선수의 광고, 유행어에 편승한 "자연주의" 마케팅도 모두 연결을 사는 것이다.</p>
+<p>음식도 그렇다. 라즈란의 "점심 기법" 연구에서 사람들은 식사 중에 본 정치 문구를 더 좋아하게 되었고, 어떤 문구를 식사 중에 봤는지는 기억하지 못했다. 파블로프의 개가 종소리에 침을 흘리듯, 맛있는 음식의 좋은 기분이 함께 있던 것에 옮겨 간다. 그래서 정치 모금 행사의 연설은 언제나 식사 중이나 식사 후에 한다.</p>
+<p>우리도 이것을 안다. 좋은 소식을 전할 때는 "좋은 소식이야"라고 하고, 나쁜 소식은 거리를 둔다. 스포츠 팬은 이기면 "우리가 이겼다"고 하고, 지면 "걔네가 졌다"고 한다. 대학생들은 학교 팀이 크게 이긴 다음 날 학교 티셔츠를 더 많이 입었다. 특히 자존감이 깎인 직후일수록 승리와의 연결을 더 드러냈다. 이름 대기, 유명인과 찍은 사진 자랑처럼 남의 성공으로 나를 빛내려는 습관은 결국 자신의 가치를 바깥에서 찾는 일이다.</p>
+<p><b>한국에서</b> · 아이돌 모델 마케팅, 협찬 광고, 명문대 로고 굿즈, "○○ 출신"을 앞세우는 강사 소개, 응원팀이 이기면 "우리"가 되는 말버릇. 내가 좋아하는 것이 제품 자체인지, 거기 붙은 이미지인지 구분해 보자.</p>`,
+pics:['페르시아의 전령 · 패전 소식을 가져오면 처형당했다','기상캐스터 · 비 때문에 협박 편지를 받는다','라즈란의 점심 기법 · 밥 먹으며 본 문구를 더 좋아하게 됐다','"우리가 이겼다" vs "걔네가 졌다" · 승리에는 붙고 패배에서는 떨어진다'],
+q:['나는 어떤 성공에 "우리"를 붙이고 어떤 실패에 "걔네"를 붙이나?','내가 산 물건 중 모델이나 이미지 때문에 산 것은?'],
+act:'광고 하나를 골라 모델·음악·로고를 지우고 남는 제품 정보만 적어 본다.',
+ref:[]},
+{id:'l4',b:4,t:'거절하는 법: 사람과 거래를 분리하라',one:'원인을 다 막으려 하지 말고, "생각보다 이 사람이 너무 좋아졌다"는 느낌을 신호로 삼아 사람과 제안을 떼어 놓아라.',
+body:`<p>호감을 만드는 방법은 너무 많고, 외모·익숙함·연합처럼 무의식적으로 작동하는 것도 많다. 하나하나 막는 전략은 불가능하다. 그래서 치알디니는 원인이 아니라 결과에 주목하라고 한다. 호감이 생기지 못하게 막으려 애쓰지 말고, 일단 작동하게 둔 뒤 "이 상황에서 이 사람을 예상보다 빨리, 많이 좋아하게 되었다"는 느낌이 들 때 경계하면 된다. 힘이 셀수록 오히려 눈에 잘 띈다는 점에서, 이것도 주짓수다.</p>
+<p>예를 들어 판매원 "딜링 댄"과 25분 이야기한 뒤 계약을 앞두고 있다면, 스스로 물어보자. "이 사람을 생각보다 더 좋아하게 됐나?" 그렇다면 그가 커피와 도넛을 대접했는지, 내 안목을 칭찬했는지, 웃게 했는지, 나와 함께 사장과 "싸워" 주었는지 돌아볼 수도 있다. 하지만 이유까지 알 필요는 없다. 지나친 호감을 알아챈 것만으로 충분하다.</p>
+<p>그렇다고 그를 일부러 미워할 필요는 없다. 원래 좋은 사람일 수도 있고, 가장 좋은 조건을 줄 수도 있다. 대신 마음속에서 댄과 그가 파는 차를 떼어 놓자. 계약하면 집에 몰고 가는 것은 댄이 아니라 차다. 그가 잘생겼든, 취미가 같든, 고향이 같든 차를 사는 판단과는 상관없다. 요청하는 사람에 대한 감정과 요청 자체를 구분하는 것, 큰 실수는 대개 상대를 좋아할 때 일어난다.</p>
+<p>장 끝 독자 편지에서, 한 남성은 장거리 전화 회사 영업 전화를 받았다. 이사 간 어릴 적 친구가 자신을 "가족·친구 할인 명단"에 올렸으니 이 회사로 바꾸면 친구가 20% 할인을 받는다는 것이었다. 서비스엔 관심이 없었지만 친구를 모욕하는 것 같아 바꿨다. 영업 담당자는 그 방법이 열에 아홉은 통한다고 했다.</p>
+<p><b>한국에서</b> · 친구 초대 이벤트("친구가 가입하면 둘 다 혜택"), 지인 보험 영업, 선배가 권하는 다단계, 단골 미용실의 시술 추천. 사람은 사람대로 고맙게 여기고, 제안은 제안대로 따지면 관계도 지갑도 지킬 수 있다.</p>`,
+pics:['딜링 댄 · 25분 만에 너무 좋아졌다면 신호다','"집에 몰고 가는 건 차다" · 사람과 상품을 분리하라','친구 할인 명단 · 친구를 돕는 마음이 통신사를 바꾸게 했다'],
+q:['최근 상대가 좋아서 제안을 제대로 따지지 않은 적은?','친구의 권유를 관계를 해치지 않고 거절하는 나만의 문장은?'],
+act:'"너는 고마운데, 이건 내게 필요 없어"처럼 사람과 제안을 나누는 거절 문장을 하나 만들어 둔다.',
+ref:[]},
+
+/* 5장 권위 */
+{id:'a1',b:5,t:'밀그램 실험: 권위에 대한 복종',one:'평범한 사람도 권위자가 지시하면 무고한 사람에게 극심한 고통을 줄 수 있다. 복종은 대개 자동으로 일어난다.',
+body:`<p>예일 대학의 밀그램은 "기억과 처벌" 실험이라며 참가자를 모았다. 참가자는 교사 역할을 맡아, 옆방의 학습자가 틀릴 때마다 15볼트씩 올라가는 전기 충격을 주어야 했다. 학습자는 사실 연기자였고 충격은 가짜였지만, 그는 비명을 지르고, 벽을 차고, 심장이 아프다며 풀어 달라고 애원했다. 실험 전 정신과 의사들은 끝까지 갈 사람이 천 명 중 한 명쯤일 거라 예상했다. 실제로는 약 3분의 2가 450볼트까지 갔다.</p>
+<p>이들은 잔인한 사람들이 아니었다. 다양한 나이와 직업의 평범한 사람들이었고, 성별도 결과에 영향이 없었다. 그들은 땀을 흘리고, 떨고, 입술을 깨물며 그만하자고 사정했다. 그래도 회색 실험복을 입은 연구자가 "계속하라"고 하면 계속했다. 증거는 분명하다. 연구자가 그만하라고 하고 학습자가 계속하라고 하자 아무도 충격을 주지 않았다. 연구자 두 명이 엇갈린 지시를 하자 참가자들은 누가 더 높은 사람인지 찾으려 했다. 밀그램의 결론은 권위의 명령이라면 어른들이 거의 어떤 일이든 한다는 것이었다.</p>
+<p>왜 그럴까? 권위 체계는 사회에 큰 이익을 준다. 생산, 교역, 방위, 질서가 그 위에서 돌아간다. 그래서 우리는 어릴 때부터 정당한 권위에 따르는 것은 옳고 거역은 그르다고 배운다. 부모와 교사는 실제로 더 많이 알았고, 상벌도 쥐고 있었다. 그래서 따르는 것이 보통은 이익이었고, 그 결과 너무 자연스럽게, 생각 없이 따르게 되었다.</p>
+<p>병원은 그 위험을 잘 보여 준다. 의사의 처방이 틀려도 간호사, 약사, 환자가 묻지 않는 일이 많다. 한 의사가 오른쪽 귀(right ear)에 넣을 귀약을 "R ear"라고 줄여 쓰자, 간호사는 그것을 엉덩이(rear)로 읽고 귀약을 항문에 넣었다. 환자도 간호사도 이상하다고 묻지 않았다.</p>
+<p><b>생각해 볼 점</b> · 책은 아담과 하와, 아브라함의 이야기를 복종을 가르치는 문화의 예로 든다. 신앙인은 하나님이라는 궁극적 권위와, 실수할 수 있는 인간 권위를 구분하는 눈이 필요하다. 사람의 지시가 양심과 부딪힐 때 멈추어 묻는 것은 불순종이 아니라 분별이다.</p>`,
+pics:['밀그램의 전기 충격 · 약 3분의 2가 450볼트까지 눌렀다','두 연구자의 엇갈린 지시 · "누가 더 높은 사람이에요?"','"R ear" 귀약 · 오른쪽 귀 대신 엉덩이에 넣었다'],
+q:['"시켜서" 한 일 중 지금 생각하면 멈췄어야 했던 일은?','내가 권위를 가진 자리(반장, 선배)에서 다른 사람의 판단을 막고 있지는 않나?'],
+act:'윗사람의 지시가 이상하게 느껴지면 "이유를 여쭤봐도 될까요?"라고 정중히 묻는 문장을 하나 준비해 둔다.',
+ref:[]},
+{id:'a2',b:5,t:'내용보다 상징: 직함, 옷, 장신구',one:'자동 복종 상태에서는 진짜 권위가 없어도 직함, 제복, 비싼 차 같은 상징만으로 따르게 된다.',
+body:`<p>한 커피 광고에서는 TV 드라마에서 의사 역을 맡았던 배우가 카페인의 해로움을 경고하며 디카페인 커피를 권했다. 그는 의사가 아니라 배우일 뿐인데 광고는 수년간 대성공을 거두었다. 권위의 겉모습만으로 충분했다. 사기꾼들이 직함과 옷과 소품으로 자신을 꾸미는 이유다.</p>
+<p><b>직함</b> · 한 교수는 여행 중 낯선 사람과 대화할 때 직업을 숨긴다. 교수라고 밝히는 순간 활발하던 대화 상대가 공손하고 지루해지기 때문이다. 호주 대학의 실험에서 같은 남자를 학생, 강사, 교수 등으로 다르게 소개하자 지위가 오를수록 키가 더 크게 추정되었다(교수일 때 약 6cm 더 크게). 가장 무서운 실험은 병원이다. 처음 듣는 목소리의 "의사"가 전화로, 병원 규정을 어기고, 승인되지 않은 약을, 최대 용량의 두 배로 투여하라고 지시했다. 간호사의 95%가 약을 들고 환자에게 가다가 제지당했다. 근거는 "의사"라는 직함 하나뿐이었다.</p>
+<p><b>옷</b> · 빅먼의 실험에서 경비원 제복을 입은 청년이 "저 사람에게 주차비 동전을 주라"고 하고 사라지면 거의 다(92%) 따랐고, 평상복이면 절반 이하(42%)가 따랐다. 학생들은 제복의 효과를 크게 과소평가했다. 정장을 입은 남자가 무단횡단하면 작업복일 때보다 3.5배 많은 사람이 따라 건넜다. "은행 감사관" 사기는 정장과 경비원 제복을 함께 쓴다. 정장 차림의 남자가 노인에게 은행 직원의 비리를 잡아야 한다며 예금을 찾게 하고, 가짜 경비원이 그 돈을 "금고에 다시 넣겠다"며 가져간다.</p>
+<p><b>장신구와 차</b> · 신호가 바뀌어도 앞차가 출발하지 않을 때, 사람들은 낡은 소형차에는 금방 경적을 울렸지만 고급차 뒤에서는 절반이 끝까지 울리지 않았다. 학생들은 자기라면 고급차에 더 빨리 울릴 거라고 예측했다. 권위의 효과는 강할 뿐 아니라, 우리가 예상하지 못한다는 점에서 더 위험하다.</p>
+<p><b>한국에서</b> · 검사·경찰·금융감독원을 사칭하는 보이스피싱, 흰 가운을 입은 건강식품 광고, "○○ 박사" 직함의 유튜버, 명품과 외제차를 앞세운 투자 권유. 상징을 보면 오히려 확인할 이유가 생겼다고 생각하자.</p>`,
+pics:['의사 역 배우의 커피 광고 · 진짜 의사가 아니어도 통했다','교수라고 소개하면 키가 커진다 · 지위가 오를수록 더 크게 보였다','전화 속 "의사"의 처방 · 간호사 95%가 위험한 용량을 들고 갔다','경비원 제복 · 92% 대 42%','고급차 앞 경적 · 절반은 끝까지 울리지 않았다'],
+q:['직함이나 옷차림 때문에 말을 더 믿은 경험은?','"권위"를 사칭하는 전화나 문자를 받았을 때 내가 할 확인 절차는?'],
+act:'가족과 함께 "기관 사칭 전화가 오면 끊고 공식 번호로 직접 다시 건다"는 규칙을 정한다.',
+ref:[]},
+{id:'a3',b:5,t:'거절하는 법: 두 가지 질문',one:'"이 사람은 정말 이 분야 전문가인가?" "이 상황에서 얼마나 정직할까?" 두 질문이 상징과 실체를 가른다.',
+body:`<p>권위에 맞서는 첫걸음은 놀람을 없애는 것이다. 우리는 권위의 힘을 늘 과소평가한다. 그 힘이 얼마나 강한지, 그 상징이 얼마나 쉽게 위조되는지 알면 적절히 경계할 수 있다. 하지만 모든 권위를 거부해서는 안 된다. 의사, 판사, 전문가는 대개 실제로 더 잘 안다. 필요한 것은 언제 따르고 언제 멈출지 쉽게 가려내는 방법이다.</p>
+<p><b>질문 1: 이 권위자는 정말 전문가인가?</b> · 이 질문은 두 가지에 눈을 돌리게 한다. 자격이 있는지, 그리고 그 자격이 지금 이 문제와 관련이 있는지. 의사 역 배우는 의사 자격이 없다. 누구나 알지만 자동 반응 중에는 뻔한 것도 놓친다. 정장 입은 무단횡단자가 실제로 사업가였다 해도, 길 건너기에 대해 남보다 잘 알 리는 없다. 유명한 운동선수의 건강식품 광고, 공부 잘한 연예인의 재테크 조언도 마찬가지다.</p>
+<p><b>질문 2: 이 전문가는 여기서 얼마나 정직할까?</b> · 진짜 전문가도 이해관계가 있으면 정직하지 않을 수 있다. 그가 내 승낙으로 무엇을 얻는지 물어보자. 이때 조심할 기술이 있다. 일부러 자기에게 불리한 말을 조금 해서 신뢰를 사는 것이다. "맛은 끔찍하지만 효과는 확실한 구강청결제", "2등이라 더 열심히 합니다" 같은 광고가 그렇다. 사소한 단점을 인정해 정직해 보인 뒤 중요한 주장을 믿게 만든다.</p>
+<p>치알디니가 식당 보조로 일하며 지켜본 웨이터 빈센트는 단체 손님의 첫 주문에 "오늘은 그 요리가 평소만 못합니다"라며 조금 더 싼 메뉴를 권했다. 손님들은 그가 전문가이면서 자기 편이라고 믿었고, 그 뒤 그가 권하는 비싼 와인과 디저트를 기꺼이 주문했다. 팁도 많이 냈다. 이익을 포기하는 척한 것이 가장 큰 이익이 되었다.</p>
+<p>독자 편지에서, 한 청년은 "더 비싸게 팔아 주겠다"는 중고차 위탁 업체에 차를 맡겼다. 업체는 그가 생각한 것보다 높은 값을 제안해 신뢰를 얻은 뒤, 가짜 구매자를 핑계로 세 번이나 가격을 낮추게 했다. 처음의 "손해 보는 친절"이 미끼였다.</p>`,
+pics:['"정말 전문가인가?" · 의사 역 배우는 의사가 아니다','"얼마나 정직할까?" · 사소한 단점 고백은 신뢰를 사는 기술일 수 있다','웨이터 빈센트 · 싼 메뉴를 권하고 비싼 와인을 팔았다','중고차 위탁 · 높은 값을 불러 주고 세 번 깎았다'],
+q:['내가 믿고 따르는 "전문가"의 자격은 지금 문제와 관련이 있나?','상대가 손해 보는 척할 때 그 뒤에 무엇이 오는지 본 적이 있나?'],
+act:'유튜브나 광고에서 조언을 들으면 "전문 분야가 맞나? 이 사람은 무엇을 얻나?" 두 칸을 채운 뒤 따른다.',
+ref:[]},
+
+/* 6장 희소성 */
+{id:'k1',b:6,t:'잃을까 봐 원한다: 희소성',one:'얻을 기회가 줄어들수록 그것이 더 귀해 보이고, 사람은 얻는 것보다 잃는 것에 더 크게 움직인다.',
+body:`<p>치알디니는 모르몬 성전에 관심이 없었다. 그런데 새로 단장한 성전의 비공개 구역을 며칠 동안만 일반인에게 공개한다는 기사를 보자 당장 가고 싶어졌다. 친구에게 이유를 설명하다 깨달았다. 지금 못 보면 다시는 볼 수 없다는 것, 그것 하나뿐이었다. 그는 재미있는 대화를 하다가도 모르는 번호의 전화를 받는다. 전화는 놓치면 끝이라는 특징이 있기 때문이다.</p>
+<p>사람은 같은 크기라면 얻는 것보다 잃는 것에 더 움직인다. 단열을 하면 "얼마 아낀다"보다 "안 하면 얼마 잃는다"고 할 때 더 많이 단열했고, 유방암 자가 검진 안내도 잃는 것을 말할 때 효과가 컸다. 수집가의 세계에서는 잘못 인쇄된 우표처럼 결함 있는 물건이 오히려 가장 비싸다. 희귀하기 때문이다.</p>
+<p>판매자는 이것을 두 가지로 쓴다. 첫째 "수량 한정"이다. "이 엔진 달린 차는 주에 다섯 대도 안 남았어요." 사실일 때도, 거짓일 때도 있었다. 한 가전 매장은 관심 있어 보이는 부부에게 "아까 다른 분께 팔렸고 그게 마지막이었어요"라고 말했다. 갑자기 그 제품이 더 갖고 싶어진 부부가 창고에 남은 게 없냐고 물으면, "찾아오면 이 가격에 사시겠어요?"라고 다짐을 받는다. 가장 귀해 보이는 순간에 약속을 받아 내고, 일관성이 그 뒤를 맡는다.</p>
+<p>둘째 "마감 시한"이다. "독점, 한정 상영, 곧 종료!" 같은 광고, "지금 결정하지 않으면 이 가격은 없다"는 현장 판매, "사진은 24시간 뒤 폐기된다"는 사진관, "한 집은 한 번만 방문한다"는 청소기 판매원. 그 회사의 판매 관리자는 목적이 손님이 생각할 시간을 갖지 못하게 하는 것이라고 분명히 말했다. 전화 투자 사기는 큰 수익을 설명한 뒤 "이제는 투자할 수 없다"고 했다가 다시 급하게 기회를 주는 3단계로 한 노인의 평생 저축을 빼앗았다.</p>
+<p><b>한국에서</b> · 홈쇼핑의 "매진 임박", 쇼핑몰의 남은 시간 카운트다운, "재고 3개 남음", 한정판 드롭과 선착순, 수강 신청 "마감 임박", 공연 티켓팅. 정말 귀한 것도 있지만, 귀하게 보이도록 연출된 것도 많다.</p>`,
+pics:['모르몬 성전의 비공개 구역 · 며칠뿐이라는 이유 하나로 가고 싶어졌다','모르는 번호의 전화 · 놓치면 끝이라 대화를 끊는다','"마지막 하나 팔렸어요" · 가장 귀해 보일 때 약속을 받는다','24시간 뒤 폐기되는 사진 · 생각할 시간을 빼앗는 마감'],
+q:['"마감 임박"이 아니었다면 사지 않았을 물건은?','잃을까 봐 붙잡고 있는 것 중 실제로는 필요 없는 것은?'],
+act:'카운트다운이나 "품절 임박"을 보면 바로 창을 닫고, 24시간 뒤에도 원하면 그때 산다.',
+ref:[]},
+{id:'k2',b:6,t:'심리적 반발: 막으면 더 원한다',one:'자유가 줄어들면 우리는 그것을 되찾으려 하고, 금지된 것과 감춰진 정보를 더 좋게 평가한다.',
+body:`<p>희소성의 힘은 두 곳에서 나온다. 하나는 얻기 어려운 것이 대개 더 좋다는 경험에서 오는 지름길이다. 다른 하나는 브렘의 "심리적 반발" 이론이다. 선택의 자유가 제한되거나 위협받으면, 우리는 그 자유와 그에 딸린 물건을 전보다 더 원하게 된다.</p>
+<p>반발은 두 살 무렵 처음 뚜렷해진다. 한 실험에서 두 살 남자아이들은 낮은 칸막이 뒤의 장난감에는 특별한 관심이 없었지만, 칸막이가 높아 닿기 어렵게 되자 그 장난감으로 세 배 빨리 달려갔다. 아이가 자신을 독립된 존재로 깨닫는 시기라, 어디까지가 자기 자유인지 시험하는 것이다. 십 대도 비슷하다. 부모가 반대할수록 사랑이 깊어지는 "로미오와 줄리엣 효과"는 실제 연인 140쌍 연구에서도 확인되었다. 간섭이 커질수록 사랑과 결혼 의지가 커졌고, 간섭이 줄면 식었다. "여성도 이제 자유롭다"는 담배 광고가 이어지는 동안 흡연율이 오른 유일한 집단은 십 대 여성이었다.</p>
+<p>어른의 반발은 엉뚱한 곳에서 터진다. 마이애미가 인 성분 세제를 금지하자 사람들은 이웃 지역에서 세제를 몰래 사 와 쌓아 두었고, 금지되지 않은 도시 사람들보다 그 세제가 더 잘 빨리고 심지어 더 잘 부어진다고 평가했다. 금지가 품질 평가까지 바꾼 것이다.</p>
+<p>정보도 마찬가지다. 남녀 공학 기숙사를 반대하는 연설이 금지된다는 말을 들은 학생들은 연설을 듣지도 않고 그 주장에 더 동의하게 되었다. "성인 전용"이라는 문구는 책을 더 읽고 싶게 하고 더 좋을 거라고 기대하게 만들었다. 모의 배심원에게 피고의 보험 가입 사실을 "무시하라"고 지시하자 오히려 배상액이 더 커졌다. 소고기 수입 회사 실험에서는 "공급이 부족해질 것"이라는 말에 주문이 두 배, 그 소식이 "우리만 아는 정보"라는 말까지 더하자 여섯 배가 되었다.</p>
+<p><b>한국에서</b> · "19금", "업계 비밀 공개", "아무에게나 알려 주지 않는 방법", "삭제되기 전에 보세요" 같은 제목, 부모가 막을수록 더 하고 싶은 게임과 연애. 내가 원하는 것이 그 자체인지, 막혔다는 사실 때문인지 물어보자.</p>`,
+pics:['높은 칸막이 뒤의 장난감 · 두 살 아이가 세 배 빨리 달려갔다','로미오와 줄리엣 효과 · 부모가 반대할수록 사랑이 깊어졌다','마이애미의 인 세제 금지 · 금지되자 더 좋은 세제로 보였다','"우리만 아는 정보" · 같은 소식이 독점이라자 주문이 여섯 배'],
+q:['누가 막아서 더 하고 싶어진 일은 무엇인가?','"비밀", "독점"이라는 말에 끌려 믿게 된 정보가 있나?'],
+act:'"금지", "독점", "삭제 전에" 같은 말이 붙은 정보를 보면 출처 하나를 확인하기 전에는 퍼뜨리지 않는다.',
+note:'부모나 교사라면 이 장에서 배울 점이 있다. 규칙은 일관되게 지키고, 금지보다 이유를 설명할 때 반발이 줄어든다.',
+ref:[]},
+{id:'k3',b:6,t:'희소성이 가장 강할 때: 새로운 부족과 경쟁',one:'원래 부족한 것보다 갑자기 부족해진 것이, 그리고 남과 다투게 될 때 희소성은 가장 강해진다.',
+body:`<p>워첼의 쿠키 실험에서 사람들은 병에 쿠키가 두 개만 있을 때 열 개 있을 때보다 같은 쿠키를 더 좋게 평가했다. 더 중요한 발견은 두 가지다. 첫째, 처음부터 두 개였던 것보다 열 개에서 두 개로 줄어든 쿠키가 더 높게 평가되었다. 새로 생긴 부족이 더 강하다.</p>
+<p>이것은 역사에도 나타난다. 데이비스는 혁명이 가장 억압받던 시기가 아니라, 형편이 나아지다가 갑자기 꺾일 때 일어난다고 분석했다. 1960년대 미국 흑인 폭동, 1991년 소련 쿠데타에 맞선 시민들의 저항도 그렇다. 고르바초프가 준 자유를 맛본 사람들은 그것을 빼앗기려 하자 사흘 만에 쿠데타를 무너뜨렸다. 한 번 준 자유는 싸움 없이 돌려받을 수 없다. 가정도 같다. 간식을 어떤 날은 허락하고 어떤 날은 금지하는 부모는 아이에게 "간식의 자유"를 만들어 주고, 그것을 빼앗을 때 반발을 산다. 일관성 없는 훈육이 반항적인 아이를 만든다는 연구가 있다.</p>
+<p>둘째, 쿠키가 실수로 줄었다고 들은 사람보다 "다른 사람들이 원해서" 줄었다고 들은 사람이 쿠키를 가장 높게 평가했다. 경쟁이 붙으면 희소성은 극대화된다. 연인은 경쟁자가 나타나면 갑자기 열정이 생기고, 부동산 중개인은 망설이는 손님에게 "돈 많은 다른 손님이 내일 다시 온대요"라고 전화한다. 할인 행사장의 쟁탈전은 미끼를 뿌리면 빈 낚싯바늘도 무는 물고기 떼와 닮았다.</p>
+<p>1973년 미국 방송사들이 영화 「포세이돈 어드벤처」의 1회 방영권을 두고 처음으로 공개 경매를 벌였다. 낙찰가는 손해가 확실한 330만 달러였다. 이긴 방송사 대표는 다시는 경매에 참여하지 않겠다고 했고, 진 방송사 대표는 미친 사람처럼 계속 불렀다가 졌을 때 안도했다며 웃었다. 이긴 사람이 진 사람처럼, 진 사람이 이긴 사람처럼 말한다면 그 상황을 만든 희소성과 경쟁을 의심해야 한다.</p>
+<p><b>한국에서</b> · 경매·중고 거래의 가격 경쟁, 인기 굿즈 선착순, "다른 분도 이 물건 보고 계세요", 수강 신청 전쟁. 남이 원한다는 사실이 내가 원해야 할 이유는 아니다.</p>`,
+pics:['쿠키 열 개에서 두 개로 · 갑자기 줄어든 쿠키가 더 맛있어 보였다','소련 쿠데타 · 한 번 맛본 자유는 사흘 만에 되찾았다','"다른 손님이 내일 온대요" · 경쟁자가 망설임을 없앤다','포세이돈 경매 · 이긴 쪽은 다시는 안 한다, 진 쪽은 안도했다'],
+q:['경쟁이 붙어서 원래 생각보다 비싸게 사거나 더 원하게 된 경험은?','내 생활 속 규칙 중 일관성 없이 지켜서 오히려 지키기 어려워진 것은?'],
+act:'중고 거래나 경매에 참여하기 전에 "최대 가격"을 미리 적어 두고, 그 숫자를 넘으면 무조건 멈춘다.',
+ref:[]},
+{id:'k4',b:6,t:'거절하는 법: 흥분을 신호로, 쿠키 맛은 같다',one:'희소성 앞에서 몸이 달아오르면 멈추고, "갖고 싶은가, 쓰고 싶은가?"를 물어라. 귀한 쿠키도 맛은 같았다.',
+body:`<p>희소성의 경고를 아는 것과 실제로 버티는 것은 다르다. 원하는 것이 줄어드는 것을 보면 몸이 흥분하고, 특히 경쟁이 붙으면 피가 솟고 시야가 좁아진다. 감정이 올라오면 이성은 물러난다. 포세이돈 경매의 방송사 대표 말처럼, 열기에 휩쓸리면 논리는 창밖으로 날아간다. 그래서 지식만으로는 막기 어렵다.</p>
+<p>치알디니의 해법은 두 단계다. <b>1단계</b>, 그 흥분 자체를 신호로 쓴다. 판매 상황에서 가슴이 뛰고 서두르고 싶어지면 그것이 희소성 전술이 작동 중이라는 경보다. 멈추고, 진정하고, 판단할 여유를 되찾는다.</p>
+<p><b>2단계</b>, 그 물건을 왜 원하는지 묻는다. 쿠키 실험에는 숨은 발견이 하나 더 있었다. 귀한 쿠키는 더 갖고 싶고 더 비싸 보였지만, 맛은 더 좋다고 평가되지 않았다. 희소성이 주는 기쁨은 경험하는 데가 아니라 소유하는 데 있다. 수집처럼 희귀한 것을 갖는 것 자체가 목적이라면 희소성을 가격 판단에 써도 좋다. 하지만 먹고, 입고, 타고, 쓰려고 사는 것이라면, 그 물건은 귀하든 흔하든 똑같이 작동한다는 것을 기억해야 한다.</p>
+<p>치알디니의 형 리처드는 신문 광고로 중고차를 사고팔아 학비를 벌었다. 비결은 차를 보러 오겠다는 사람들을 모두 같은 시간에 부르는 것이었다. 첫 손님이 꼼꼼히 흠을 보다가 두 번째 손님이 도착하면 분위기가 바뀐다. "제가 먼저 왔는데요." 리처드는 두 번째 손님에게 기다려 달라고 하고, 첫 손님은 몇 분 안에 결정해야 하는 압박을 받는다. 세 번째 손님이 오면 대개 끝이었다. 손님들은 차가 좋아서가 아니라 남에게 빼앗길까 봐 산 것이다. 그들이 원래 원한 것은 차를 "타는 것"이었는데, 경쟁은 "갖는 것"에 대한 욕구만 키웠다.</p>
+<p>장 끝 독자 편지에서, 열아홉 살 여성은 별로 끌리지 않던 스물일곱 살 남자와 사귀다가 부모가 반대하자 더 깊이 빠졌다. 반대가 없었다면 한 달이면 끝났을 관계가 다섯 달 갔다.</p>`,
+pics:['가슴이 뛰면 경보 · 흥분 자체가 희소성 전술의 신호','쿠키 맛은 같았다 · 귀해도 더 맛있지는 않다','형 리처드의 같은 시간 약속 · 손님끼리 경쟁시켜 차를 팔았다'],
+q:['내가 최근 산 한정판은 "갖고 싶어서"였나, "쓰고 싶어서"였나?','희소성 앞에서 내 몸이 보내는 신호(빨라지는 손, 조급함)는 무엇인가?'],
+act:'"한정"이라는 말에 끌릴 때 "흔했어도 이걸 샀을까?"라고 소리 내어 묻고 답을 적는다.',
+ref:[]},
+
+/* 맺음말 */
+{id:'e1',b:7,t:'자동화 시대의 원시적 동의',one:'정보가 넘칠수록 우리는 지름길에 더 기댄다. 그래서 지름길을 위조하는 사람과 싸워야 한다.',
+body:`<p>1960년대 독설로 유명한 토크쇼 진행자가 긴 머리의 록 음악가에게 "머리가 길면 여자인가 보지?"라고 했다. 음악가는 의족을 한 진행자에게 "다리가 나무면 식탁인가 보죠?"라고 받아쳤다. 이 대화는 책 전체의 주제를 담고 있다. 우리는 판단할 때 모든 정보가 아니라 대표적인 정보 하나만 쓰곤 하고, 그 하나는 보통 맞지만 때로는 우스꽝스러운 실수로 이끈다.</p>
+<p>동시에 현대 생활은 그런 지름길을 점점 더 요구한다. 바쁠 때, 지칠 때, 불확실할 때, 산만할 때, 관심이 없을 때 우리는 정보를 덜 본다. 존 스튜어트 밀은 세상의 모든 지식을 알았던 마지막 사람이라고 불린다. 지금은 지식이 몇 년마다 두 배로 늘고, 선택지와 변화의 속도도 끝없이 빨라진다. 우리는 스스로 만든 복잡한 세상 때문에, 한때 넘어섰던 동물처럼 신호 하나에 반응해야 하는 처지가 되었다.</p>
+<p>상호성, 일관성, 사회적 증거, 호감, 권위, 희소성이 자주 쓰이는 이유는 대개 믿을 만하기 때문이다. 따라서 그것에 기대는 것 자체는 잘못이 아니다. 정직한 광고가 "가장 많이 팔린 치약"이라고 알려 준다면, 그 정보로 치약을 고르는 것은 현명한 지름길이고 그 광고주는 우리의 협력자다.</p>
+<p>적은 신호를 위조하는 사람이다. 배우를 일반인처럼 꾸민 광고, 녹음된 웃음, 직접 돈을 넣어 둔 팁 통, 빈자리가 있는데도 세워 둔 줄. 치알디니는 이런 경우 사지 말고, 보지 말고, 줄을 떠나며 이유를 말하고, 항의하라고 강하게 권한다. 이익을 추구하는 것이 문제가 아니다. 우리 모두 어느 정도 이익을 추구한다. 문제는 우리가 꼭 필요로 하는 지름길의 신뢰성을 무너뜨리는 방식으로 이익을 얻는 것이다. 지름길이 오염될수록 우리는 그것을 쓸 수 없고, 복잡한 세상을 감당하기 더 어려워진다.</p>
+<p><b>이 앱의 결론</b> · 방어는 의심이 아니라 분별이다. 진짜 호의, 진짜 약속, 진짜 증거, 진짜 우정, 진짜 전문성, 진짜 희소성은 기꺼이 받아들이자. 그리고 내가 남을 설득할 때는 이 여섯 원리를 진실하게만 쓰자. 그것이 지름길을 지키는 가장 좋은 방법이다.</p>`,
+pics:['"다리가 나무면 식탁?" · 정보 하나로 내리는 판단의 우스꽝스러움','존 스튜어트 밀 · 모든 지식을 알았던 마지막 사람','정직한 "판매 1위" · 진짜 신호를 주는 광고주는 협력자다'],
+q:['내가 가장 자주 기대는 지름길은 여섯 원리 중 무엇인가?','내가 남을 설득할 때 신호를 부풀리거나 꾸며 낸 적은 없나?'],
+act:'여섯 원리 중 이번 주 정직하게 써 볼 것 하나와, 경계할 것 하나를 정해 적는다.',
+ref:[]}
+];
+
+/* ---------- 여섯 원리 ---------- */
+const PRINCIPLES=[
+ {k:'reciprocity',t:'상호성',s:'받은 만큼 같은 종류로 돌려주어야 한다',
+  tells:['청하지 않은 선물이나 샘플을 먼저 건넨다','돌려주려 해도 "선물이니 그냥 가지세요"라며 받지 않는다','큰 부탁을 거절하자 곧바로 "그럼 이것만이라도"라고 물러선다','받은 것보다 훨씬 큰 대가를 요구한다','"제가 이만큼 해 드렸잖아요"라고 빚을 상기시킨다'],
+  defense:'모든 호의를 거절하지 말고, 받은 것을 실제 정체에 맞게 다시 정의한다. 진짜 호의라면 언젠가 갚고, 승낙을 끌어내려는 장치였다면 "선물이 아니라 영업 도구"로 보고 갚을 의무에서 벗어난다.',
+  ethical:'먼저 베푸는 것은 좋다. 다만 되돌려 받을 것을 계산하지 말고, 받은 사람이 거절해도 괜찮도록 조건 없이 준다.'},
+ {k:'commitment',t:'일관성',s:'한 번 한 말과 행동에 맞게 계속 행동하려 한다',
+  tells:['사소한 질문에 "네"라는 대답부터 받아 낸다','"그렇게 생각하시죠?"라며 입장을 말하게 한다','직접 쓰고 서명하게 하거나 공개적으로 말하게 한다','결정한 뒤에 조건이 슬그머니 바뀐다(로볼)','"아까 그렇게 말씀하셨잖아요"라고 앞의 말을 근거로 든다'],
+  defense:'원치 않는 일에 갇혔다고 위장이 조이면, 상대에게 지금 무슨 일이 벌어지는지 그대로 말한다. 이미 정당화가 쌓인 결정이라면 "지금 아는 걸 알고 다시 돌아간다면 똑같이 할까?"라고 묻고 첫 느낌을 믿는다.',
+  ethical:'좋은 습관을 작게 시작하고 스스로 선택했다고 느끼게 돕는다. 상대가 원치 않는 방향으로 자기 이미지를 바꾸도록 유도하지 않는다.'},
+ {k:'social',t:'사회적 증거',s:'남들이 하는 것을 보고 무엇이 옳은지 정한다',
+  tells:['"가장 많이 팔린", "○만 명이 선택" 같은 숫자를 앞세운다','리뷰, 별점, 조회수가 지나치게 고르거나 갑자기 늘었다','배우가 연기한 "일반인 인터뷰"가 나온다','"다들 하는데 너만 안 해"라는 압박이 있다','나와 비슷한 사람들만 보이도록 상황이 꾸며져 있다'],
+  defense:'사회적 증거라는 자동 조종은 대체로 믿되, 증거가 조작된 흔적이 보이거나 군중이 서로를 따라 하고 있을 때는 고개를 들어 사실·경험·내 판단과 비교한다.',
+  ethical:'진짜 숫자와 진짜 후기만 보여 준다. 좋은 행동을 퍼뜨리고 싶다면 먼저 행동하는 한 사람이 된다.'},
+ {k:'liking',t:'호감',s:'좋아하는 사람의 부탁은 쉽게 들어준다',
+  tells:['만난 지 얼마 안 됐는데 이상하게 이 사람이 좋다','"저도 그래요" 하며 공통점을 계속 찾아낸다','칭찬이 지나치게 많다','"제가 사장님과 싸워서 해 드릴게요"처럼 내 편인 척한다','친구나 지인의 이름을 내세워 접근한다'],
+  defense:'호감의 원인을 일일이 막지 말고, 예상보다 상대가 너무 좋아졌다는 느낌을 신호로 삼는다. 그 순간 사람과 제안을 마음속에서 떼어 놓고 제안의 장단점만 따진다.',
+  ethical:'진심으로 칭찬하고 진짜 공통점을 나눈다. 관계를 판매 도구로 쓰지 말고, 친구가 거절해도 관계가 흔들리지 않게 한다.'},
+ {k:'authority',t:'권위',s:'권위자의 말은 생각 없이 따르기 쉽다',
+  tells:['직함(박사, 교수, 원장, 검사)을 강조한다','제복, 흰 가운, 정장 같은 옷차림을 앞세운다','고급차, 명품, 화려한 사무실을 보여 준다','"전문가가 말하니 믿으세요"라며 질문을 막는다','사소한 단점을 먼저 인정해 정직해 보이려 한다'],
+  defense:'두 가지를 묻는다. "이 사람은 이 분야의 진짜 전문가인가?"(자격과 관련성) "이 상황에서 얼마나 정직할까?"(그가 얻는 이익). 상징이 보이면 오히려 확인할 때라고 생각한다.',
+  ethical:'내가 가진 실제 전문성만 내세우고, 모르는 분야는 모른다고 말한다. 권위 있는 자리에서는 아랫사람이 질문할 수 있게 한다.'},
+ {k:'scarcity',t:'희소성',s:'얻기 어려운 것, 잃을 것 같은 것을 더 원한다',
+  tells:['"수량 한정", "재고 ○개", "마지막 하나"','"오늘만", "마감 임박", 카운트다운','"지금 아니면 다시는 못 산다"','"다른 분도 보고 계세요"처럼 경쟁자를 언급한다','"비밀", "독점", "금지된" 정보라고 강조한다'],
+  defense:'몸이 달아오르고 서두르고 싶어지면 그 흥분을 멈춤 신호로 쓴다. 진정한 뒤 "갖고 싶은가, 쓰고 싶은가?"를 묻는다. 쓰려고 사는 것이라면 귀하든 흔하든 성능은 같다.',
+  ethical:'실제 마감과 실제 수량만 알린다. 가짜 경쟁이나 가짜 마감으로 생각할 시간을 빼앗지 않는다.'}
+];
+
+/* ---------- 실천 ---------- */
+const PRACTICES=[
+ {k:'log',t:'영향력 일지',s:'오늘 "예"라고 한 순간 하나와 작동한 원리를 적는다',from:'들어가며',freq:'매일'},
+ {k:'pause',t:'예 전에 한 호흡',s:'승낙하기 전 3초 멈추고 "이건 누구의 이익인가?"를 묻는다',from:'들어가며 · 맺음말',freq:'매일'},
+ {k:'anchor',t:'첫 숫자 지우기',s:'"원래 가격", 첫 요구를 지우고 지금 조건만 보고 판단한다',from:'들어가며 · 1장',freq:'매주'},
+ {k:'redefine',t:'선물 다시 정의하기',s:'부담스러운 공짜를 받으면 "선물인가, 영업 도구인가?"를 판정한다',from:'1장',freq:'매주'},
+ {k:'giveclean',t:'조건 없이 먼저 주기',s:'되돌려 받을 생각 없이 작은 호의 하나를 베푼다',from:'1장',freq:'매일'},
+ {k:'stomach',t:'위장 신호 점검',s:'배 속이 조였던 승낙을 떠올리고, 다음엔 상대에게 그대로 말할 문장을 준비한다',from:'2장',freq:'매주'},
+ {k:'goback',t:'다시 돌아간다면',s:'지속 중인 선택 하나에 "지금 알고 다시 고른다면?"을 묻고 첫 느낌을 적는다',from:'2장',freq:'매월'},
+ {k:'smallstart',t:'2분 약속 쓰기',s:'좋은 습관을 2분짜리로 줄여 손으로 쓰고 한 사람에게 알린다',from:'2장',freq:'매주'},
+ {k:'lookup',t:'고개 들기',s:'"다들 한다"는 이유의 선택 하나를 사실·경험·내 판단으로 다시 본다',from:'3장',freq:'매주'},
+ {k:'pointone',t:'한 사람 지목하기',s:'위급할 때 쓸 문장을 소리 내어 연습한다: "○○ 입으신 분, 119에 전화해 주세요"',from:'3장',freq:'매월'},
+ {k:'separate',t:'사람과 제안 분리',s:'지인의 권유를 "모르는 사람이 권해도 할까?"로 다시 판단한다',from:'4장',freq:'매주'},
+ {k:'twoq',t:'권위 두 질문',s:'조언을 따르기 전 "진짜 전문가인가? 그는 무엇을 얻나?"를 적는다',from:'5장',freq:'매주'},
+ {k:'cookie',t:'쿠키 맛은 같다',s:'"한정", "마감"에 끌릴 때 "흔했어도 샀을까?"를 묻고 24시간 기다린다',from:'6장',freq:'매일'},
+ {k:'honest',t:'정직한 설득 점검',s:'이번 주 내가 남을 설득한 장면에서 신호를 부풀리지 않았는지 돌아본다',from:'맺음말',freq:'매주'}
+];
+
+/* ---------- 상황 카드 ---------- */
+const CARDS=[
+ {q:'마트 시식 코너에서 만두 한 조각을 먹었다. 직원이 웃으며 보고 있으니 한 봉지 사야 할 것 같다.',a:'상호성이다. 시식은 정보이면서 동시에 작은 선물이라 빚진 느낌을 만든다. 맛이 정말 좋아서 필요하다면 사고, 아니라면 "맛있네요, 감사합니다" 하고 지나가도 된다. 시식은 판매 도구이지 갚아야 할 선물이 아니다.',p:'reciprocity',ch:'r2'},
+ {q:'길에서 누가 볼펜을 손에 쥐여 주고 "선물이에요"라며 돌려받지 않더니, 곧 후원 서명을 부탁한다.',a:'상호성, 크리슈나 교단의 꽃과 같은 구조다. 청하지 않은 선물도 빚을 만든다. 마음속에서 볼펜을 "모금 도구"로 다시 정의하면 서명하든 안 하든 자유롭다. 정중히 거절하고 볼펜을 돌려줘도 된다.',p:'reciprocity',ch:'r2'},
+ {q:'친구가 "30만 원만 빌려줄래?" 해서 거절했더니 "그럼 5만 원만"이라고 한다. 5만 원은 괜찮아 보인다.',a:'거절 후 양보 기법이다. 상호성(양보에는 양보)과 대비(30만 원 뒤의 5만 원)가 함께 작동한다. 첫 숫자를 지우고 "처음부터 5만 원을 빌려 달라고 했다면 빌려줬을까?"로 판단하자.',p:'reciprocity',ch:'r3'},
+ {q:'학원 상담실에서 1년 프리미엄 패키지 300만 원을 먼저 설명하더니, 망설이자 "그럼 6개월 기본반"을 권한다.',a:'거절 후 양보와 대비가 함께 있다. 비싼 것부터 보여 주는 "위에서 아래로" 판매다. 6개월 기본반이 내게 필요한지, 다른 학원 가격과 비교해 적정한지만 따로 판단하자.',p:'reciprocity',ch:'r3'},
+ {q:'무료 피부 진단을 받고 샘플까지 받았다. 직원이 "이 세트면 고민이 해결돼요"라며 20만 원짜리를 권한다.',a:'상호성이다. 무료 진단과 샘플이 빚을 만든 뒤 큰 구매를 요청하는 구조로, 책의 무료 화재 점검과 같다. 받은 것을 판매 도구로 다시 정의하고, 제품만 놓고 판단하자. 진단은 고맙게 받아도 된다.',p:'reciprocity',ch:'r4'},
+ {q:'길에서 "잠깐 설문 하나만요"에 응했는데, 답을 다 하자 "이런 분께 딱 맞는 프로그램이 있다"며 가입을 권한다.',a:'일관성이다. 설문 답변이 공개적인 약속이 되어, 거절하면 앞의 말과 모순되는 사람처럼 느껴진다. 치알디니의 가짜 설문 사례와 같다. 위장이 조이면 "설문을 영업에 쓰시는 거군요. 관심 없어요"라고 그대로 말하자.',p:'commitment',ch:'c5'},
+ {q:'전화 영업원이 "요즘 잘 지내시죠?" 하고 묻는다. "네, 잘 지내요" 했더니 어려운 이웃 후원을 권한다.',a:'일관성이다. "잘 지낸다"고 말한 직후에는 인색해 보이기 싫어 거절이 어렵다. 실험에서 이 질문이 승낙을 거의 두 배로 늘렸다. 인사와 후원 결정은 별개다. 후원은 단체를 확인한 뒤 내 계획대로 하자.',p:'commitment',ch:'c2'},
+ {q:'온라인 쇼핑몰에서 최저가를 보고 장바구니에 담아 결제까지 갔는데, 마지막에 배송비와 옵션비가 붙어 오히려 비싸졌다.',a:'로볼이다. 싼 조건으로 결정하게 만든 뒤 처음 이유를 빼는 구조다. 이미 정한 결정이 스스로 다리를 키워 그냥 결제하고 싶어진다. 바뀐 최종 가격만 보고 처음부터 다시 비교하자.',p:'commitment',ch:'c4'},
+ {q:'"첫 달 무료" 구독을 시작했다. 해지하려니 "그동안 잘 쓰셨잖아요"라는 안내와 함께 해지 버튼이 깊숙이 숨어 있다.',a:'일관성과 로볼이다. 무료로 시작하게 한 뒤 쓴 경험이 "나는 이 서비스 이용자"라는 이미지를 만든다. "오늘 처음 가입한다면 이 가격에 할까?"를 묻고, 아니라면 해지하자.',p:'commitment',ch:'c4'},
+ {q:'동아리 선배가 "작은 일 하나만" 부탁해서 했더니, 다음엔 행사 준비, 그다음엔 회비 관리까지 맡기려 한다.',a:'문간에 발 들여놓기다. 작은 승낙이 "이 일을 하는 사람"이라는 자기 이미지를 만들어 큰 부탁을 들어주게 한다. 매번 새 부탁을 처음 받는 것처럼 판단하고, 할 수 있는 범위를 미리 말하자.',p:'commitment',ch:'c2'},
+ {q:'비싼 인강을 결제한 뒤 별로라는 걸 알지만 "그래도 좋은 강의야"라고 스스로 이유를 찾고 있다.',a:'일관성이다. 마권을 산 뒤 자기 말이 더 잘 뛸 것 같은 경마장 사람들과 같다. 결정이 새 이유를 만든다. "다시 고른다면 이 강의를 살까?"의 첫 느낌을 믿고, 손해를 인정하는 것도 지혜다.',p:'commitment',ch:'c5'},
+ {q:'친구가 길에서 쓰러진 사람을 봤는데 주변 사람들이 다 그냥 지나가서 "괜찮은가 보다" 하고 지나쳤다고 한다.',a:'사회적 증거와 다원적 무지다. 모두가 서로를 보며 침착한 척하니 응급이 아닌 것처럼 보인다. 직접 "괜찮으세요?"라고 확인하고, 필요하면 한 사람을 지목해 "119에 전화해 주세요"라고 부탁하자.',p:'social',ch:'s2'},
+ {q:'단톡방에서 한 친구가 놀림을 당하는데, 아무도 말리지 않으니 나도 그냥 웃음 이모티콘을 보냈다.',a:'사회적 증거다. 다들 가만있으니 별일 아닌 것처럼 느껴진다. 하지만 실제로는 모두가 서로를 보며 망설이는 중일 수 있다. 먼저 "그만하자"라고 말하는 한 사람이 흐름을 바꾼다.',p:'social',ch:'s2'},
+ {q:'처음 보는 브랜드인데 리뷰가 2만 개, 별점 4.9다. 다 비슷한 짧은 칭찬이다.',a:'사회적 증거다. 리뷰 수는 보통 쓸모 있는 정보지만 조작될 수 있다. 내용이 지나치게 비슷하거나 날짜가 몰려 있으면 오페라의 박수 부대(클라크)를 의심하자. 낮은 별점 리뷰와 외부 평가를 함께 보자.',p:'social',ch:'s4'},
+ {q:'맛집이라는 가게 앞에 긴 줄이 있다. 들어가 보니 안에 빈자리가 꽤 많다.',a:'사회적 증거의 조작일 수 있다. 책에 나온 클럽처럼 줄을 일부러 만들어 인기를 연출한 것이다. 맺음말의 권고처럼, 가짜 신호를 알아챘다면 그 가게에 보상하지 않을 자유가 있다.',p:'social',ch:'e1'},
+ {q:'예능 프로그램에서 웃긴 장면마다 자막과 웃음 효과음이 나온다. 별로 웃기지 않은데 나도 따라 웃게 된다.',a:'사회적 증거다. 녹음된 웃음은 재미없는 농담일수록 효과가 크다. 가짜인 줄 알아도 통한다. 효과음을 끄고 봤을 때도 재미있는지 시험해 보자.',p:'social',ch:'s1'},
+ {q:'반 친구들이 모두 같은 브랜드 패딩을 입는다. 필요 없는데 나만 안 입으면 이상해 보일 것 같다.',a:'사회적 증거, 특히 "나와 비슷한 사람"의 힘이다. 또래의 행동은 가장 강한 기준이 된다. 내가 원하는 게 따뜻한 옷인지, 소속감인지 구분하고, 필요라면 다른 선택지와 비교하자.',p:'social',ch:'s3'},
+ {q:'친한 친구가 화장품 판매를 시작했다며 "나 좀 도와줘"라고 한다. 필요 없는 제품인데 거절하면 서운해할 것 같다.',a:'호감, 타파웨어 파티와 같은 구조다. 제품이 아니라 우정이 구매를 이끈다. 사람과 제안을 분리하자. "응원해! 근데 이건 지금 필요 없어"처럼 관계는 지키고 제안만 거절할 수 있다.',p:'liking',ch:'l1'},
+ {q:'옷 가게 직원이 "고향이 어디세요? 어머, 저도요!" 하더니 계속 칭찬하며 비싼 옷을 권한다.',a:'호감이다. 비슷함과 칭찬은 쉽게 꾸며 낼 수 있다. 생각보다 이 직원이 너무 좋아졌다면 그것이 신호다. 집에 가져가는 건 직원이 아니라 옷이다. 옷의 가격과 필요만 따지자.',p:'liking',ch:'l4'},
+ {q:'좋아하는 아이돌이 광고하는 음료라서 맛도 모르면서 한 박스를 샀다.',a:'호감과 연합이다. 광고는 좋아하는 사람의 이미지를 제품에 옮겨 붙인다. 모델이 매력적이면 차가 더 빨라 보인다는 실험처럼, 제품 자체의 질은 그대로다. 모델을 지우고도 살지 생각해 보자.',p:'liking',ch:'l3'},
+ {q:'친구가 "이 앱에 가입하면 너랑 나 둘 다 포인트 받아"라며 초대 링크를 보냈다.',a:'호감이다. 책의 "친구·가족 할인 명단" 사례와 같다. 서비스가 필요 없는데 친구에게 손해를 줄까 봐 가입하게 된다. 서비스 자체가 내게 필요한지만 보고 판단해도 친구는 이해할 것이다.',p:'liking',ch:'l4'},
+ {q:'중고차 판매원이 "제가 팀장님께 사정해서 특별히 깎아 드릴게요"라며 자리를 비웠다 온다.',a:'호감(협력)이다. 나와 같은 편인 척하며 팀워크를 꾸며 낸다. 착한 경찰, 나쁜 경찰과 같은 구조다. 깎은 가격이 시세 대비 적정한지만 따로 확인하자.',p:'liking',ch:'l2'},
+ {q:'검찰 수사관이라는 사람이 전화로 "계좌가 범죄에 연루됐다"며 안전 계좌로 돈을 옮기라고 한다.',a:'권위, 책의 "은행 감사관" 사기와 같다. 직함과 공식적인 말투만으로도 사람은 따르기 쉽다. 진짜 기관은 전화로 이체를 요구하지 않는다. 끊고 공식 번호로 직접 확인하자.',p:'authority',ch:'a2'},
+ {q:'흰 가운을 입은 사람이 유튜브에서 건강 보조제를 추천한다. 설명란에 구매 링크가 있다.',a:'권위다. 가운은 의사 역 배우의 커피 광고처럼 상징일 수 있다. 두 질문을 하자. 정말 그 분야 전문가인가(자격과 관련성)? 이 추천으로 무엇을 얻나(구매 링크 수익)?',p:'authority',ch:'a3'},
+ {q:'유명 연예인이 투자 앱 광고에서 "저도 이걸로 돈 벌었어요"라고 한다.',a:'권위(관련 없는 권위)와 호감이다. 연예인의 전문성은 연기이지 투자가 아니다. "이 사람은 이 분야 전문가인가?"를 묻자. 투자 정보는 금융 당국에 등록된 업체인지부터 확인한다.',p:'authority',ch:'a3'},
+ {q:'식당 직원이 "이건 오늘 별로예요" 하며 조금 싼 메뉴를 권해 믿음이 갔다. 이어서 비싼 디저트를 추천한다.',a:'권위와 상호성, 웨이터 빈센트의 기술이다. 작은 손해를 보는 척해 정직한 전문가로 보인 뒤 큰 추천을 한다. 디저트는 원래 먹고 싶었는지만 보고 결정하자.',p:'authority',ch:'a3'},
+ {q:'선배가 "원래 이렇게 하는 거야"라며 후배들에게 불합리한 규칙을 지키라고 한다. 다들 따른다.',a:'권위와 사회적 증거다. 밀그램 실험처럼 윗사람의 지시 앞에서 판단을 멈추기 쉽다. "이유를 여쭤봐도 될까요?"라고 정중히 묻는 것은 불순종이 아니라 분별이다.',p:'authority',ch:'a1'},
+ {q:'홈쇼핑에서 "매진 임박! 남은 수량 50개"라는 자막이 깜빡이고 쇼호스트가 숨 가쁘게 말한다.',a:'희소성(수량 한정과 마감)이다. 서두르게 만들어 생각할 시간을 빼앗는다. 가슴이 뛰는 것을 멈춤 신호로 쓰자. 매진되면 다음 방송이나 다른 판매처가 있을 가능성이 크다.',p:'scarcity',ch:'k1'},
+ {q:'운동화 한정판 드롭에 실패했다. 갑자기 리셀가로라도 사고 싶어진다.',a:'희소성, 특히 경쟁과 갑자기 생긴 부족이다. 쿠키 실험처럼 남이 원해서 줄어든 것이 가장 귀해 보인다. "갖고 싶은가, 신고 싶은가?"를 묻자. 신는 목적이라면 다른 신발도 똑같이 잘 걷는다.',p:'scarcity',ch:'k3'},
+ {q:'중고 거래 판매자가 "다른 분도 지금 사겠다고 연락 왔어요. 30분 안에 결정해 주세요"라고 한다.',a:'희소성과 경쟁이다. 형 리처드의 같은 시간 약속, 부동산의 "다른 손님" 전화와 같다. 미리 정한 최대 가격을 넘으면 놓쳐도 괜찮다고 생각하자. 경쟁은 소유욕만 키울 뿐 물건의 가치는 그대로다.',p:'scarcity',ch:'k4'},
+ {q:'"삭제되기 전에 보세요! 아무도 말 안 해 주는 공부법"이라는 영상 제목에 손이 간다.',a:'희소성(정보의 희소성)이다. 금지되거나 독점이라는 정보는 듣기도 전에 더 믿게 된다. 소고기 실험에서 "우리만 아는 정보"는 주문을 여섯 배로 늘렸다. 내용 자체를 다른 자료와 비교해 검증하자.',p:'scarcity',ch:'k2'},
+ {q:'부모님이 어떤 게임을 하지 말라고 하시니 원래 별 관심 없던 그 게임이 더 하고 싶어졌다.',a:'희소성(심리적 반발)이다. 자유가 제한되면 그것을 더 원하게 된다. 로미오와 줄리엣 효과처럼 막힌 것이 매력의 이유일 수 있다. "막지 않았어도 이걸 원했을까?"를 물어보자.',p:'scarcity',ch:'k2'},
+ {q:'전시회가 "이번 주말까지만"이라는 말을 듣고, 원래 관심 없던 전시를 꼭 가야 할 것 같다.',a:'희소성(마감 시한)이다. 치알디니의 모르몬 성전 이야기와 같다. 곧 없어진다는 사실 하나가 매력의 전부일 수 있다. 마감이 없어도 가고 싶었을지 생각해 보자. 그래도 가고 싶다면 즐겁게 가면 된다.',p:'scarcity',ch:'k1'},
+ {q:'교회 행사 후원 모금에서 "지금까지 30가정이 참여했어요!"라고 안내한다. 나도 해야 할 것 같다.',a:'사회적 증거다. 진짜 숫자라면 정직한 정보이고 나쁜 것이 아니다. 다만 참여 여부는 숫자가 아니라 목적과 내 형편으로 결정하자. 반대로 모금하는 입장이라면 숫자를 부풀리지 않는 것이 신뢰를 지킨다.',p:'social',ch:'s1'},
+ {q:'전도 집회 강사가 "지금 결단하지 않으면 다시는 기회가 없을지 모릅니다"라고 반복한다.',a:'희소성(마감)과 권위가 함께 쓰일 수 있다. 진지한 결단은 중요하지만, 서두름과 압박 자체가 판단을 흐린다. 정말 옳은 결정이라면 내일 차분히 생각해도 여전히 옳을 것이다. 믿을 만한 사람과 이야기해 보자.',p:'scarcity',ch:'k4'}
+];
+
+/* ---------- 오늘의 생각 ---------- */
+const THOUGHTS=[
+ ['지름길은 어리석은 게 아니다. 위조된 신호가 문제다.','들어가며'],
+ ['"때문에"라는 말 하나가 이유 없는 부탁도 통하게 했다.','들어가며'],
+ ['같은 물도 앞에 무엇을 만졌느냐에 따라 뜨겁고 차갑다.','들어가며'],
+ ['착취자는 힘을 쓰지 않는다. 이미 있는 원리를 빌린다.','들어가며'],
+ ['받을 의무가 있기에, 누구에게 빚질지 고를 수 없다.','1장 · 상호성'],
+ ['빚진 느낌은 호감보다 강하다.','1장 · 상호성'],
+ ['작은 선물은 큰 대가로 돌아오기 쉽다.','1장 · 상호성'],
+ ['첫 요구를 지우고 두 번째 요구만 보라.','1장 · 상호성'],
+ ['호의는 호의로 갚되, 속임수는 갚을 의무가 없다.','1장 · 상호성'],
+ ['결정하고 나면 내 말이 더 잘 뛸 것 같다.','2장 · 일관성'],
+ ['작은 "네"가 "나는 이런 사람"을 만든다.','2장 · 일관성'],
+ ['쓴 것, 말한 것, 고생한 것, 스스로 고른 것은 오래 남는다.','2장 · 일관성'],
+ ['결정은 스스로 새 다리를 키운다.','2장 · 일관성'],
+ ['위장이 조이면 지금 벌어지는 일을 그대로 말하라.','2장 · 일관성'],
+ ['"다시 돌아간다면?"의 첫 1초를 믿어라.','2장 · 일관성'],
+ ['조심할 것은 일관성이 아니라 어리석은 일관성이다.','2장 · 일관성'],
+ ['가짜 웃음소리도 재미없는 농담을 웃기게 만든다.','3장 · 사회적 증거'],
+ ['사람들이 돕지 않는 건 냉정해서가 아니라 확신이 없어서다.','3장 · 사회적 증거'],
+ ['도움이 필요하면 군중이 아니라 한 사람을 가리켜라.','3장 · 사회적 증거'],
+ ['나와 비슷한 사람이 하면 나도 할 수 있을 것 같다.','3장 · 사회적 증거'],
+ ['자동 조종을 믿되, 가끔 고개를 들어 창밖을 보라.','3장 · 사회적 증거'],
+ ['예상보다 이 사람이 너무 좋아졌다면, 그게 신호다.','4장 · 호감'],
+ ['집에 가져가는 건 판매원이 아니라 물건이다.','4장 · 호감'],
+ ['공동의 목표가 적을 친구로 만든다.','4장 · 호감'],
+ ['이기면 "우리", 지면 "걔네". 남의 성공으로 나를 빛내지 말자.','4장 · 호감'],
+ ['자동 복종 상태에서는 상징이 실체를 대신한다.','5장 · 권위'],
+ ['진짜 전문가인가? 그는 무엇을 얻나?','5장 · 권위'],
+ ['사소한 단점 고백은 큰 주장을 믿게 하는 기술일 수 있다.','5장 · 권위'],
+ ['양심과 부딪히는 지시 앞에서 멈추는 것은 분별이다.','5장 · 권위'],
+ ['사람은 얻는 것보다 잃는 것에 더 크게 움직인다.','6장 · 희소성'],
+ ['막으면 더 원한다. 원하는 게 그것인지, 자유인지 물어라.','6장 · 희소성'],
+ ['한 번 준 자유는 싸움 없이 돌려받을 수 없다.','6장 · 희소성'],
+ ['이긴 사람이 후회하고 진 사람이 안도한다면 경쟁을 의심하라.','6장 · 희소성'],
+ ['가슴이 뛰면 멈춤 신호다.','6장 · 희소성'],
+ ['귀한 쿠키도 맛은 같았다.','6장 · 희소성'],
+ ['방어는 의심이 아니라 분별이다.','맺음말'],
+ ['정직한 신호를 주는 사람은 적이 아니라 협력자다.','맺음말']
+];
+const CFG={key:'seoldeuk-bangpae-v1',title:'설득 방패',kicker:'Influence · Robert Cialdini',sub:'딸깍, 재생 되기 전에 한 호흡. 여섯 원리를 알아보고, 쓸 땐 정직하게 쓴다.',
+ cardStat:'이해한 퀴즈',intentPh:'예: 오늘 "예" 하기 전에 3초 멈추기',readTitle:'책 읽기',readHelp:'들어가며부터 맺음말까지 한 장씩 풀어 썼다. 장마다 질문에 답하고, 실천 하나를 오늘 할 일로 가져간다.',
+ picsLabel:'실험과 사례',noteLabel:'주의 노트',practiceHelp:'매일 것은 오늘, 매주 것은 이번 주 안에, 매월 것은 이번 달 안에 한 번 하면 된다.',
+ cardHead:'상황 퀴즈',cardHelp:'상황을 읽고 어떤 원리가 작동하는지 먼저 고른다. 맞힌 것과 틀린 것은 기록 탭에서 원리별로 보인다.'};
+/* ---------- 공통 도우미 ---------- */
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>{d=new Date(d);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
+const parseD=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const addD=(s,n)=>{const d=parseD(s);d.setDate(d.getDate()+n);return ymd(d);};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const today=()=>ymd(Date.now());
+const clone=o=>JSON.parse(JSON.stringify(o));
+function weekKey(d=today()){const dt=parseD(d);const day=(dt.getDay()+6)%7;dt.setDate(dt.getDate()-day);return ymd(dt);}
+let toastT;function toast(m,ms=2600){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,ms);}
+function dialog(html,bind){$('ovl').innerHTML=`<div class="overlay"><div class="dialog" role="dialog" aria-modal="true">${html}</div></div>`;const ov=$('ovl').firstChild;ov.onclick=e=>{if(e.target===ov||e.target.hasAttribute('data-close'))closeDialog();};bind&&bind(ov);}
+function closeDialog(){$('ovl').innerHTML='';}
+function armed(btn,label,fn){if(btn.dataset.arm){fn();return;}btn.dataset.arm=1;const old=btn.textContent;btn.textContent=label;setTimeout(()=>{if(btn.isConnected){delete btn.dataset.arm;btn.textContent=old;}},3000);}
+const PARTSHORT=b=>{const t=BOOKS[b].t;return t.split(' · ')[0];};
+function chNo(l){const same=L.filter(x=>x.b===l.b);return same.length>1?`${PARTSHORT(l.b)} ${same.indexOf(l)+1}`:PARTSHORT(l.b);}
+
+/* ---------- 저장 (이 기기 + 아이폰·맥 동기화, 계정별 개인 공간) ---------- */
+let DOCS={};
+try{DOCS=JSON.parse(localStorage.getItem(CFG.key)||'{}').docs||{};}catch(e){}
+function defState(){return {read:{},notes:{},days:{},cards:{},weekly:{},last:null};}
+if(!DOCS.state)DOCS.state=Object.assign(defState(),{updatedAt:0});
+DOCS.state=Object.assign(defState(),DOCS.state);
+const ST=()=>DOCS.state;
+let COL=null;const wq={},wt={};
+function saveLocal(){try{localStorage.setItem(CFG.key,JSON.stringify({docs:DOCS}));}catch(e){}}
+function touch(name='state'){const d=DOCS[name];if(!d)return;d.updatedAt=Date.now();saveLocal();push(name);}
+function push(name){if(!COL)return;clearTimeout(wt[name]);wt[name]=setTimeout(()=>{const body=DOCS[name]?clone(DOCS[name]):null;wq[name]=(wq[name]||Promise.resolve()).then(()=>body?COL.doc(name).set(body):COL.doc(name).delete()).then(()=>{$('syncTxt').textContent='아이폰·맥 동기화';}).catch(()=>{$('syncTxt').textContent='동기화 실패 · 이 기기에는 저장됨';});},600);}
+function removeDoc(name){delete DOCS[name];saveLocal();if(COL){clearTimeout(wt[name]);wq[name]=(wq[name]||Promise.resolve()).then(()=>COL.doc(name).delete()).catch(()=>{});}}
+(async()=>{try{
+  const user=await (window.claude?.use?.('user')??Promise.resolve(null));const id=user?await user.id():null;
+  const db=await (window.claude?.use?.('db')??Promise.resolve(null));if(!db||!id)return;
+  COL=db.collection('data/users/'+id);let first=true;
+  COL.onSnapshot(qs=>{let changed=false;const seen=new Set();
+    for(const d of qs.docs){seen.add(d.id);const r=d.data();if(!r)continue;const l=DOCS[d.id];if(!l||(r.updatedAt||0)>(l.updatedAt||0)){DOCS[d.id]=clone(r);changed=true;}}
+    for(const ch of qs.docChanges()){if(ch.type==='removed'&&!first&&DOCS[ch.doc.id]){delete DOCS[ch.doc.id];changed=true;}}
+    if(first){first=false;for(const k in DOCS){const r=qs.docs.find(x=>x.id===k)?.data();if(!seen.has(k)?(DOCS[k].updatedAt||0)>0:(r&&(DOCS[k].updatedAt||0)>(r.updatedAt||0)))push(k);}}
+    $('syncTxt').textContent='아이폰·맥 동기화';
+    if(changed){DOCS.state=Object.assign(defState(),DOCS.state);saveLocal();safeRender();}
+  },()=>{$('syncTxt').textContent='동기화 끊김 · 이 기기에는 저장됨';});
+}catch(e){}})();
+let pendingRender=false;
+function safeRender(){const a=document.activeElement;if(a&&['TEXTAREA','INPUT'].includes(a.tagName)){pendingRender=true;return;}render();}
+document.addEventListener('focusout',()=>setTimeout(()=>{const a=document.activeElement;if(pendingRender&&!(a&&['TEXTAREA','INPUT'].includes(a.tagName))){pendingRender=false;render();}},250));
+
+/* ---------- 계산 ---------- */
+function day(d=today()){const s=ST();if(!s.days[d])s.days[d]={p:[]};return s.days[d];}
+function did(k,d=today()){return (ST().days[d]?.p||[]).includes(k);}
+function toggleP(k,d=today()){const r=day(d);const i=r.p.indexOf(k);i>=0?r.p.splice(i,1):r.p.push(k);touch();}
+function streak(){let n=0;let d=today();const has=x=>(ST().days[x]?.p||[]).length||Object.values(ST().days[x]?.h||{}).some(v=>v==='done'||v==='two'||v==='kept')||logs().some(g=>g.d===x);if(!has(d))d=addD(d,-1);while(has(d)){n++;d=addD(d,-1);}return n;}
+function weekDone(k){const t=today();for(let i=0;i<7;i++)if(did(k,addD(t,-i)))return true;return false;}
+function monthDone(k){const m=today().slice(0,7);return Object.keys(ST().days).some(d=>d.startsWith(m)&&did(k,d));}
+function pDone(p){return p.freq==='매일'?did(p.k):p.freq==='매주'?weekDone(p.k):monthDone(p.k);}
+function logs(){let a=[];for(const k in DOCS)if(k.startsWith('g_'))a=a.concat(DOCS[k].list||[]);return a.sort((x,y)=>y.t-x.t);}
+function addLog(e){const k='g_'+e.d.slice(0,7);if(!DOCS[k])DOCS[k]={list:[],updatedAt:0};DOCS[k].list.push(e);touch(k);}
+function delLog(id){for(const k in DOCS)if(k.startsWith('g_')){const n=DOCS[k].list.length;DOCS[k].list=DOCS[k].list.filter(x=>x.id!==id);if(DOCS[k].list.length!==n)touch(k);}}
+function readCount(b){return L.filter(l=>(b===undefined||l.b===b)&&ST().read[l.id]).length;}
+function nextUnread(){return L.find(l=>!ST().read[l.id])||null;}
+function knownCards(){return Object.values(ST().cards).filter(c=>c.ok).length;}
+
+/* ---------- 화면 ---------- */
+let VIEW='home',LID=null;
+function render(){const v=$('view');v.innerHTML='';({home:rHome,read:rRead,practice:rPractice,qa:rQA,log:rLog})[VIEW]?.(v);document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===VIEW));}
+function go(v,lid){VIEW=v;LID=lid??null;render();window.scrollTo(0,0);}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+
+function bar(p){return `<span class="pbar"><i style="width:${Math.round(p*100)}%"></i></span>`;}
+function rHome(v){const s=ST(),t=today(),rec=s.days[t]||{p:[]};const di=Math.floor(Date.now()/864e5);const th=THOUGHTS[di%THOUGHTS.length];const nx=nextUnread();
+  const dailies=PRACTICES.filter(p=>p.freq==='매일');const doneN=dailies.filter(p=>did(p.k)).length;
+  v.innerHTML=`<div class="page"><div class="col">
+  <section class="hall" aria-label="진도">
+    <div class="kicker">${CFG.kicker}</div><h1>${CFG.title}</h1><div class="sub">${CFG.sub}</div>
+    <div class="parts">${BOOKS.map(B=>{const tot=L.filter(l=>l.b===B.n).length;if(!tot)return '';const r=readCount(B.n);return `<button class="part" data-b="${B.n}"><span>${esc(PARTSHORT(B.n))}</span>${bar(r/tot)}<small>${r}/${tot}</small></button>`;}).join('')}</div>
+    <div class="stats"><div><small>읽은 장</small><b>${readCount()}/${L.length}</b></div><div><small>실천 연속</small><b>${streak()}일</b></div><div><small>${CFG.cardStat}</small><b>${knownCards()}/${CARDS.length}</b></div></div>
+  </section>
+  ${SPECIAL.homeTop?SPECIAL.homeTop():''}
+  <section class="card"><div class="lbl"><span>오늘 할 한 가지</span>${rec.intentDone?'<span class="tag ok">해냈다</span>':''}</div>
+    <input class="txt" id="intentIn" maxlength="120" placeholder="${CFG.intentPh}" value="${esc(rec.intent||'')}">
+    <p class="help" style="margin-top:6px">읽기에서 각 장의 실천을 누르면 여기로 들어온다.</p>
+    ${rec.intent?`<div class="row" style="margin-top:8px"><button class="btn sm ${rec.intentDone?'acc2':''}" id="intentDone">${rec.intentDone?'해냈다 ✓':'해냈으면 누른다'}</button></div>`:''}
+  </section>
+  <section class="card"><div class="lbl"><span>오늘의 실천</span><span>${doneN}/${dailies.length}</span></div>
+    ${dailies.map(p=>`<div class="ptk"><button class="chk ${did(p.k)?'on':''}" data-p="${p.k}" aria-pressed="${did(p.k)}" aria-label="${esc(p.t)}">${did(p.k)?'✓':''}</button><div class="tx"><b>${esc(p.t)}</b><small>${esc(p.s)}</small></div><span class="src">${esc(p.from)}</span></div>`).join('')}
+  </section>
+  </div><div class="col">
+  ${SPECIAL.homeCards()}
+  <section class="card"><div class="lbl"><span>오늘의 생각</span></div><p class="quote">${esc(th[0])}<cite>${esc(th[1])}</cite></p></section>
+  ${nx?`<button class="btn wide" id="nextRead">이어 읽기 · ${esc(chNo(nx))} ${esc(nx.t)}</button>`:'<section class="card"><p class="help"><b>책을 다 읽었다.</b> 이제 카드로 꼭꼭 씹고 실천을 이어 간다.</p></section>'}
+  </div></div>`;
+  v.querySelectorAll('.part').forEach(b=>b.onclick=()=>{VIEW='read';LID=null;render();setTimeout(()=>$('bk'+b.dataset.b)?.scrollIntoView({behavior:'smooth'}),30);});
+  let iT;$('intentIn').oninput=e=>{clearTimeout(iT);iT=setTimeout(()=>{day().intent=e.target.value.trim();touch();},600);};
+  $('intentIn').onchange=()=>render();
+  $('intentDone')&&($('intentDone').onclick=()=>{const r=day();r.intentDone=!r.intentDone;touch();render();if(r.intentDone)toast('해냈다');});
+  v.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{toggleP(b.dataset.p);render();});
+  SPECIAL.bindHome(v);
+  $('nextRead')&&($('nextRead').onclick=()=>go('read',nx.id));
+}
+
+/* ---------- 읽기 ---------- */
+function rRead(v){if(LID){rLesson(v,LID);return;}
+  v.innerHTML=`<div style="max-width:760px;margin:0 auto">
+  <section class="card"><h2>${CFG.readTitle}</h2><p class="help">${CFG.readHelp}</p>
+   <div style="margin-top:12px">${bar(readCount()/L.length)}</div><p class="help" style="margin-top:6px">${readCount()} / ${L.length}장 읽음</p></section>
+  ${BOOKS.map(B=>{const ls=L.filter(l=>l.b===B.n);if(!ls.length)return '';return `<div class="bookttl" id="bk${B.n}">${esc(B.t)}</div><p class="booksub">${esc(B.s)}</p>${ls.map((l,i)=>`<button class="lsn" data-l="${l.id}"><span class="no">${ls.length>1?i+1:'·'}</span><span class="tt">${esc(l.t)}<small>${esc(l.one)}</small></span>${ST().read[l.id]?'<span class="rd">읽음</span>':''}</button>`).join('')}`;}).join('')}
+  </div>`;
+  v.querySelectorAll('.lsn').forEach(b=>b.onclick=()=>go('read',b.dataset.l));}
+function rLesson(v,id){const l=L.find(x=>x.id===id);const i=L.indexOf(l);const s=ST();const nt=s.notes[id]||{};const prev=L[i-1],next=L[i+1];
+  v.innerHTML=`<article class="reader">
+   <div class="head"><button class="btn ghost sm" id="back">← 목차</button><div class="crumb" style="margin-top:10px">${esc(BOOKS[l.b].t)}</div><h1>${esc(l.t)}</h1><p class="one">${esc(l.one)}</p></div>
+   <section class="card body">${l.body}</section>
+   ${(l.pics||[]).length?`<section class="card"><div class="lbl"><span>${CFG.picsLabel}</span></div>${l.pics.map(p=>{const [a,...b]=p.split(' · ');return `<div class="pic"><span class="ic">✦</span><div><b>${esc(a)}</b>${b.length?` · ${esc(b.join(' · '))}`:''}</div></div>`;}).join('')}</section>`:''}
+   ${l.note?`<section class="card note"><div class="lbl"><span>${CFG.noteLabel}</span></div><p>${esc(l.note)}</p></section>`:''}
+   <section class="card"><div class="lbl"><span>꼭꼭 씹기 · 질문</span><span class="help" id="saved"></span></div>
+    ${l.q.map((q,qi)=>`<div class="qa"><b>${esc(q)}</b><textarea class="txt" data-q="q${qi}" rows="2" placeholder="내 생각을 적는다">${esc(nt['q'+qi]||'')}</textarea></div>`).join('')}
+    <div class="qa"><b>이 장에서 남은 한 줄</b><textarea class="txt" data-q="my" rows="2" placeholder="내 말로 다시 쓴 핵심">${esc(nt.my||'')}</textarea></div></section>
+   <section class="card actcard"><div class="lbl"><span>이 장의 실천</span></div><p style="margin:0 0 10px">${esc(l.act)}</p><button class="btn acc2 sm" id="toIntent">오늘 할 한 가지로 정하기</button></section>
+   <button class="btn ${s.read[id]?'':'pri'} wide" id="readBtn">${s.read[id]?'읽음으로 표시됨 · 취소':'다 읽었다'}</button>
+   <div class="navrow">${prev?`<button class="btn sm" data-go="${prev.id}">← 이전 장</button>`:'<span></span>'}${next?`<button class="btn sm" data-go="${next.id}">다음 장 →</button>`:'<span></span>'}</div>
+  </article>`;
+  $('back').onclick=()=>go('read');
+  let qT;v.querySelectorAll('textarea[data-q]').forEach(ta=>ta.oninput=()=>{clearTimeout(qT);qT=setTimeout(()=>{s.notes[id]=Object.assign({},s.notes[id],{[ta.dataset.q]:ta.value,t:Date.now()});touch();$('saved').textContent='저장됨';},700);});
+  $('readBtn').onclick=()=>{if(s.read[id])delete s.read[id];else s.read[id]=Date.now();touch();if(s.read[id]&&next){toast('읽었다. 다음 장으로');go('read',next.id);}else render();};
+  $('toIntent').onclick=()=>{day().intent=l.act;day().intentDone=false;touch();toast('오늘 탭에 담았다');};
+  v.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go('read',b.dataset.go));
+}
+
+/* ---------- 실천 ---------- */
+function rPractice(v){
+  v.innerHTML=`<div class="page"><div class="col">
+  ${SPECIAL.practiceTop?SPECIAL.practiceTop():''}
+  <section class="card"><h2>책에서 나온 실천 ${PRACTICES.length}가지</h2><p class="help" style="margin-bottom:6px">${CFG.practiceHelp}</p>
+   ${PRACTICES.map(p=>{const dn=pDone(p);return `<div class="ptk"><button class="chk ${dn?'on':''}" data-p="${p.k}" aria-pressed="${dn}" aria-label="${esc(p.t)}">${dn?'✓':''}</button><div class="tx"><b>${esc(p.t)}</b> <span class="tag no">${p.freq}</span><small>${esc(p.s)}</small></div><span class="src">${esc(p.from)}</span></div>`;}).join('')}</section>
+  </div><div class="col">${SPECIAL.practiceCards()}</div></div>`;
+  v.querySelectorAll('.ptk [data-p]').forEach(b=>b.onclick=()=>{const p=PRACTICES.find(x=>x.k===b.dataset.p);if(p.freq==='매일'||did(p.k)||!pDone(p))toggleP(p.k);else toast(p.freq==='매주'?'이번 주에 이미 했다':'이번 달에 이미 했다');render();});
+  SPECIAL.bindPractice(v);
+}
+
+/* ---------- 카드 ---------- */
+let QI=null,QSHOW=false,QF='all',QPICK=null;
+function rQA(v){const s=ST();const list=CARDS.map((c,i)=>Object.assign({i},c)).filter(c=>QF==='all'||(QF==='ok'?s.cards[c.i]?.ok:!s.cards[c.i]?.ok));
+  if(QI===null||!CARDS[QI])QI=list.length?list[0].i:0;const c=CARDS[QI];const cs=s.cards[QI]||{};const ch=L.find(l=>l.id===c.ch);
+  v.innerHTML=`<div class="page"><div class="col">
+  <section class="card"><div class="lbl"><span>${CFG.cardHead}</span><span class="tag ${cs.ok?'ok':'no'}">${cs.ok?'이해했다':'아직'}</span></div>
+   <div class="flash"><div class="qq">${esc(c.q)}</div>
+    ${SPECIAL.cardGuess?SPECIAL.cardGuess(c,cs):`<div class="qa"><b style="font-size:13px;color:var(--mute)">먼저 내 생각을 써 본다</b><textarea class="txt" id="mine" rows="3" placeholder="책의 답을 보기 전에 써 본다">${esc(cs.mine||'')}</textarea></div>`}
+    ${QSHOW?`<div class="aa">${esc(c.a)}</div>${ch?`<button class="btn ghost sm" id="toCh" style="align-self:flex-start">관련 장 · ${esc(ch.t)} →</button>`:''}`:`<button class="btn" id="showA">책의 답 보기</button>`}
+   </div>
+   <div class="row" style="margin-top:12px"><button class="btn ${cs.ok?'acc2':''}" id="okBtn">${cs.ok?'이해했다 ✓':'이제 이해했다'}</button><button class="btn" id="nextQ">다음 카드</button><button class="btn ghost" id="randQ">무작위</button></div>
+  </section>
+  <p class="help" style="padding:0 4px">${CFG.cardHelp}</p>
+  </div><div class="col">
+  <section class="card"><div class="lbl"><span>카드 ${CARDS.length}장</span><span>${knownCards()} 이해</span></div>
+   <div class="row" style="margin-bottom:8px">${[['all','전체'],['no','아직'],['ok','이해함']].map(([k,t])=>`<button class="chip ${QF===k?'on':''}" data-f="${k}">${t}</button>`).join('')}</div>
+   <div class="cardlist">${list.map(x=>`<button data-i="${x.i}" style="${x.i===QI?'font-weight:700':''}"><span class="t">${esc(x.q)}</span>${s.cards[x.i]?.ok?'<span class="tag ok">✓</span>':''}</button>`).join('')||'<p class="help">해당하는 카드가 없다.</p>'}</div></section>
+  </div></div>`;
+  let mT;$('mine')&&($('mine').oninput=e=>{clearTimeout(mT);mT=setTimeout(()=>{s.cards[QI]=Object.assign({},s.cards[QI],{mine:e.target.value});touch();},700);});
+  $('showA')&&($('showA').onclick=()=>{QSHOW=true;render();});
+  $('toCh')&&($('toCh').onclick=()=>go('read',ch.id));
+  $('okBtn').onclick=()=>{s.cards[QI]=Object.assign({},s.cards[QI],{ok:!cs.ok,t:Date.now()});touch();render();};
+  const moveTo=i=>{QI=i;QSHOW=false;QPICK=null;render();};
+  $('nextQ').onclick=()=>{const idx=list.findIndex(x=>x.i===QI);const nx=list[(idx+1)%Math.max(1,list.length)];moveTo(nx?nx.i:0);};
+  $('randQ').onclick=()=>{const pool=CARDS.map((_,i)=>i).filter(i=>!s.cards[i]?.ok);const arr=pool.length?pool:CARDS.map((_,i)=>i);moveTo(arr[Math.floor(Math.random()*arr.length)]);};
+  v.querySelectorAll('.cardlist [data-i]').forEach(b=>b.onclick=()=>moveTo(+b.dataset.i));
+  v.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{QF=b.dataset.f;QI=null;QSHOW=false;QPICK=null;render();});
+  SPECIAL.bindCard&&SPECIAL.bindCard(v,c,cs);
+}
+
+/* ---------- 기록 ---------- */
+let CALM=null;
+function rLog(v){const s=ST(),t=today();if(!CALM)CALM=t.slice(0,7);const [Y,M]=CALM.split('-').map(Number);const off=new Date(Y,M-1,1).getDay(),dim=new Date(Y,M,0).getDate();
+  let cal='';['일','월','화','수','목','금','토'].forEach(h=>cal+=`<div class="h">${h}</div>`);for(let i=0;i<off;i++)cal+='<div></div>';
+  const G=logs();
+  for(let d=1;d<=dim;d++){const k=`${CALM}-${pad(d)}`;const n=(s.days[k]?.p||[]).length+Object.values(s.days[k]?.h||{}).filter(v=>v==='done'||v==='two'||v==='kept').length+G.filter(g=>g.d===k).length;cal+=`<div class="d ${n>=5?'l3':n>=3?'l2':n>=1?'l1':''} ${k===t?'today':''}" title="${k} ${n}">${d}</div>`;}
+  const notes=Object.entries(s.notes).filter(([id,n])=>n.my||n.q0||n.q1).sort((a,b)=>(b[1].t||0)-(a[1].t||0));
+  v.innerHTML=`<div class="page"><div class="col">
+  <section class="card"><div class="lbl"><button class="btn ghost sm" id="cP" aria-label="이전 달">‹</button><span style="color:var(--ink);font-size:14px">${Y}년 ${M}월</span><button class="btn ghost sm" id="cN" aria-label="다음 달">›</button></div><div class="cal">${cal}</div>
+   <p class="help" style="margin-top:8px">진할수록 그날 실천과 기록이 많다. 연속 ${streak()}일.</p></section>
+  ${SPECIAL.logCards()}
+  <section class="card"><div class="lbl"><span>백업</span></div><p class="help" style="margin-bottom:8px">이 판은 기록을 이 기기에만 저장한다. 다른 기기로 옮길 때는 백업 복사 → 그 기기에서 복원.</p>
+   <div class="row"><button class="btn sm" id="bkC">백업 복사</button><button class="btn sm" id="bkR">복원</button></div><textarea class="txt" id="bkT" rows="3" hidden placeholder="백업 글자를 붙여넣고 복원을 다시 누른다" style="margin-top:8px"></textarea></section>
+  </div><div class="col">
+  ${SPECIAL.logList()}
+  <section class="card"><div class="lbl"><span>내가 꼭꼭 씹은 장</span><span>${notes.length}</span></div>${notes.length?notes.map(([id,n])=>{const l=L.find(x=>x.id===id);return l?`<div class="entry"><div class="meta"><span>${esc(l.t)}</span><button class="x" data-open="${id}">열기</button></div><div class="tx">${esc(n.my||n.q0||n.q1)}</div></div>`:'';}).join(''):'<p class="help">읽기에서 질문에 답하면 여기 모인다.</p>'}</section>
+  </div></div>`;
+  $('cP').onclick=()=>{CALM=ymd(new Date(Y,M-2,1)).slice(0,7);render();};$('cN').onclick=()=>{CALM=ymd(new Date(Y,M,1)).slice(0,7);render();};
+  v.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>go('read',b.dataset.open));
+  v.querySelectorAll('[data-gdel]').forEach(b=>b.onclick=()=>armed(b,'정말?',()=>{delLog(b.dataset.gdel);render();}));
+  $('bkC').onclick=async()=>{const tx=JSON.stringify(DOCS);try{await navigator.clipboard.writeText(tx);toast('백업을 복사했다');}catch(e){const ta=$('bkT');ta.hidden=false;ta.value=tx;ta.select();toast('선택된 글자를 직접 복사한다');}};
+  $('bkR').onclick=()=>{const ta=$('bkT');if(ta.hidden||!ta.value.trim()){ta.hidden=false;ta.value='';ta.focus();return;}try{const r=JSON.parse(ta.value);if(!r.state)throw 0;for(const k in r){DOCS[k]=r[k];touch(k);}DOCS.state=Object.assign(defState(),DOCS.state);render();toast('복원했다');}catch(e){toast('백업 글자를 읽지 못했다');}};
+  SPECIAL.bindLog&&SPECIAL.bindLog(v);
+}
+document.addEventListener('dblclick',e=>{if(!['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))e.preventDefault();},{passive:false});
+/* ---------- 설득 방패 · 영향력 일지, 원리 카드, 원리 맞히기 ---------- */
+const PN=k=>(PRINCIPLES.find(p=>p.k===k)||{t:k}).t;
+const IOUTS=[['fell','넘어갔다'],['caught','알아채고 멈췄다'],['refused','거절했다'],['honest','정직하게 썼다']];
+const outName=k=>(IOUTS.find(x=>x[0]===k)||[,''])[1];
+let IP=null,IO=null,IDRAFT='';
+const weekLogs=()=>{const w=weekKey();return logs().filter(g=>g.d>=w);};
+function infForm(){const wl=weekLogs();const cau=wl.filter(g=>g.out==='caught'||g.out==='refused').length;
+ return `<section class="card"><div class="lbl"><span>영향력 일지</span><span>이번 주 ${wl.length}건 · 알아챔 ${cau}</span></div>
+  <p class="help" style="margin-bottom:8px">오늘 누가 나를 움직였거나, 내가 누구를 움직인 순간 하나. 이름을 붙이면 다음엔 보인다.</p>
+  <div class="sublbl">작동한 원리</div><div class="row">${PRINCIPLES.map(p=>`<button class="chip ${IP===p.k?'on':''}" data-ip="${p.k}">${esc(p.t)}</button>`).join('')}</div>
+  <div class="sublbl">상황</div><textarea class="txt" id="iTx" rows="2" placeholder="예: 편의점에서 &quot;오늘까지만 1+1&quot;이라 원래 안 살 걸 집었다">${esc(IDRAFT)}</textarea>
+  <div class="sublbl">그래서</div><div class="row">${IOUTS.map(([k,t])=>`<button class="chip ${IO===k?'on':''}" data-io="${k}">${t}</button>`).join('')}</div>
+  <button class="btn pri wide" id="iSave" style="margin-top:12px">기록한다</button></section>`;}
+function bindInf(v){
+  v.querySelectorAll('[data-ip]').forEach(b=>b.onclick=()=>{IP=IP===b.dataset.ip?null:b.dataset.ip;render();});
+  v.querySelectorAll('[data-io]').forEach(b=>b.onclick=()=>{IO=IO===b.dataset.io?null:b.dataset.io;render();});
+  $('iTx').oninput=e=>IDRAFT=e.target.value;
+  $('iSave').onclick=()=>{const tx=IDRAFT.trim();if(!tx){toast('상황을 한 줄 적는다');return;}
+    addLog({id:uid(),d:today(),t:Date.now(),p:IP||'',text:tx,out:IO||''});
+    if(!did('log'))toggleP('log');IP=null;IO=null;IDRAFT='';render();toast('적었다. 이름 붙인 건 다음에 보인다');};
+}
+function prinCard(p,open){return `<details class="prin" ${open?'open':''}><summary><span>${esc(p.t)}</span><small>${esc(p.s)}</small></summary>
+  <div class="sublbl" style="margin-top:0">이런 신호가 보이면</div><ul>${p.tells.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>
+  <div class="sublbl">막는 법</div><p>${esc(p.defense)}</p>
+  <div class="sublbl">정직하게 쓰는 법</div><p>${esc(p.ethical)}</p></details>`;}
+function quizStats(){const s=ST();const o={};PRINCIPLES.forEach(p=>o[p.k]={r:0,w:0});CARDS.forEach((c,i)=>{const cs=s.cards[i];if(!cs||!o[c.p])return;o[c.p].r+=cs.right||0;o[c.p].w+=cs.wrong||0;});return o;}
+const SPECIAL={
+  homeCards(){const di=Math.floor(Date.now()/864e5);const p=PRINCIPLES[di%PRINCIPLES.length];
+    return infForm()+`<section class="card"><div class="lbl"><span>오늘의 원리</span><span>${di%PRINCIPLES.length+1}/6</span></div>${prinCard(p,false)}</section>`;},
+  bindHome(v){bindInf(v);},
+  practiceCards(){return `<section class="card"><h2>여섯 원리 카드</h2><p class="help" style="margin-bottom:10px">신호를 알아보고, 막고, 쓸 때는 정직하게. 눌러서 펼친다.</p>${PRINCIPLES.map(p=>prinCard(p,false)).join('')}</section>`;},
+  bindPractice(){},
+  cardGuess(c,cs){const pick=QPICK;
+    return `<div class="qa"><b style="font-size:13px;color:var(--mute)">어떤 원리일까</b><div class="pgrid">${PRINCIPLES.map(p=>{let cl='';if(pick){if(p.k===c.p)cl='right';else if(p.k===pick)cl='wrong';}
+      return `<button class="${cl}" data-g="${p.k}" ${pick?'disabled':''}>${esc(p.t)}</button>`;}).join('')}</div>
+      ${pick?`<p class="help" style="margin-top:4px"><b>${pick===c.p?'맞혔다.':'아깝다. 정답은 '+esc(PN(c.p))+'.'}</b> 지금까지 이 카드 ${cs.right||0}번 맞힘 · ${cs.wrong||0}번 틀림</p>`:''}</div>`;},
+  bindCard(v,c){v.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{if(QPICK)return;QPICK=b.dataset.g;const s=ST();const o=Object.assign({},s.cards[QI]);
+    if(QPICK===c.p)o.right=(o.right||0)+1;else o.wrong=(o.wrong||0)+1;o.t=Date.now();s.cards[QI]=o;touch();QSHOW=true;render();});},
+  logCards(){const G=logs();const qs=quizStats();
+    return `<section class="card"><div class="lbl"><span>원리별 일지</span><span>${G.length}건</span></div>
+     <div class="stat6">${PRINCIPLES.map(p=>`<div>${esc(p.t)}<b>${G.filter(g=>g.p===p.k).length}</b></div>`).join('')}</div>
+     <div class="sublbl">결과</div><div class="stat6">${IOUTS.map(([k,t])=>`<div>${t}<b>${G.filter(g=>g.out===k).length}</b></div>`).join('')}</div></section>
+     <section class="card"><div class="lbl"><span>퀴즈 정답률</span><span>원리별</span></div>
+     ${PRINCIPLES.map(p=>{const q=qs[p.k],n=q.r+q.w;return `<div class="sc" style="padding:7px 0"><div class="h"><b style="font-size:13.5px">${esc(p.t)}</b><span class="help">${n?Math.round(q.r/n*100)+'% · '+q.r+'/'+n:'아직'}</span></div>${bar(n?q.r/n:0)}</div>`;}).join('')}</section>`;},
+  logList(){const G=logs();return `<section class="card"><div class="lbl"><span>영향력 일지</span><span>${G.length}</span></div>
+    ${G.length?G.slice(0,60).map(g=>`<div class="entry"><div class="meta"><span>${g.d.slice(5).replace('-','/')}${g.p?' · '+esc(PN(g.p)):''}${g.out?' · '+esc(outName(g.out)):''}</span><button class="x" data-gdel="${g.id}">지우기</button></div><div class="tx">${esc(g.text)}</div></div>`).join(''):'<p class="help">오늘 화면에서 영향력이 작동한 순간을 적으면 여기 쌓인다.</p>'}</section>`;}
+};
+render();
+</script>
+
+<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
+</body>
+</html>
