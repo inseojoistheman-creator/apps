@@ -1,0 +1,1 @@
+{"name": "내 앱", "short_name": "내 앱", "start_url": "./index.html", "display": "standalone", "background_color": "#161B26", "theme_color": "#161B26", "icons": [{"src": "launcher-512.png", "sizes": "512x512", "type": "image/png"}, {"src": "launcher-180.png", "sizes": "180x180", "type": "image/png"}]}

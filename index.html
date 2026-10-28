@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#161B26">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="내 앱">
+<link rel="apple-touch-icon" href="launcher-180.png">
+<link rel="manifest" href="manifest.json">
+<title>내 앱</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#F1F2F5;--card:#FFFFFF;--line:#DADDE4;--ink:#161B26;--mute:#5D6475;--acc:#C96A12;--chip:#E6E8EE;
+ --f:"Gothic A1",-apple-system,"Apple SD Gothic Neo",sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#10131A;--card:#181C26;--line:#2A303D;--ink:#E8EAF0;--mute:#9AA2B3;--acc:#F2994A;--chip:#232836;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding-block:18px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-size:26px;font-weight:800;margin:4px 0 2px}
+.sub{color:var(--mute);font-size:13.5px;margin:0 0 14px}
+.q{width:100%;border:1px solid var(--line);background:var(--card);color:inherit;border-radius:12px;padding:11px 14px;font:inherit;font-size:16px}
+h2{font-size:14px;color:var(--mute);font-weight:800;letter-spacing:.04em;margin:22px 2px 10px;display:flex;justify-content:space-between;gap:8px}
+h2 small{font-weight:600;letter-spacing:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:14px 8px}
+.app{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:inherit;font-size:12.5px;text-align:center;line-height:1.3}
+.app img,.app .ph{width:62px;height:62px;border-radius:15px;box-shadow:0 1px 3px rgba(0,0,0,.15);background:var(--chip);object-fit:cover}
+.app small{color:var(--mute);font-size:11px}
+.list{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.row{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row a{flex:1;min-width:0;color:inherit;text-decoration:none;font-weight:600;font-size:15px}
+.tag{font-size:11px;background:var(--chip);color:var(--mute);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.cp{border:1px solid var(--line);background:transparent;color:var(--mute);border-radius:8px;padding:4px 8px;font:inherit;font-size:12px;cursor:pointer}
+details{margin-top:12px}summary{color:var(--mute);font-size:13px;cursor:pointer;padding:4px 2px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:999px;font-size:13px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <h1>내 앱</h1>
+ <p class="sub">여기 하나만 홈 화면에 두면 된다. 위는 GitHub판(화면 켜두기·오프라인), 아래는 Claude 링크판(아이폰·맥 동기화).</p>
+ <input class="q" id="q" type="search" placeholder="앱 이름으로 찾기" autocomplete="off">
+ <h2><span>GitHub판</span><small id="ghn"></small></h2>
+ <div class="grid" id="gh"></div>
+ <h2><span>Claude 링크판</span><small id="cln"></small></h2>
+ <div class="list" id="cl"></div>
+ <details id="oldbox"><summary>예전 판</summary><div class="list" id="old" style="margin-top:8px"></div></details>
+</div>
+<div class="toast" id="toast" hidden></div>
+<script>
+const D={"gh": [{"n": "아주 작은 습관", "u": "habits/", "i": "habits/icon-180.png", "d": "습관 만들기·끊기, 충동 버튼"}, {"n": "리부트", "u": "reboot/", "i": "reboot/icon-180.png", "d": "회복 기록장"}, {"n": "공부 CCTV", "u": "cctv/", "i": "cctv/icon-180.png", "d": "공부하는 나를 녹화"}, {"n": "홈스카", "u": "homesca/", "i": "homesca/icon-180.png", "d": "집에서 관리형 스카"}, {"n": "숨터", "u": "sumteo/", "i": "sumteo/icon-180.png", "d": "호흡 명상"}, {"n": "성벽", "u": "wall/", "i": "wall/icon.png", "d": "절제"}, {"n": "살까 말까", "u": "salkka/", "i": "salkka/icon-180.png", "d": "위시리스트"}, {"n": "탑라인", "u": "beat/", "i": "beat/icon.png", "d": "흥얼거리면 비트"}, {"n": "각성록", "u": "https://inseojoistheman-creator.github.io/-/pullup.html", "i": "https://inseojoistheman-creator.github.io/-/pullup-icon-180.png", "d": "턱걸이·링딥스·스쿼트"}, {"n": "아침 제단", "u": "https://inseojoistheman-creator.github.io/P/altar.html", "i": "https://inseojoistheman-creator.github.io/P/altar-icon-180.png", "d": "말씀·기도·습관"}, {"n": "또박또박 발성실", "u": "https://inseojoistheman-creator.github.io/balseongsil/", "i": "https://inseojoistheman-creator.github.io/balseongsil/icon-180.png", "d": "발음·발성·노래"}], "cl": [{"n": "아주 작은 습관", "u": "https://claude.ai/artifact/2bCv4wRYdBHm6uwF9bMkgE", "t": "습관"}, {"n": "작은 그리스도", "u": "https://claude.ai/artifact/QhBT4XoHCwr3NJQULaeaGV", "t": "신앙"}, {"n": "정직한 매력", "u": "https://claude.ai/artifact/PCDuQFwJgT7hnwpo6SNaHC", "t": "책"}, {"n": "설득 방패", "u": "https://claude.ai/artifact/44BeAearn8DeMo38aWYV1j", "t": "책"}, {"n": "리부트", "u": "https://claude.ai/artifact/RcwybMpsXA8GkEcqpb1iHh", "t": "습관"}, {"n": "몰입 항로", "u": "https://claude.ai/artifact/FgTGkgUTdMgnMkYgYvSpj2", "t": "공부"}, {"n": "봉인", "u": "https://claude.ai/artifact/K2UhxgPdvFhsHBpKe2Ka6H", "t": "절제"}, {"n": "순례자의 상태창", "u": "https://claude.ai/artifact/6uUzz8NNw9rAHpcDu1GrbL", "t": "성장"}, {"n": "면접 연습장", "u": "https://claude.ai/artifact/SRDuwgSnhd83aAx8Aif1aZ", "t": "입시"}, {"n": "닻", "u": "https://claude.ai/artifact/KDh416sB9aQu5T95NQdkPP", "t": "공부"}, {"n": "학이시습", "u": "https://claude.ai/artifact/M3q32SEoSfmXxEQpxwa5sk", "t": "공부"}, {"n": "각성록", "u": "https://claude.ai/artifact/XQ2Kw2Mhoc4BG335wY4ujL", "t": "운동"}, {"n": "마중 · 미래의 나", "u": "https://claude.ai/artifact/45JbdgfgVaFUHShQxYQinq", "t": "성장"}, {"n": "숨터", "u": "https://claude.ai/artifact/TzkUk8nuRTaJ4DhT4JoTwK", "t": "명상"}, {"n": "또박또박 발성실", "u": "https://claude.ai/artifact/JtJBWTYgqBu6xme9obFns4", "t": "목소리"}, {"n": "올해 얼마나", "u": "https://claude.ai/artifact/4LRMd9VwAxeQnrmAdopBfG", "t": "돈"}, {"n": "재능 탐사 노트", "u": "https://claude.ai/artifact/9SoG5LEQLJTsBKiVrEgrvj", "t": "성장"}, {"n": "내려놓기", "u": "https://claude.ai/artifact/SerYybPPe1pZF9UJU37ymb", "t": "절제"}, {"n": "벗고 입기", "u": "https://claude.ai/artifact/SFB8e27qtWgnhAd5LLdpfS", "t": "습관"}, {"n": "은사 나침반", "u": "https://claude.ai/artifact/21PikRQ9HsKitacJKBUSPu", "t": "신앙"}, {"n": "성벽", "u": "https://claude.ai/artifact/2hSw6XApqLdEAVyj4R9eRB", "t": "절제"}, {"n": "홈스카", "u": "https://claude.ai/artifact/8zWKp6H5rjiHU4D5uiy1qq", "t": "공부"}, {"n": "살까 말까", "u": "https://claude.ai/artifact/DkgTvj58cGHb43chgivkTC", "t": "돈"}, {"n": "아침 제단", "u": "https://claude.ai/artifact/JPLPcD9nqJbcxbrPRFJ4C6", "t": "신앙"}, {"n": "이 찬양 뭐지", "u": "https://claude.ai/artifact/TGnKLPoHUXan2FxTV88Lvk", "t": "찬양"}, {"n": "레벨업 일지", "u": "https://claude.ai/artifact/Dt9aMgGGhtGeZkxaXUsp6H", "t": "성장"}, {"n": "생활과 윤리 개념 정리", "u": "https://claude.ai/artifact/HpdUA4bTE81yoCE68Db5Gq", "t": "자료"}, {"n": "수능 영단어 어원 지도", "u": "https://claude.ai/artifact/6rxiynaUhyrMwvVHfUCYMy", "t": "자료"}, {"n": "낭독 스크립트", "u": "https://claude.ai/artifact/6kzG8y6uPB4PT3Hr4ZjE5A", "t": "자료"}], "old": [{"n": "각성록 · 철봉과 링 (예전)", "u": "https://claude.ai/artifact/MwCoikk8BRYrLNHy8Ft1tQ"}, {"n": "각성록 (예전)", "u": "https://claude.ai/artifact/8Vxua6LjhxByxwKAEB6S55"}, {"n": "링의 순례길 (예전)", "u": "https://claude.ai/artifact/7i98jmZdtJfE8zSMPLontr"}]};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let tT;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.hidden=false;clearTimeout(tT);tT=setTimeout(()=>t.hidden=true,1800);}
+function full(u){return new URL(u,location.href).href;}
+function row(x){return `<div class="row"><a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.n)}</a>${x.t?`<span class="tag">${esc(x.t)}</span>`:''}<button class="cp" data-u="${esc(x.u)}">링크 복사</button></div>`;}
+function draw(){const q=document.getElementById('q').value.trim();const m=x=>!q||x.n.includes(q)||(x.d||'').includes(q)||(x.t||'').includes(q);
+ const g=D.gh.filter(m),c=D.cl.filter(m),o=D.old.filter(m);
+ document.getElementById('gh').innerHTML=g.map(x=>`<a class="app" href="${esc(x.u)}"><img src="${esc(x.i)}" alt="" onerror="this.outerHTML='<span class=ph></span>'"><span>${esc(x.n)}<br><small>${esc(x.d)}</small></span></a>`).join('')||'<p class="sub">없다</p>';
+ document.getElementById('cl').innerHTML=c.map(row).join('')||'<div class="row">없다</div>';
+ document.getElementById('old').innerHTML=o.map(row).join('');document.getElementById('oldbox').hidden=!o.length;
+ document.getElementById('ghn').textContent=g.length+'개';document.getElementById('cln').textContent=c.length+'개';}
+document.getElementById('q').oninput=draw;
+document.addEventListener('click',async e=>{const b=e.target.closest('.cp');if(!b)return;try{await navigator.clipboard.writeText(full(b.dataset.u));toast('복사했다');}catch(err){prompt('복사',full(b.dataset.u));}});
+draw();
+</script>
+</body>
+</html>
