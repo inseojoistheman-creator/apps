@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#24473A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="마음의 소원">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>마음의 소원</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap">
+<style>
+/* Layout: 올리브 숲의 새벽. 맨 위 판에 시편 37:4와 이룬 소원·남은 소원. 아래 탭으로 오늘(말씀·나에게 하는 말·한 걸음)·소원 목록(사고·하고·가고·버킷)·에벤에셀(이뤄진 것의 기념비)·나에게(그리스도 안의 나, 편지)를 오간다. 맥에서는 두 단. */
+:root{
+  --bg:#EEF1EC; --card:#FBFCFA; --sunk:#E2E7E0; --line:#D1D9CF; --ink:#18221D; --mute:#56645B; --faint:#89958C;
+  --pri:#2F5D4A; --pri-soft:#D7E7DE; --on-pri:#FFFFFF;
+  --gold:#A87A1E; --gold-soft:#F3E7CC;
+  --c-buy:#A87A1E; --c-do:#2F7A55; --c-go:#2F68A6; --c-bucket:#7B4C8F;
+  --c-buy-s:#F3E7CC; --c-do-s:#D8EEE0; --c-go-s:#DCE7F5; --c-bucket-s:#EBDFF1;
+  --warn:#A8433A; --hall:#24473A; --on-hall:#F3F6F2;
+  --f-head:"Gowun Batang","AppleMyungjo",serif;
+  --f-body:"Gowun Dodum",-apple-system,"Apple SD Gothic Neo",sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#101512; --card:#171E1A; --sunk:#1F2822; --line:#2B362F; --ink:#E5ECE7; --mute:#9EADA3; --faint:#6D7B72;
+  --pri:#7CC4A0; --pri-soft:#173528; --on-pri:#0D1611;
+  --gold:#E2B655; --gold-soft:#3A2E14;
+  --c-buy:#E2B655; --c-do:#73C99A; --c-go:#86B4EA; --c-bucket:#C59BDA;
+  --c-buy-s:#3A2E14; --c-do-s:#16331F; --c-go-s:#182A42; --c-bucket-s:#2E1F37;
+  --warn:#EE8C83; --hall:#18291F; --on-hall:#E8EEE9; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#101512; --card:#171E1A; --sunk:#1F2822; --line:#2B362F; --ink:#E5ECE7; --mute:#9EADA3; --faint:#6D7B72;
+  --pri:#7CC4A0; --pri-soft:#173528; --on-pri:#0D1611;
+  --gold:#E2B655; --gold-soft:#3A2E14;
+  --c-buy:#E2B655; --c-do:#73C99A; --c-go:#86B4EA; --c-bucket:#C59BDA;
+  --c-buy-s:#3A2E14; --c-do-s:#16331F; --c-go-s:#182A42; --c-bucket-s:#2E1F37;
+  --warn:#EE8C83; --hall:#18291F; --on-hall:#E8EEE9; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;touch-action:manipulation}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0;line-height:1.35;font-weight:700}
+.wrap{max-width:1080px;margin:0 auto;padding-block:14px calc(96px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.top .ttl{font-family:var(--f-head);font-weight:700;font-size:19px}
+.top .sync{font-size:11.5px;color:var(--faint);margin-left:auto}
+.page{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.page>.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.one-col{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+@media (max-width:820px){.page{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{font-size:18px;margin-bottom:6px}
+.lbl{font-size:12px;letter-spacing:.05em;color:var(--mute);font-weight:700;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.help{font-size:13.5px;color:var(--mute);margin:0}
+.help b{color:var(--ink)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 14px}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:var(--on-pri);font-weight:700}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:var(--on-pri);font-weight:700}
+.btn.ghost{background:transparent}
+.btn.wide{width:100%}
+.btn.sm{padding:6px 10px;font-size:13px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;font-size:13.5px;white-space:nowrap}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.txt{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;font:inherit;color:inherit;font-size:16px}
+textarea.txt{resize:vertical;min-height:64px;line-height:1.6}
+/* 판 */
+.hall{background:var(--hall);color:var(--on-hall);border-radius:16px;padding:18px;position:relative;overflow:hidden}
+.hall .vs{font-family:var(--f-head);font-size:14px;opacity:.85;line-height:1.6;max-width:34em}
+.hall h1{font-size:30px;margin:6px 0 2px}
+.hall .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.hall .stats div{background:color-mix(in srgb,var(--on-hall) 10%,transparent);border-radius:10px;padding:8px 10px}
+.hall .stats small{display:block;font-size:11px;opacity:.75}
+.hall .stats b{font-size:19px;font-variant-numeric:tabular-nums}
+.stones{display:flex;gap:3px;align-items:flex-end;margin-top:12px;min-height:20px;flex-wrap:wrap}
+.stones i{display:block;width:14px;height:10px;border-radius:5px 5px 3px 3px;background:color-mix(in srgb,var(--on-hall) 55%,transparent)}
+.stones i.buy{background:#E2B655}.stones i.do{background:#73C99A}.stones i.go{background:#86B4EA}.stones i.bucket{background:#C59BDA}
+.verse{font-family:var(--f-head);font-weight:700;font-size:16.5px;line-height:1.75;margin:0}
+.verse cite{display:block;font-family:var(--f-body);font-weight:400;font-style:normal;font-size:12.5px;color:var(--mute);margin-top:6px}
+.letter{font-family:var(--f-head);font-size:16px;line-height:1.75;white-space:pre-wrap;margin:0}
+/* 소원 */
+.cat{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px;white-space:nowrap}
+.cat.buy{background:var(--c-buy-s);color:var(--c-buy)}.cat.do{background:var(--c-do-s);color:var(--c-do)}.cat.go{background:var(--c-go-s);color:var(--c-go)}.cat.bucket{background:var(--c-bucket-s);color:var(--c-bucket)}
+.item{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item .ck{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line);background:transparent;flex:none;padding:0;display:flex;align-items:center;justify-content:center;color:var(--faint);font-size:14px;margin-top:1px}
+.item .ck:hover{border-color:var(--pri);color:var(--pri)}
+.item .tx{flex:1;min-width:0;text-align:left;border:0;background:none;padding:0}
+.item .tx b{font-size:15px;display:block;overflow-wrap:anywhere}
+.item .tx small{display:block;color:var(--mute);font-size:12.5px;line-height:1.5;overflow-wrap:anywhere}
+.meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:3px}
+.mt{font-size:11.5px;color:var(--mute);background:var(--sunk);border-radius:6px;padding:0 6px}
+.mt.pray{background:var(--pri-soft);color:var(--pri);font-weight:700}
+.mt.wait{background:var(--gold-soft);color:var(--gold);font-weight:700}
+.segs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.segs::-webkit-scrollbar{display:none}
+.quick{display:flex;gap:8px}
+.quick .txt{flex:1;min-width:0}
+.fld{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.fld label{font-size:12.5px;font-weight:700;color:var(--mute)}
+.fld label i{font-style:normal;font-weight:400;color:var(--faint)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.check{display:flex;gap:10px;align-items:center;padding:8px 0;font-size:14.5px}
+.check input{width:20px;height:20px;accent-color:var(--pri);flex:none}
+.qs{background:var(--gold-soft);border-radius:12px;padding:10px 14px;margin:10px 0;font-size:14px}
+.qs b{color:var(--gold)}
+.qs ul{margin:4px 0 0;padding-left:18px}
+.step{display:flex;gap:10px;align-items:center}
+.step .ck2{width:28px;height:28px;border-radius:8px;border:1.5px solid var(--line);background:transparent;flex:none;padding:0;font-size:15px;color:var(--on-pri)}
+.step .ck2.on{background:var(--pri);border-color:var(--pri)}
+/* 에벤에셀 */
+.month{font-family:var(--f-head);font-weight:700;font-size:15px;margin:6px 2px 4px;color:var(--mute)}
+.stone{display:flex;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.stone:last-child{border-bottom:0}
+.stone .mk{width:12px;height:12px;border-radius:4px;margin-top:6px;flex:none}
+.mk.buy{background:var(--c-buy)}.mk.do{background:var(--c-do)}.mk.go{background:var(--c-go)}.mk.bucket{background:var(--c-bucket)}.mk.gave{background:var(--faint)}
+.stone .tx{flex:1;min-width:0}
+.stone .tx b{display:block;font-size:14.5px;overflow-wrap:anywhere}
+.stone .tx small{display:block;color:var(--mute);font-size:12.5px}
+.stone .tx p{margin:4px 0 0;font-family:var(--f-head);font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.x{border:0;background:none;color:var(--faint);padding:0 4px;font-size:12.5px;white-space:nowrap}
+.stat4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.stat4 div{border-radius:10px;padding:8px 10px;font-size:11.5px;color:var(--mute);background:var(--sunk)}
+.stat4 b{display:block;font-size:18px;color:var(--ink);font-variant-numeric:tabular-nums}
+.truth{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.truth:last-child{border-bottom:0}
+.truth span{flex:1}
+.truth small{color:var(--faint);white-space:nowrap;font-size:12px}
+.empty{text-align:center;padding:18px 8px;color:var(--mute);font-size:14px}
+/* tabs, overlay */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--card) 93%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px max(10px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px));display:flex;justify-content:center;gap:4px}
+nav.tabs button{flex:1;max-width:130px;border:0;background:none;border-radius:10px;padding:6px 0;font-size:12px;color:var(--mute);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav.tabs button svg{width:22px;height:22px}
+nav.tabs button.on{color:var(--pri);font-weight:700}
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(8,14,10,.5);display:flex;align-items:flex-end;justify-content:center;padding:16px}
+@media (min-width:640px){.overlay{align-items:center}}
+.dialog{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;max-width:560px;width:100%;max-height:88vh;overflow:auto}
+.dialog h3{font-size:19px;margin-bottom:6px}
+.acts2{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:14px}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:13.5px;z-index:90;max-width:calc(100% - 32px);text-align:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <span class="ttl">마음의 소원</span>
+    <span class="sync" id="syncTxt">이 기기에만 저장</span>
+  </header>
+  <main id="view"></main>
+</div>
+<nav class="tabs" id="tabs" aria-label="화면">
+  <button data-v="home" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 18h18"/><path d="M6 18a6 6 0 0 1 12 0"/><path d="M12 4v3M4.9 8.5l2 1.5M19.1 8.5l-2 1.5"/></svg>오늘</button>
+  <button data-v="list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="5" cy="6.5" r="1.3"/><circle cx="5" cy="12" r="1.3"/><circle cx="5" cy="17.5" r="1.3"/><path d="M9 6.5h11M9 12h11M9 17.5h7"/></svg>소원</button>
+  <button data-v="eben"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 20h14"/><path d="M7 20l1.5-5h7L17 20"/><path d="M9 15l1-4h4l1 4"/><path d="M10.5 11l.8-3h1.4l.8 3"/></svg>에벤에셀</button>
+  <button data-v="me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>나에게</button>
+</nav>
+<div id="ovl"></div>
+<div class="toast" id="toast" hidden></div>
+<script>
+/* ---------- 말씀 (개역한글) ---------- */
+const VERSES=[
+ ['또 여호와를 기뻐하라 저가 네 마음의 소원을 이루어 주시리로다','시편 37:4'],
+ ['너의 길을 여호와께 맡기라 저를 의지하면 저가 이루시고','시편 37:5'],
+ ['내게 능력 주시는 자 안에서 내가 모든 것을 할 수 있느니라','빌립보서 4:13'],
+ ['오직 여호와를 앙망하는 자는 새 힘을 얻으리니 독수리의 날개치며 올라감 같을 것이요 달음박질하여도 곤비치 아니하겠고 걸어가도 피곤치 아니하리로다','이사야 40:31','w'],
+ ['여호와의 말씀이니라 너희를 향한 나의 생각은 내가 아나니 평안이요 재앙이 아니니라 너희 장래에 소망을 주려 하는 생각이라','예레미야 29:11','w'],
+ ['사람이 마음으로 자기의 길을 계획할지라도 그 걸음을 인도하는 자는 여호와시니라','잠언 16:9'],
+ ['너의 행사를 여호와께 맡기라 그리하면 너의 경영하는 것이 이루리라','잠언 16:3'],
+ ['너는 마음을 다하여 여호와를 의뢰하고 네 명철을 의지하지 말라 너는 범사에 그를 인정하라 그리하면 네 길을 지도하시리라','잠언 3:5-6'],
+ ['우리가 알거니와 하나님을 사랑하는 자 곧 그 뜻대로 부르심을 입은 자들에게는 모든 것이 합력하여 선을 이루느니라','로마서 8:28','w'],
+ ['우리가 선을 행하되 낙심하지 말지니 피곤하지 아니하면 때가 이르매 거두리라','갈라디아서 6:9','w'],
+ ['무슨 일을 하든지 마음을 다하여 주께 하듯 하고 사람에게 하듯 하지 말라','골로새서 3:23'],
+ ['그런즉 너희가 먹든지 마시든지 무엇을 하든지 다 하나님의 영광을 위하여 하라','고린도전서 10:31'],
+ ['너희는 먼저 그의 나라와 그의 의를 구하라 그리하면 이 모든 것을 너희에게 더하시리라','마태복음 6:33'],
+ ['푯대를 향하여 그리스도 예수 안에서 하나님이 위에서 부르신 부름의 상을 위하여 좇아가노라','빌립보서 3:14'],
+ ['하나님이 우리에게 주신 것은 두려워하는 마음이 아니요 오직 능력과 사랑과 근신하는 마음이니','디모데후서 1:7','w'],
+ ['여호와는 나의 목자시니 내가 부족함이 없으리로다','시편 23:1','w'],
+ ['두려워 말라 내가 너와 함께 함이니라 놀라지 말라 나는 네 하나님이 됨이니라 내가 너를 굳세게 하리라 참으로 너를 도와 주리라 참으로 나의 의로운 오른손으로 너를 붙들리라','이사야 41:10','w'],
+ ['나에게 이르시기를 내 은혜가 네게 족하도다 이는 내 능력이 약한 데서 온전하여짐이라 하신지라','고린도후서 12:9','w'],
+ ['항상 기뻐하라 쉬지 말고 기도하라 범사에 감사하라 이는 그리스도 예수 안에서 너희를 향하신 하나님의 뜻이니라','데살로니가전서 5:16-18'],
+ ['오직 너희를 위하여 보물을 하늘에 쌓아 두라','마태복음 6:20'],
+ ['그러나 지족하는 마음이 있으면 경건이 큰 이익이 되느니라','디모데전서 6:6'],
+ ['돈을 사랑치 말고 있는 바를 족한 줄로 알라 그가 친히 말씀하시기를 내가 결코 너희를 버리지 아니하고 너희를 떠나지 아니하리라 하셨느니라','히브리서 13:5'],
+ ['우리에게 우리 날 계수함을 가르치사 지혜의 마음을 얻게 하소서','시편 90:12'],
+ ['범사에 기한이 있고 천하 만사가 다 때가 있나니','전도서 3:1'],
+ ['여호와의 자비와 긍휼이 무궁하시므로 우리가 진멸되지 아니함이니이다 이것들이 아침마다 새로우니 주의 성실이 크도소이다','예레미야애가 3:22-23','w'],
+ ['우리는 그의 만드신 바라 그리스도 예수 안에서 선한 일을 위하여 지으심을 받은 자니 이 일은 하나님이 전에 예비하사 우리로 그 가운데서 행하게 하려 하심이니라','에베소서 2:10'],
+ ['이 날은 여호와의 정하신 것이라 이 날에 우리가 즐거워하고 기뻐하리로다','시편 118:24'],
+ ['너희가 도리어 말하기를 주의 뜻이면 우리가 살기도 하고 이것이나 저것을 하리라 할 것이거늘','야고보서 4:15'],
+ ['나는 포도나무요 너희는 가지라 저가 내 안에, 내가 저 안에 있으면 이 사람은 과실을 많이 맺나니 나를 떠나서는 너희가 아무 것도 할 수 없음이라','요한복음 15:5'],
+ ['여호와가 여기까지 우리를 도우셨다','사무엘상 7:12','w']
+];
+/* 그리스도 안의 나 (말씀을 풀어 쓴 고백) */
+const TRUTHS=[
+ ['나는 하나님의 자녀다','요 1:12'],['나는 하나님이 선한 일을 위해 지으신 작품이다','엡 2:10'],['나는 그리스도 안에서 새로운 피조물이다','고후 5:17'],
+ ['나는 정죄받지 않는다','롬 8:1'],['나는 은혜로 구원받았다. 내가 이룬 것이 나를 증명하지 않는다','엡 2:8-9'],['나는 이름으로 부르심을 받은 하나님의 것이다','사 43:1'],
+ ['내게는 두려움이 아니라 능력과 사랑과 절제의 마음이 있다','딤후 1:7'],['어떤 것도 나를 하나님의 사랑에서 끊을 수 없다','롬 8:38-39'],['나는 세상의 빛이다','마 5:14'],
+ ['나는 그리스도의 몸의 한 지체다','고전 12:27'],['나는 포도나무에 붙은 가지다. 붙어 있으면 열매는 맺힌다','요 15:5'],['내 약함에서 그분의 능력이 온전해진다','고후 12:9']
+];
+/* 나를 일으키는 말 */
+const PUSH=[
+ '소원을 적는 건 욕심이 아니라, 그 소원을 하나님 앞에 펼쳐 놓는 일이다.',
+ '오늘 할 수 있는 한 걸음만 한다. 나머지는 맡긴다.',
+ '이룬 것이 나를 증명하지 않는다. 나는 이미 사랑받는 자녀다. 그래서 마음껏 해 본다.',
+ '꿈이 크면 걸음은 작게. 작은 걸음은 매일.',
+ '하고 싶은 일을 미루는 이유가 두려움이라면, 두려움보다 크신 분을 떠올린다.',
+ '사고 싶은 것 앞에서는 일주일 기다린다. 그래도 원하면 감사함으로 산다.',
+ '여기까지 도우신 분이 다음 걸음도 도우신다.',
+ '남과 비교하면 소원이 욕심이 된다. 하나님과 대화하면 욕심이 소원이 된다.',
+ '실패해도 끝이 아니다. 아침마다 새로운 자비가 있다.',
+ '가고 싶은 곳은 지도에서, 가야 할 곳은 기도에서 찾는다.',
+ '오늘 공부하는 이 시간도 주께 하듯 하면 예배다.',
+ '내려놓는 것도 응답이다. 더 좋은 것을 위해 비워 두는 것이다.',
+ '버킷리스트는 언젠가가 아니라 날짜가 있을 때 움직인다.',
+ '감사는 이미 받은 것을 세는 일이고, 소망은 아직 받지 않은 것을 기다리는 일이다. 둘 다 한다.',
+ '지금의 나는 부족해도, 하나님이 보시는 나는 이미 자라고 있다.',
+ '하나 이루면 꼭 돌을 쌓는다. 기억해야 다음에 믿는다.',
+ '잘하려고 하기 전에 먼저 시작한다.',
+ '오늘 하루를 정하신 분이 계시니 즐거워할 이유가 있다.',
+ '내 계획은 연필로, 하나님의 인도는 잉크로.',
+ '청년의 때는 짧고, 그래서 귀하다. 미루지 말고 한 걸음.'
+];
+const CATS={buy:{t:'사고 싶은 것',s:'살 것'},do:{t:'하고 싶은 것',s:'할 것'},go:{t:'가고 싶은 곳',s:'갈 곳'},bucket:{t:'버킷리스트',s:'평생 소원'}};
+const PH={buy:'예: 노이즈캔슬링 이어폰',do:'예: 턱걸이 15개',go:'예: 제주 올레길 7코스',bucket:'예: 성경 1독, 부모님과 해외여행'};
+/* ---------- 도우미 ---------- */
+const KEY='maeum-sowon-v1';
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>{d=new Date(d);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
+const parseD=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const daysBetween=(a,b)=>Math.round((parseD(b)-parseD(a))/864e5);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const today=()=>ymd(Date.now());
+const clone=o=>JSON.parse(JSON.stringify(o));
+const won=n=>n?Number(n).toLocaleString('ko-KR')+'원':'';
+let toastT;function toast(m,ms=2600){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,ms);}
+function dialog(html,bind){$('ovl').innerHTML=`<div class="overlay"><div class="dialog" role="dialog" aria-modal="true">${html}</div></div>`;const ov=$('ovl').firstChild;ov.onclick=e=>{if(e.target===ov||e.target.hasAttribute('data-close'))closeDialog();};bind&&bind(ov);}
+function closeDialog(){$('ovl').innerHTML='';}
+function armed(btn,label,fn){if(btn.dataset.arm){fn();return;}btn.dataset.arm=1;const old=btn.textContent;btn.textContent=label;setTimeout(()=>{if(btn.isConnected){delete btn.dataset.arm;btn.textContent=old;}},3000);}
+
+/* ---------- 저장 · 아이폰·맥 동기화 ---------- */
+let DOCS={};
+try{DOCS=JSON.parse(localStorage.getItem(KEY)||'{}').docs||{};}catch(e){}
+function defState(){return {items:[],letters:[],days:{},updatedAt:0};}
+DOCS.state=Object.assign(defState(),DOCS.state||{});
+const ST=()=>DOCS.state;
+let COL=null,wq=Promise.resolve(),wt=null;
+function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify({docs:DOCS}));}catch(e){}}
+function touch(){DOCS.state.updatedAt=Date.now();saveLocal();push();}
+function push(){if(!COL)return;clearTimeout(wt);wt=setTimeout(()=>{const body=clone(DOCS.state);wq=wq.then(()=>COL.doc('state').set(body)).then(()=>{$('syncTxt').textContent='아이폰·맥 동기화';}).catch(()=>{$('syncTxt').textContent='동기화 실패 · 이 기기에는 저장됨';});},600);}
+(async()=>{try{
+  const user=await (window.claude?.use?.('user')??Promise.resolve(null));const id=user?await user.id():null;
+  const db=await (window.claude?.use?.('db')??Promise.resolve(null));if(!db||!id)return;
+  COL=db.collection('data/users/'+id);let first=true;
+  COL.onSnapshot(qs=>{const d=qs.docs.find(x=>x.id==='state');const r=d?.data();
+    if(r&&(r.updatedAt||0)>(DOCS.state.updatedAt||0)){DOCS.state=Object.assign(defState(),clone(r));saveLocal();safeRender();}
+    else if(first&&(DOCS.state.updatedAt||0)>(r?.updatedAt||0))push();
+    first=false;$('syncTxt').textContent='아이폰·맥 동기화';
+  },()=>{$('syncTxt').textContent='동기화 끊김 · 이 기기에는 저장됨';});
+}catch(e){}})();
+let pendingRender=false;
+function safeRender(){const a=document.activeElement;if(a&&['TEXTAREA','INPUT','SELECT'].includes(a.tagName)){pendingRender=true;return;}render();}
+document.addEventListener('focusout',()=>setTimeout(()=>{const a=document.activeElement;if(pendingRender&&!(a&&['TEXTAREA','INPUT','SELECT'].includes(a.tagName))){pendingRender=false;render();}},250));
+
+/* ---------- 계산 ---------- */
+const items=()=>ST().items;
+const open=()=>items().filter(x=>!x.done&&!x.gave);
+const done=()=>items().filter(x=>x.done).sort((a,b)=>b.done.t-a.done.t);
+const gave=()=>items().filter(x=>x.gave).sort((a,b)=>b.gave.t-a.gave.t);
+const dayIdx=()=>Math.floor((parseD(today())-new Date(2026,0,1))/864e5);
+function waited(x){return daysBetween(x.created,today());}
+function dday(x){if(!x.when||!/^\d{4}-\d{2}-\d{2}$/.test(x.when))return null;return daysBetween(today(),x.when);}
+let VOFF=0,POFF=0;
+const vOf=n=>VERSES[((dayIdx()+n)%VERSES.length+VERSES.length)%VERSES.length];
+
+/* ---------- 화면 ---------- */
+let VIEW='home',FILT='all';
+function render(){const v=$('view');({home:rHome,list:rList,eben:rEben,me:rMe})[VIEW](v);document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===VIEW));}
+function go(v){VIEW=v;render();window.scrollTo(0,0);}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+
+function itemRow(x){const dd=dday(x),w=waited(x);
+  const meta=[x.cat==='buy'&&x.price?`<span class="mt">${won(x.price)}</span>`:'',x.cat==='buy'&&w<7?`<span class="mt wait">기다린 지 ${w}일</span>`:'',
+    dd!==null?`<span class="mt">${dd>0?'D-'+dd:dd===0?'D-day':'D+'+(-dd)}</span>`:x.when?`<span class="mt">${esc(x.when)}</span>`:'',x.pray?'<span class="mt pray">기도로 맡김</span>':''].join('');
+  return `<div class="item"><button class="ck" data-done="${x.id}" aria-label="${esc(x.t)} 이뤄졌다">✓</button>
+   <button class="tx" data-edit="${x.id}"><b>${esc(x.t)}</b>${x.step?`<small>다음 한 걸음 · ${esc(x.step)}</small>`:x.why?`<small>${esc(x.why)}</small>`:''}<span class="meta"><span class="cat ${x.cat}">${CATS[x.cat].t}</span>${meta}</span></button></div>`;}
+function bindItems(v){v.querySelectorAll('[data-done]').forEach(b=>b.onclick=()=>doneDlg(b.dataset.done));v.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>editDlg(null,b.dataset.edit));}
+
+/* 오늘 */
+let QCAT='do',QTXT='';
+function rHome(v){const s=ST(),t=today(),dr=s.days[t]||{};const O=open(),D=done();const vs=vOf(VOFF);
+  const mineL=s.letters.length?s.letters[((dayIdx()+POFF)%s.letters.length+s.letters.length)%s.letters.length]:null;
+  const pushLine=PUSH[((dayIdx()+POFF)%PUSH.length+PUSH.length)%PUSH.length];
+  const mth=t.slice(0,7);const stepItem=dr.step?items().find(x=>x.id===dr.step):null;
+  v.innerHTML=`<div class="page"><div class="col">
+  <section class="hall"><div class="vs">또 여호와를 기뻐하라 저가 네 마음의 소원을 이루어 주시리로다 · 시 37:4</div><h1>마음의 소원</h1>
+   <div class="stats"><div><small>남은 소원</small><b>${O.length}</b></div><div><small>이뤄진 것</small><b>${D.length}</b></div><div><small>이번 달</small><b>${D.filter(x=>x.done.d.startsWith(mth)).length}</b></div></div>
+   <div class="stones" aria-label="에벤에셀 돌">${D.slice(0,40).reverse().map(x=>`<i class="${x.cat}" title="${esc(x.t)}"></i>`).join('')||'<span style="font-size:12px;opacity:.7">이뤄진 소원마다 여기 돌이 하나씩 쌓인다</span>'}</div></section>
+  <section class="card"><div class="lbl"><span>오늘의 말씀</span><button class="btn ghost sm" id="vNext">다른 말씀</button></div><p class="verse">${esc(vs[0])}<cite>${esc(vs[1])} · 개역한글</cite></p></section>
+  <section class="card"><div class="lbl"><span>${mineL?'내가 나에게 쓴 말':'나를 일으키는 말'}</span><button class="btn ghost sm" id="pNext">다른 말</button></div>
+   <p class="letter">${esc(mineL?mineL.t:pushLine)}</p>${mineL?`<p class="help" style="margin-top:6px">${esc(mineL.d)}에 쓴 편지</p>`:''}</section>
+  <button class="btn wide" id="weary" style="border-color:var(--pri);color:var(--pri);font-weight:700">지친 날 · 힘이 필요하다</button>
+  </div><div class="col">
+  <section class="card"><div class="lbl"><span>오늘의 한 걸음</span>${dr.stepDone?'<span class="mt pray">했다</span>':''}</div>
+   ${O.length?`<select class="txt" id="stepSel" aria-label="오늘 한 걸음 내디딜 소원"><option value="">소원 하나를 고른다</option>${O.map(x=>`<option value="${x.id}" ${dr.step===x.id?'selected':''}>${esc(CATS[x.cat].s)} · ${esc(x.t)}</option>`).join('')}</select>
+   ${stepItem?`<div class="step" style="margin-top:10px"><button class="ck2 ${dr.stepDone?'on':''}" id="stepCk" aria-pressed="${!!dr.stepDone}">${dr.stepDone?'✓':''}</button><div style="flex:1;min-width:0"><b>${esc(stepItem.step||'이 소원을 위해 오늘 할 작은 일')}</b>${stepItem.step?'':'<div class="help">소원을 눌러 "다음 한 걸음"을 적어 두면 여기 뜬다.</div>'}</div></div>`:'<p class="help" style="margin-top:8px">하나를 골라 오늘 한 걸음만 내딛는다.</p>'}`:'<p class="help">아직 소원이 없다. 아래에서 하나 적는다.</p>'}</section>
+  <section class="card"><div class="lbl"><span>소원 적기</span></div>
+   <div class="segs" style="margin-bottom:8px">${Object.keys(CATS).map(k=>`<button class="chip ${QCAT===k?'on':''}" data-qc="${k}">${CATS[k].t}</button>`).join('')}</div>
+   <div class="quick"><input class="txt" id="qIn" maxlength="60" placeholder="${PH[QCAT]}" value="${esc(QTXT)}"><button class="btn pri" id="qAdd">적기</button></div>
+   <p class="help" style="margin-top:6px">자세한 건 소원 탭에서 눌러 채운다. 왜 원하는지, 다음 한 걸음, 언제까지.</p></section>
+  ${O.length?`<section class="card"><div class="lbl"><span>가까운 소원</span><button class="btn ghost sm" id="toList">전체 →</button></div>${O.slice().sort((a,b)=>(dday(a)??9999)-(dday(b)??9999)||b.created.localeCompare(a.created)).slice(0,4).map(itemRow).join('')}</section>`:''}
+  </div></div>`;
+  $('vNext').onclick=()=>{VOFF++;render();};$('pNext').onclick=()=>{POFF++;render();};
+  $('weary').onclick=weary;
+  $('stepSel')&&($('stepSel').onchange=e=>{const r=s.days[t]||(s.days[t]={});r.step=e.target.value||null;r.stepDone=false;touch();render();});
+  $('stepCk')&&($('stepCk').onclick=()=>{const r=s.days[t];r.stepDone=!r.stepDone;touch();render();if(r.stepDone)toast('한 걸음 내디뎠다');});
+  v.querySelectorAll('[data-qc]').forEach(b=>b.onclick=()=>{QCAT=b.dataset.qc;render();});
+  $('qIn').oninput=e=>QTXT=e.target.value;
+  const add=()=>{const tx=QTXT.trim();if(!tx){$('qIn').focus();return;}items().push({id:uid(),cat:QCAT,t:tx,created:t});QTXT='';touch();render();toast(CATS[QCAT].t+'에 적었다');};
+  $('qAdd').onclick=add;$('qIn').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();add();}};
+  $('toList')&&($('toList').onclick=()=>go('list'));
+  bindItems(v);
+}
+function weary(){const W=VERSES.filter(x=>x[2]==='w');const vs=W[Math.floor(Math.random()*W.length)];const s=ST();const L=s.letters;const l=L.length?L[Math.floor(Math.random()*L.length)]:null;const D=done().slice(0,5);
+  const tr=TRUTHS[Math.floor(Math.random()*TRUTHS.length)];
+  dialog(`<h3>숨 한 번 쉬고, 이것부터 본다</h3>
+   <p class="verse" style="margin:10px 0 14px">${esc(vs[0])}<cite>${esc(vs[1])} · 개역한글</cite></p>
+   <div class="card" style="background:var(--pri-soft);border-color:transparent;margin-bottom:10px"><div class="lbl" style="color:var(--pri)"><span>그리스도 안의 나</span></div><p style="margin:0;font-weight:700">${esc(tr[0])} <span class="help">(${esc(tr[1])})</span></p></div>
+   ${l?`<div class="card" style="margin-bottom:10px"><div class="lbl"><span>${esc(l.d)}의 내가 보낸 편지</span></div><p class="letter">${esc(l.t)}</p></div>`:''}
+   <div class="card"><div class="lbl"><span>여기까지 도우셨다</span></div>${D.length?D.map(x=>`<div class="help" style="padding:3px 0"><b>${esc(x.t)}</b> · ${esc(x.done.d)}${x.done.note?' · '+esc(x.done.note):''}</div>`).join(''):'<p class="help">아직 쌓인 돌이 없다. 그래도 오늘까지 지켜 주신 것이 첫 번째 돌이다.</p>'}</div>
+   <div class="acts2"><button class="btn pri" data-close>다시 한 걸음</button></div>`);}
+
+/* 소원 목록 */
+let SORT='new';
+function rList(v){const O=open().filter(x=>FILT==='all'||x.cat===FILT);
+  const sorted=O.slice().sort(SORT==='date'?(a,b)=>(dday(a)??99999)-(dday(b)??99999):SORT==='pray'?(a,b)=>(b.pray?1:0)-(a.pray?1:0)||b.created.localeCompare(a.created):(a,b)=>b.created.localeCompare(a.created));
+  const cnt=k=>open().filter(x=>x.cat===k).length;
+  v.innerHTML=`<div class="one-col">
+  <section class="card"><div class="lbl"><span>소원 목록</span><button class="btn pri sm" id="addBtn">+ 소원 적기</button></div>
+   <div class="segs">${[['all','전체 '+open().length]].concat(Object.keys(CATS).map(k=>[k,CATS[k].t+' '+cnt(k)])).map(([k,t])=>`<button class="chip ${FILT===k?'on':''}" data-f="${k}">${t}</button>`).join('')}</div>
+   <div class="row" style="margin-top:8px"><span class="help">정렬</span>${[['new','최근'],['date','날짜 가까운'],['pray','기도로 맡긴']].map(([k,t])=>`<button class="chip ${SORT===k?'on':''}" data-s="${k}" style="font-size:12.5px;padding:3px 10px">${t}</button>`).join('')}</div>
+  </section>
+  <section class="card">${sorted.length?sorted.map(itemRow).join(''):`<div class="empty">${FILT==='all'?'아직 적은 소원이 없다.':CATS[FILT].t+'이 비어 있다.'}<br><button class="btn sm" id="addEmpty" style="margin-top:10px">첫 소원 적기</button></div>`}</section>
+  ${FILT==='buy'||FILT==='all'?`<p class="help" style="padding:0 4px">사고 싶은 것은 적은 날부터 7일을 센다. 일주일 뒤에도 원하면 감사함으로 산다. 원하지 않게 되면 내려놓는다.</p>`:''}
+  </div>`;
+  v.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{FILT=b.dataset.f;render();});
+  v.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{SORT=b.dataset.s;render();});
+  $('addBtn').onclick=()=>editDlg(FILT==='all'?'do':FILT);$('addEmpty')&&($('addEmpty').onclick=()=>editDlg(FILT==='all'?'do':FILT));
+  bindItems(v);
+}
+function editDlg(cat,id){const x=id?items().find(y=>y.id===id):{cat,t:'',created:today()};let C=x.cat;
+  const draw=()=>`<h3>${id?'소원 고치기':'소원 적기'}</h3>
+   <div class="segs" style="margin:8px 0 12px">${Object.keys(CATS).map(k=>`<button class="chip ${C===k?'on':''}" data-ec="${k}">${CATS[k].t}</button>`).join('')}</div>
+   <div class="fld"><label for="eT">무엇을</label><input class="txt" id="eT" maxlength="60" placeholder="${PH[C]}" value="${esc(x.t)}"></div>
+   <div class="fld"><label for="eW">왜 원하나 <i>· 마음을 하나님 앞에서 점검한다</i></label><textarea class="txt" id="eW" rows="2" placeholder="예: 공부할 때 소음 때문에 집중이 깨진다">${esc(x.why||'')}</textarea></div>
+   <div class="fld"><label for="eS">다음 한 걸음 <i>· 오늘이라도 할 수 있는 작은 일</i></label><input class="txt" id="eS" maxlength="80" placeholder="예: 후기 3개 비교하기, 일정 알아보기" value="${esc(x.step||'')}"></div>
+   <div class="two">${C==='buy'?`<div class="fld"><label for="eP">가격</label><input class="txt" id="eP" inputmode="numeric" placeholder="원" value="${esc(x.price||'')}"></div>`:''}
+    <div class="fld" ${C==='buy'?'':'style="grid-column:1/-1"'}><label for="eD">언제까지 <i>· 날짜 또는 "대학 가면"</i></label><input class="txt" id="eD" maxlength="30" placeholder="2027-02-20" value="${esc(x.when||'')}"></div></div>
+   <label class="check"><input type="checkbox" id="eR" ${x.pray?'checked':''}> 기도로 맡긴다 <span class="help">(주의 뜻이면 · 약 4:15)</span></label>
+   <div class="acts2">${id?`<button class="btn ghost" id="eGive">내려놓기</button><button class="btn ghost" id="eDel">지우기</button>`:''}<button class="btn ghost" data-close>취소</button><button class="btn pri" id="eSave">저장</button></div>`;
+  const bind=ov=>{
+    ov.querySelectorAll('[data-ec]').forEach(b=>b.onclick=()=>{keepVals();C=b.dataset.ec;ov.querySelector('.dialog').innerHTML=draw();bind(ov);});
+    $('eSave').onclick=()=>{keepVals();if(!x.t.trim()){toast('무엇인지 적는다');$('eT').focus();return;}x.cat=C;x.t=x.t.trim();if(!id)items().push(x);touch();closeDialog();render();toast(id?'고쳤다':'적었다');};
+    $('eDel')&&($('eDel').onclick=e=>armed(e.target,'정말 지운다',()=>{ST().items=items().filter(y=>y.id!==id);touch();closeDialog();render();}));
+    $('eGive')&&($('eGive').onclick=()=>{closeDialog();giveDlg(id);});
+  };
+  const keepVals=()=>{x.t=$('eT').value;x.why=$('eW').value.trim();x.step=$('eS').value.trim();x.when=$('eD').value.trim();x.pray=$('eR').checked;if($('eP'))x.price=$('eP').value.replace(/[^\d]/g,'');};
+  dialog(draw(),bind);setTimeout(()=>{if(!id)$('eT')?.focus();},50);}
+function doneDlg(id){const x=items().find(y=>y.id===id);const w=waited(x);
+  dialog(`<h3>${esc(x.t)} · 이뤄졌다</h3>
+   ${x.cat==='buy'?`<div class="qs"><b>사기 전에 한 번만</b>${w<7?` · 적은 지 ${w}일째다`:''}<ul><li>필요인가, 남을 따라가는 욕심인가</li><li>일주일 뒤에도 똑같이 원할까</li><li>감사함으로 쓰고, 오래 아껴 쓸 수 있나</li></ul></div>`:''}
+   <div class="fld" style="margin-top:10px"><label for="dN">감사 한 줄 <i>· 에벤에셀 돌에 새긴다</i></label><textarea class="txt" id="dN" rows="2" placeholder="예: 부모님이 보태 주셨다. 아껴 쓰겠다"></textarea></div>
+   ${x.cat==='buy'?`<div class="fld"><label for="dP">실제로 쓴 돈</label><input class="txt" id="dP" inputmode="numeric" placeholder="원" value="${esc(x.price||'')}"></div>`:''}
+   <div class="acts2"><button class="btn ghost" data-close>아직</button><button class="btn gold" id="dOk">이뤄졌다 · 돌 쌓기</button></div>`,()=>{
+   $('dOk').onclick=()=>{x.done={d:today(),t:Date.now(),note:$('dN').value.trim()};if($('dP'))x.paid=$('dP').value.replace(/[^\d]/g,'');touch();closeDialog();render();toast('여호와가 여기까지 도우셨다');};});}
+function giveDlg(id){const x=items().find(y=>y.id===id);
+  dialog(`<h3>${esc(x.t)} · 내려놓기</h3><p class="help">원하지 않게 된 것도 응답이다. 욕심이었는지, 때가 아닌지, 더 좋은 것이 생겼는지 적어 둔다.</p>
+   <div class="fld" style="margin-top:10px"><label for="gN">내려놓는 이유</label><textarea class="txt" id="gN" rows="2" placeholder="예: 일주일 지나니 필요 없었다"></textarea></div>
+   <div class="acts2"><button class="btn ghost" data-close>취소</button><button class="btn pri" id="gOk">내려놓는다</button></div>`,()=>{
+   $('gOk').onclick=()=>{x.gave={d:today(),t:Date.now(),note:$('gN').value.trim()};touch();closeDialog();render();toast('내려놓았다. 손이 비어야 새것을 받는다');};});}
+
+/* 에벤에셀 */
+function rEben(v){const D=done(),G=gave();const cnt=k=>D.filter(x=>x.cat===k).length;const spent=D.filter(x=>x.cat==='buy').reduce((a,x)=>a+(+x.paid||+x.price||0),0);
+  const byM={};D.forEach(x=>{const m=x.done.d.slice(0,7);(byM[m]=byM[m]||[]).push(x);});
+  v.innerHTML=`<div class="page"><div class="col">
+  <section class="card"><h2>에벤에셀</h2><p class="help" style="margin-bottom:12px">사무엘이 돌을 세우고 "여호와가 여기까지 우리를 도우셨다"고 했다(삼상 7:12). 이뤄진 소원은 지워지지 않고 여기 돌로 남는다.</p>
+   <div class="stat4">${Object.keys(CATS).map(k=>`<div>${CATS[k].s}<b>${cnt(k)}</b></div>`).join('')}</div>
+   ${spent?`<p class="help" style="margin-top:8px">사서 감사한 것에 쓴 돈 ${won(spent)}</p>`:''}</section>
+  ${G.length?`<section class="card"><div class="lbl"><span>내려놓은 것</span><span>${G.length}</span></div>${G.map(x=>stoneRow(x,true)).join('')}</section>`:''}
+  </div><div class="col">
+  <section class="card">${D.length?Object.keys(byM).sort().reverse().map(m=>`<div class="month">${m.replace('-','년 ')}월</div>${byM[m].map(x=>stoneRow(x)).join('')}`).join(''):'<div class="empty">아직 쌓인 돌이 없다.<br>소원 옆 ✓를 누르면 감사와 함께 여기 쌓인다.</div>'}</section>
+  </div></div>`;
+  v.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>{const x=items().find(y=>y.id===b.dataset.back);delete x.done;delete x.gave;touch();render();toast('소원 목록으로 돌려놓았다');});
+  v.querySelectorAll('[data-sdel]').forEach(b=>b.onclick=()=>armed(b,'정말?',()=>{ST().items=items().filter(y=>y.id!==b.dataset.sdel);touch();render();}));
+}
+function stoneRow(x,g){const r=g?x.gave:x.done;return `<div class="stone"><span class="mk ${g?'gave':x.cat}"></span><div class="tx"><b>${esc(x.t)}</b><small>${CATS[x.cat].t} · ${esc(r.d)}${!g&&x.cat==='buy'&&(x.paid||x.price)?' · '+won(x.paid||x.price):''}${x.created?' · 적은 지 '+daysBetween(x.created,r.d)+'일 만에':''}</small>${r.note?`<p>${esc(r.note)}</p>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><button class="x" data-back="${x.id}">되돌리기</button><button class="x" data-sdel="${x.id}">지우기</button></div></div>`;}
+
+/* 나에게 */
+let LDRAFT='';
+function rMe(v){const s=ST();
+  v.innerHTML=`<div class="page"><div class="col">
+  <section class="card"><h2>그리스도 안의 나</h2><p class="help" style="margin-bottom:6px">소원이 이뤄지든 아니든 변하지 않는 것. 소리 내어 읽는다.</p>
+   ${TRUTHS.map(([a,b])=>`<div class="truth"><span>${esc(a)}</span><small>${esc(b)}</small></div>`).join('')}</section>
+  </div><div class="col">
+  <section class="card"><h2>나에게 쓰는 편지</h2><p class="help" style="margin-bottom:10px">힘이 날 때 써 둔다. 오늘 화면과 "지친 날"에 뜬다.</p>
+   <textarea class="txt" id="lIn" rows="4" placeholder="예: 인서야, 지금 힘든 거 안다. 그래도 하나님은 너를 포기하지 않으셨다. 오늘 딱 한 걸음만 가자.">${esc(LDRAFT)}</textarea>
+   <button class="btn pri wide" id="lAdd" style="margin-top:8px">편지 남기기</button>
+   ${s.letters.length?s.letters.slice().reverse().map(l=>`<div class="stone"><div class="tx"><small>${esc(l.d)}</small><p>${esc(l.t)}</p></div><button class="x" data-ldel="${l.id}">지우기</button></div>`).join(''):''}</section>
+  <section class="card"><div class="lbl"><span>백업</span></div><p class="help" style="margin-bottom:8px">이 판은 기록을 이 기기에만 저장한다. 다른 기기로 옮길 때는 백업 복사 → 그 기기에서 복원.</p>
+   <div class="row"><button class="btn sm" id="bkC">백업 복사</button><button class="btn sm" id="bkR">복원</button></div><textarea class="txt" id="bkT" rows="3" hidden placeholder="백업 글자를 붙여넣고 복원을 다시 누른다" style="margin-top:8px"></textarea></section>
+  </div></div>`;
+  $('lIn').oninput=e=>LDRAFT=e.target.value;
+  $('lAdd').onclick=()=>{const t=LDRAFT.trim();if(!t){$('lIn').focus();return;}s.letters.push({id:uid(),d:today(),t});LDRAFT='';touch();render();toast('편지를 남겼다');};
+  v.querySelectorAll('[data-ldel]').forEach(b=>b.onclick=()=>armed(b,'정말?',()=>{s.letters=s.letters.filter(l=>l.id!==b.dataset.ldel);touch();render();}));
+  $('bkC').onclick=async()=>{const tx=JSON.stringify(DOCS.state);try{await navigator.clipboard.writeText(tx);toast('백업을 복사했다');}catch(e){const ta=$('bkT');ta.hidden=false;ta.value=tx;ta.select();toast('선택된 글자를 직접 복사한다');}};
+  $('bkR').onclick=()=>{const ta=$('bkT');if(ta.hidden||!ta.value.trim()){ta.hidden=false;ta.value='';ta.focus();return;}try{const r=JSON.parse(ta.value);if(!Array.isArray(r.items))throw 0;DOCS.state=Object.assign(defState(),r);touch();render();toast('복원했다');}catch(e){toast('백업 글자를 읽지 못했다');}};
+}
+document.addEventListener('dblclick',e=>{if(!['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))e.preventDefault();},{passive:false});
+render();
+</script>
+
+<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
+</body>
+</html>
